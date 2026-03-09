@@ -2,8 +2,6 @@ syntax = "proto3";
 
 package aegis.common;
 
-option java_multiple_files = true;
-
 // Shared metadata attached to all requests
 message RequestMetadata {
   string correlation_id = 1;

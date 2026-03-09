@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from decimal import Decimal
 from uuid import UUID
 
@@ -40,7 +40,7 @@ class TransactionResponse(BaseModel):
     sender_country: str
     receiver_country: str
     status: str
-    created_at: datetime
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     updated_at: datetime | None = None
 
     model_config = ConfigDict(from_attributes=True)
@@ -60,4 +60,4 @@ class TransactionEvent(BaseModel):
     ip_address: str | None = None
     channel: str = "web"
     metadata: dict | None = None
-    created_at: str
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))

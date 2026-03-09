@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from pydantic import BaseModel, Field
 from shared.aegis_shared.enums import RiskLevel, TransactionStatus
 
@@ -19,4 +19,4 @@ class AuditLogEntry(BaseModel):
     retry_count: int = 0
     worker_id: str | None = None
     correlation_id: str | None = None
-    timestamp: datetime
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
