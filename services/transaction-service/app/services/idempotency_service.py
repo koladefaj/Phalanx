@@ -1,8 +1,6 @@
 """Idempotency service — Redis-backed cache for preventing duplicate processing."""
 
 import json
-import redis.asyncio as redis
-from app.config import settings
 from aegis_shared.utils.redis import get_redis
 from aegis_shared.utils.logging import get_logger
 
@@ -72,7 +70,7 @@ class IdempotencyService:
             idempotency_key: Client-provided unique key.
             response: Response dict to cache.
         """
-        key = f"idempotency:response:{idempotency_key}"
+        key = f"idempotency:{idempotency_key}"
         try:
             await self.redis_client.setex(
                 key,

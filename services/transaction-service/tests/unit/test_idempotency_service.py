@@ -51,7 +51,7 @@ async def test_store_caches_response(idempotency_service, mock_redis):
 
     mock_redis.setex.assert_called_once()
     call_args = mock_redis.setex.call_args[0]
-    assert call_args[0] == "idempotency:response:store-key"
+    assert call_args[0] == "idempotency:store-key"
     assert call_args[1] == 86400  # TTL
 
 

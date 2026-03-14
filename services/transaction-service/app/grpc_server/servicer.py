@@ -68,14 +68,29 @@ class TransactionServicer:
             logger.info("idempotent_duplicate_detected", idempotency_key=idempotency_key)
             response = CreateTransactionResponse()
             return ParseDict(cached["response"], response, ignore_unknown_fields=True)
+        
+        # 2. Cache miss - acquire lock  
+        lock_acquired = await self.idempotency_service.acquire_lock(idempotency_key)
 
-        # 2. Process new transaction
+        if not lock_acquired:
+            await context.abort(
+                grpc.StatusCode.ABORTED,
+                "Concurrent request for same idempotency key in progress"
+            )
+
         try:
             amount = Decimal(str(grpc_request.amount))
         except Exception:
             await context.abort(grpc.StatusCode.INVALID_ARGUMENT, "Invalid amount format")
 
+        # 3. Double check cache incase it was populated while acquiring lock
         try:
+            cached = await self.idempotency_service.check(idempotency_key)
+
+            if cached:
+                return ParseDict(cached["response"], response, ignore_unknown_fields=True)
+            
+            # 4. Process New transaction
             result = await self.transaction_service.create(
                 idempotency_key=idempotency_key,
                 amount=amount,
@@ -114,6 +129,7 @@ class TransactionServicer:
         except Exception as e:
             logger.error("create_transaction_failed", error=str(e),)
             await context.abort(grpc.StatusCode.INTERNAL, "An internal error occurred")
+
 
     async def GetTransaction(self, grpc_request, context):
         """Retrieve a transaction by ID."""
