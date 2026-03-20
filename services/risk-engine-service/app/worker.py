@@ -6,6 +6,7 @@ import time
 import uuid
 from decimal import Decimal
 
+from aegis_shared.utils.redis import get_redis
 from aegis_shared.utils.sqs import get_boto_session
 from app.config import settings
 from app.engine.orchestrator import RiskOrchestrator
@@ -129,6 +130,14 @@ class RiskWorker:
                 decision=body.get("risk_decision", "REVIEW"),
                 )
             
+            if body.get("risk_decision") in ("BLOCK", "REVIEW"):
+                try:
+                    redis_client = get_redis()
+                    failed_key = f"failed:1h:{body.get('sender_id', '')}"
+                    await redis_client.incr(failed_key)
+                    await redis_client.expire(failed_key, 3600)
+                except Exception as e:
+                    logger.warning("redis_failed_counter_error", error=str(e))
 
             # Step 2: Reconstruct RiskAssessment from SQS payload
             validated_factors = []
@@ -177,6 +186,7 @@ class RiskWorker:
                     assessment=assessment,
                     transaction_data=body,
                     rule_flags=body.get("rule_flags", []),
+                    rule_score=float(body.get("rule_score", 0.0)),   # ✅ add
                     ml_anomaly_score=float(body.get("ml_anomaly_score", 0.5)),
                     ml_model_version=body.get("ml_model_version", "unknown"),
                     ml_fallback_used=bool(body.get("ml_fallback_used", True)),

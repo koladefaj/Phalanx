@@ -39,6 +39,7 @@ services:
       AWS_DEFAULT_REGION: us-east-1
       DEBUG: 1
     volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
       - ./infra/localstack-init.sh:/etc/localstack/init/ready.d/init.sh
     networks:
       - aegis-net

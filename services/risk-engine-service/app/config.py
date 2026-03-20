@@ -8,6 +8,7 @@ class Settings(BaseSettings):
 
     ENVIRONMENT: str
     LOG_LEVEL: str = "INFO"
+    CORRELATION_ID_HEADER: str
 
     # gRPC
     RISK_ENGINE_GRPC_PORT: int = 50052
@@ -55,7 +56,7 @@ class Settings(BaseSettings):
 
     # Rule thresholds (configurable)
     HIGH_VALUE_THRESHOLD: float = 10000.0
-    VELOCITY_MAX_TRANSACTIONS: int = 10
+    VELOCITY_MAX_TRANSACTIONS: int = 3
     VELOCITY_WINDOW_MINUTES: int = 60
     UNUSUAL_HOUR_START: int = 0  # midnight
     UNUSUAL_HOUR_END: int = 5    # 5 AM

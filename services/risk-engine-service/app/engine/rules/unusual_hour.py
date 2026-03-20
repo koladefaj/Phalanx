@@ -29,6 +29,7 @@ class UnusualHourRule(BaseRule):
                 triggered=False,
                 score=0.0,
                 reason="No timestamp available",
+                severity="LOW",
             )
 
         try:
@@ -52,12 +53,14 @@ class UnusualHourRule(BaseRule):
                     triggered=True,
                     score=0.5,
                     reason=f"Transaction at unusual hour ({hour}:00, window: {start}:00-{end}:00)",
+                    severity="MEDIUM",
                 )
 
             return self._result(
                 triggered=False,
                 score=0.0,
                 reason=f"Transaction at normal hour ({hour}:00)",
+                severity="LOW",
             )
 
         except (ValueError, TypeError):
@@ -65,4 +68,5 @@ class UnusualHourRule(BaseRule):
                 triggered=False,
                 score=0.0,
                 reason="Could not parse transaction timestamp",
+                severity="LOW",
             )

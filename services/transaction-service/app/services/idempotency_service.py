@@ -2,7 +2,6 @@
 
 import json
 from redis.asyncio import Redis
-from aegis_shared.utils.redis import get_redis
 from aegis_shared.utils.logging import get_logger
 
 logger = get_logger("idempotency_service")

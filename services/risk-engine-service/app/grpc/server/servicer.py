@@ -48,7 +48,20 @@ class RiskEngineServicer:
                     "created_at": grpc_request.created_at,
                 },
             )
-            return RiskServicerMapper.to_create_proto(result)
+            logger.info(
+                "servicer_result",
+                decision=result.decision.value if hasattr(result.decision, 'value') else result.decision,
+                risk_score=result.risk_score,
+                risk_level=result.risk_level.value if hasattr(result.risk_level, 'value') else result.risk_level,
+            )
+            proto_response = RiskServicerMapper.to_create_proto(result)
+            logger.info(
+                "proto_response",
+                decision=proto_response.decision,
+                risk_score=proto_response.risk_score,
+                risk_level=proto_response.risk_level,
+            )
+            return proto_response
         
         except ValueError as e:
             logger.warning(

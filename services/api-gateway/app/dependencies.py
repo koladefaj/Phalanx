@@ -3,7 +3,7 @@
 from fastapi import HTTPException, status, Depends, Request
 from aegis_shared.schemas.auth import AuthUser
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
-from app.grpc_clients.transaction_client import TransactionGRPCClient
+from app.grpc.clients.transaction_client import TransactionGRPCClient
 from app.middleware.auth.cognito import verify_token
 
 oauth2_scheme = HTTPBearer(auto_error=False)

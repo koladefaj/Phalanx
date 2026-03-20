@@ -7,9 +7,9 @@ class TransactionStatus(str, Enum):
     """Transaction lifecycle states."""
     RECEIVED  = "RECEIVED"   
     APPROVED  = "APPROVED"    
-    BLOCKED   = "BLOCKED"     # risk engine blocked — bank must decline
-    REVIEW    = "REVIEW"      # risk engine uncertain — manual review needed
-    PROCESSING = "PROCESSING" # being processed downstream
+    BLOCKED   = "BLOCKED"  
+    REVIEW    = "REVIEW"      
+    PROCESSING = "PROCESSING"
     COMPLETED  = "COMPLETED"  
     FAILED     = "FAILED"    
     DEAD_LETTERED = "DEAD_LETTERED"
@@ -25,7 +25,7 @@ class TransactionStatus(str, Enum):
             "APPROVE": cls.APPROVED,
             "BLOCK":   cls.BLOCKED,
             "REVIEW":  cls.REVIEW,
-        }.get(decision, cls.REVIEW)  # default REVIEW if unknown decision
+        }.get(decision, cls.REVIEW)
 
 
 class TransactionType(str, Enum):
@@ -40,7 +40,7 @@ class RiskLevel(str, Enum):
     LOW      = "LOW"
     MEDIUM   = "MEDIUM"
     HIGH     = "HIGH"
-    CRITICAL = "CRITICAL"  # ✅ added — for score >= 0.95
+    CRITICAL = "CRITICAL"
 
     @classmethod
     def from_score(cls, score: float) -> "RiskLevel":
@@ -59,16 +59,14 @@ class RiskLevel(str, Enum):
 
 class RiskDecision(str, Enum):
     """Final decision after risk evaluation."""
-    APPROVE = "APPROVE"  # ✅ removed trailing commas — they made these tuples
+    APPROVE = "APPROVE" 
     REVIEW  = "REVIEW"
     BLOCK   = "BLOCK"
 
     @classmethod
     def from_score(cls, score: float, block_threshold: float = 0.80, review_threshold: float = 0.50) -> "RiskDecision":
         """Map a 0.0–1.0 risk score to a decision.
-        
         Used by risk-engine to make final APPROVE/BLOCK/REVIEW call.
-        Thresholds are configurable — banks may want different sensitivity.
         """
         if score >= block_threshold:
             return cls.BLOCK
@@ -86,7 +84,6 @@ class RuleFlag(str, Enum):
     UNUSUAL_HOUR     = "UNUSUAL_HOUR"
     ACCOUNT_AGE_RISK = "ACCOUNT_AGE_RISK"
     FAILED_BURST     = "FAILED_BURST"
-    # ✅ added — needed by risk-engine feature engineering
     HIGH_RISK_CORRIDOR = "HIGH_RISK_CORRIDOR"
     AMOUNT_ANOMALY     = "AMOUNT_ANOMALY"
     NEW_RECEIVER       = "NEW_RECEIVER"

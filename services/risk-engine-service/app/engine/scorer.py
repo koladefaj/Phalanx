@@ -12,25 +12,15 @@ class RiskScorer:
     Score formula:
         final_score = (rule_score * rule_weight) + (ml_score * 100 * ml_weight)
 
-    Risk categories:
-        LOW:      0–40
-        MEDIUM:   41–70
-        HIGH:     71–90
-        CRITICAL: 91–100
+    Risk categories (relaxed for low‑risk transactions):
+        LOW:      0–30
+        MEDIUM:   30–50
+        HIGH:     50–75
+        CRITICAL: 75–100
     """
 
     def calculate_rule_score(self, rule_results: list[dict]) -> float:
-        """Calculate aggregate score from rule evaluations.
-
-        Only triggered rules contribute to the score — untriggered rules
-        returning score=0.0 don't dilute the aggregate.
-
-        Args:
-            rule_results: List of rule evaluation result dicts.
-
-        Returns:
-            Aggregate rule score (0–100).
-        """
+        """Calculate aggregate score from rule evaluations with severity weighting."""
         if not rule_results:
             return 0.0
 
@@ -39,12 +29,39 @@ class RiskScorer:
         if not triggered:
             return 0.0
 
-        # Sum scores from triggered rules only
-        total_score = sum(r.get("score", 0.0) for r in triggered)
+        
+        weighted_total = 0.0
+        for r in triggered:
+            base_score = r.get("score", 0.0)
+            severity = r.get("severity", "MEDIUM")
+            
+            # Severity multipliers (reduced)
+            if severity == "HIGH":
+                weighted_total += base_score * 2.5   
+            elif severity == "MEDIUM":
+                weighted_total += base_score * 1.2
+            else:  # LOW
+                weighted_total += base_score * 0.7
 
-        # Normalize against total possible (all rules triggered at max score)
+        # Additional boost for multiple HIGH severity rules (reduced)
+        high_count = sum(1 for r in triggered if r.get("severity") == "HIGH")
+        if high_count >= 2:
+            weighted_total *= 1.2                   
+        elif high_count == 1:
+            weighted_total *= 1.08                      
+
+        # Normalize against TOTAL rules
         max_possible = len(rule_results)
-        normalized = (total_score / max_possible) * 100
+        normalized = (weighted_total / max_possible) * 100
+
+        logger.debug(
+            "rule_score_calculation",
+            triggered_count=len(triggered),
+            high_count=high_count,
+            total_rules=max_possible,
+            weighted_total=weighted_total,
+            normalized=normalized,
+        )
 
         return min(100.0, max(0.0, normalized))
 
@@ -55,17 +72,7 @@ class RiskScorer:
         rule_weight: float = 0.6,
         ml_weight: float = 0.4,
     ) -> float:
-        """Calculate the weighted final risk score.
-
-        Args:
-            rule_score: Rule-based score (0–100).
-            ml_score: ML anomaly score (0–1).
-            rule_weight: Weight for rule score (should sum to 1.0 with ml_weight).
-            ml_weight: Weight for ML score.
-
-        Returns:
-            Final risk score (0–100).
-        """
+        """Calculate weighted final risk score."""
         if abs((rule_weight + ml_weight) - 1.0) > 0.001:
             logger.warning(
                 "score_weights_dont_sum_to_one",
@@ -73,34 +80,39 @@ class RiskScorer:
                 ml_weight=ml_weight,
             )
 
+        if ml_score == 0.0:
+            return min(100.0, max(0.0, rule_score))
+
         ml_contribution = ml_score * 100 * ml_weight
         rule_contribution = rule_score * rule_weight
-        final = rule_contribution + ml_contribution
+        final_score = rule_contribution + ml_contribution
 
-        return min(100.0, max(0.0, final))
+        logger.debug(
+            "final_score_calculation",
+            rule_score=rule_score,
+            ml_score=ml_score,
+            rule_contribution=rule_contribution,
+            ml_contribution=ml_contribution,
+            final_score=final_score,
+        )
+
+        return min(100.0, max(0.0, final_score))
 
     def categorize_risk(self, score: float) -> RiskLevel:
-        """Categorize a risk score into LOW/MEDIUM/HIGH/CRITICAL.
+        """Categorize risk score into levels (thresholds raised)."""
+        EPSILON = 0.0001
+        pct_score = score * 100 if score < 1 else score
 
-        Args:
-            score: Risk score (0–100).
-
-        Returns:
-            RiskLevel enum value.
-        """
-        if score >= 91:
+        if pct_score >= 75 - EPSILON:
             return RiskLevel.CRITICAL
-        if score >= 71:
+        if pct_score >= 45 - EPSILON:      
             return RiskLevel.HIGH
-        if score >= 41:
+        if pct_score >= 25 - EPSILON:    
             return RiskLevel.MEDIUM
         return RiskLevel.LOW
 
     def make_decision(self, risk_level: RiskLevel) -> RiskDecision:
-        """Map a RiskLevel to a RiskDecision.
-
-        Uses enum classmethod — single source of truth for thresholds.
-        """
+        """Map a RiskLevel to a RiskDecision."""
         return {
             RiskLevel.LOW:      RiskDecision.APPROVE,
             RiskLevel.MEDIUM:   RiskDecision.REVIEW,

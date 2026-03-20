@@ -32,13 +32,14 @@ class BaseRule(ABC):
         """
         ...
 
-    def _result(self, triggered: bool, score: float, reason: str) -> dict:
+    def _result(self, triggered: bool, score: float, reason: str, severity: str) -> dict:
         """Build a standardized rule result.
 
         Args:
             triggered: Whether the rule flagged the transaction.
             score: Risk contribution score (0.0 to 1.0).
             reason: Human-readable explanation.
+            severity: Severity level of the rule.
 
         Returns:
             Standardized result dict.

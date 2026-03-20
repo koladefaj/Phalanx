@@ -8,10 +8,10 @@ from aegis_shared.enums import RiskLevel, RiskDecision, RuleFlag
 
 
 class RiskFactor(BaseModel):
-    """Single risk factor — returned to bank in sync response."""
-    factor: str      # matches RuleFlag values e.g. "HIGH_VELOCITY"
-    severity: str    # "HIGH", "MEDIUM", "LOW"
-    detail: str = "" # "8 transactions in 1 hour"
+    """Single risk factor — returned in sync response."""
+    factor: str 
+    severity: str    
+    detail: str = "" 
 
 
 class RuleFlagResult(BaseModel):
@@ -41,15 +41,15 @@ class LLMExplanation(BaseModel):
 class RiskAssessment(BaseModel):
     """
     Sync response from risk-engine to transaction-service.
-    Named RiskAssessment to avoid conflict with RiskDecision enum.
     Returned inline — LLM explanation empty (comes async via webhook).
     """
     transaction_id: str
-    decision: RiskDecision              # enum: APPROVE / BLOCK / REVIEW
+    decision: RiskDecision             
     risk_score: float = Field(..., ge=0.0, le=1.0)
     risk_level: RiskLevel = RiskLevel.LOW
-    confidence: str = "MEDIUM"          # "HIGH", "MEDIUM", "LOW"
+    confidence: str = "MEDIUM"         
     risk_factors: list[RiskFactor] = []
+    rule_score: float = Field(0.0, ge=0.0, le=1.0)
     processing_time_ms: float = 0.0
     model_version: str = "1.0.0"
 
@@ -83,7 +83,7 @@ class RiskResult(BaseModel):
 
 
 class RiskResultResponse(BaseModel):
-    """Public risk result — returned to bank via GET /risk/{transaction_id}."""
+    """Public risk result — returned to via GET /risk/{transaction_id}."""
     transaction_id: str
     risk_score: float
     risk_level: RiskLevel

@@ -1,16 +1,21 @@
 """AegisRisk API Gateway — FastAPI application entrypoint."""
 
+import asyncio
+
 import grpc
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, Depends, status, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from app.grpc.channel import create_channel
+from aegis_shared.utils.tracing import get_correlation_id
 
 from app.config import settings
 from app.middleware.correlation import CorrelationIdMiddleware
+from app.middleware.timing import RequestTimingMiddleware
 
-from app.grpc_clients.transaction_client import TransactionGRPCClient
+from app.grpc.clients.transaction_client import TransactionGRPCClient
 from aegis_shared.utils.logging import setup_logger
 from aegis_shared.utils.redis import init_redis, close_redis
 
@@ -25,11 +30,20 @@ logger = setup_logger("api-gateway", settings.LOG_LEVEL)
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Application lifespan handler."""
-    # Initialize Redis
-    await init_redis(settings.REDIS_URL)
+
+    try:
+        # Initialize Redis
+        await init_redis(settings.REDIS_URL)
     
+    except Exception as e:
+        logger.error("error_initializing_redis", error=str(e))
+        raise
+
     # Initialize the client
-    client = TransactionGRPCClient(channel = grpc.aio.insecure_channel(settings.TRANSACTION_GRPC_ADDR))
+    transaction_channel = create_channel(settings.TRANSACTION_GRPC_ADDR)
+    await asyncio.wait_for(transaction_channel.channel_ready(), timeout=15)  # ensure channel is ready before accepting requests
+    
+    client = TransactionGRPCClient(transaction_channel)
     
     # Store it in app state so dependencies can find it
     app.state.transaction_client = client
@@ -37,8 +51,12 @@ async def lifespan(app: FastAPI):
     logger.info("api_gateway_starting", port=settings.API_GATEWAY_PORT)
     yield
     
-    # Clean up 
-    await client.close()
+    # Clean up resources on shutdown
+    try:
+        await client.close()
+    except Exception as e:
+        logger.warning("error_closing_transaction_client", error=str(e))
+
     await close_redis()
     logger.info("api_gateway_shutting_down")
 
@@ -54,6 +72,7 @@ app = FastAPI(
 
 # Middleware
 app.add_middleware(CorrelationIdMiddleware)
+app.add_middleware(RequestTimingMiddleware)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -86,7 +105,11 @@ async def grpc_exception_handler(request: Request, exc: grpc.RpcError):
 
     return JSONResponse(
         status_code=http_status,
-        content={"detail": detail},
+        content={
+            "detail": detail,
+            "correlation_id": get_correlation_id(),
+            },
+        
     )
 
 app.include_router(auth_router)
@@ -118,5 +141,5 @@ if __name__ == "__main__":
         "app.main:app",
         host="0.0.0.0",
         port=settings.API_GATEWAY_PORT,
-        reload=True,
+        reload=settings.ENVIRONMENT == "development",
     )

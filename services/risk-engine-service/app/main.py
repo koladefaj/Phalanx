@@ -1,21 +1,16 @@
 """Risk Engine Service — gRPC server + SQS worker entrypoint."""
 
 import asyncio
-from concurrent import futures
 
-import grpc
 
 import aegis_shared.generated.common_pb2  # noqa: F401
 
-from app.engine.rules import get_all_rules
+from app.grpc.server.setup import create_grpc_server
 from app.engine.scorer import RiskScorer
-from app.grpc_clients.ml_client import MLGRPCClient
-from app.repositories.account_profile_repo import AccountProfileRepository
-from app.repositories.risk_repo import RiskResultRepository
+from app.grpc.clients.ml_client import MLGRPCClient
 from app.config import settings
 from app.engine.orchestrator import RiskOrchestrator
-from app.grpc_server.servicer import RiskEngineServicer
-from app.grpc_server.interceptors import LoggingInterceptor
+from app.grpc.server.servicer import RiskEngineServicer
 from app.worker import RiskWorker
 from app.db.session import engine
 from aegis_shared.utils.logging import setup_logger
@@ -29,27 +24,35 @@ logger = setup_logger("risk-engine-service", settings.LOG_LEVEL)
 async def serve():
     """Start the Risk Engine gRPC server and SQS worker."""
 
-    # init downstream clients and resources before starting server
-    await init_boto_session(
-        aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
-        aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
-        region_name=settings.AWS_REGION,
-    )
+    try:
+        # init downstream clients and resources before starting server
+        await init_boto_session(
+            aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+            aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
+            region_name=settings.AWS_REGION,
+        )
 
-    await init_redis(settings.REDIS_URL)
+        await init_redis(settings.REDIS_URL)
+    
+    except Exception as e:
+        logger.error("startup_initialization_failed", error=str(e))
+        raise
+
 
     orchestrator = RiskOrchestrator(
         scorer=RiskScorer(),
         ml_client=MLGRPCClient(),
     )
 
-    server = grpc.aio.server(
-        futures.ThreadPoolExecutor(max_workers=10),
-        interceptors=[LoggingInterceptor()],
-    )
+    server = create_grpc_server()
+
 
     servicer = RiskEngineServicer(orchestrator)
-    risk_engine_pb2_grpc.add_RiskEngineServiceServicer_to_server(servicer, server)
+
+    risk_engine_pb2_grpc.add_RiskEngineServiceServicer_to_server(
+        servicer,
+        server
+    )
 
     listen_addr = f"0.0.0.0:{settings.RISK_ENGINE_GRPC_PORT}"
     server.add_insecure_port(listen_addr)

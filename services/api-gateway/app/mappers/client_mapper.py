@@ -87,7 +87,6 @@ class TransactionClientMapper:
             status=proto.status,
             created_at=datetime.fromisoformat(proto.created_at),
             already_existed=proto.already_existed,
-            # Add the mapped risk data
             decision=proto.decision,
             risk_score=proto.risk_score,
             risk_level=proto.risk_level,

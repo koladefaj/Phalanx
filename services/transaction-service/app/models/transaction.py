@@ -1,5 +1,6 @@
 """ Sqlalchemy Transaction Model. """
 
+from datetime import datetime
 import uuid
 from sqlalchemy import DateTime, Numeric, Index, String, func, text
 from sqlalchemy.orm import mapped_column, Mapped
@@ -78,7 +79,7 @@ class Transaction(Base):
         String(20),
         nullable=False,
         default="web",
-        server_default="web"
+        server_default=text("web")
     )
 
     status: Mapped[str] = mapped_column(
@@ -93,13 +94,13 @@ class Transaction(Base):
         nullable=True
     )
 
-    created_at: Mapped[DateTime] = mapped_column(
+    created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         server_default=func.now(),
         nullable=False,
     )
 
-    updated_at: Mapped[DateTime] = mapped_column(
+    updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         onupdate=func.now(),
         nullable=True
@@ -112,4 +113,4 @@ class Transaction(Base):
     )
 
     def __repr__(self):
-        return f"<Transaction(id={self.id}, status={self.status}, amount={self.amount})>"
+        return f"<Transaction(id={self.transaction_id}, status={self.status}, amount={self.amount})>"

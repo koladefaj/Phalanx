@@ -11,6 +11,7 @@ from aegis_shared.schemas.transaction import (
     TransactionCreate,
 )
 
+from aegis_shared.utils.tracing import get_correlation_id
 from app.mappers.client_mapper import TransactionClientMapper
 from app.config import settings
 from aegis_shared.utils.logging import get_logger
@@ -35,6 +36,8 @@ class TransactionGRPCClient:
     ) -> TransactionAccepted:
         """Create a new transaction via gRPC."""
 
+        correlation_id = get_correlation_id()
+
         logger.info(
             "grpc_create_transaction",
         )
@@ -48,7 +51,7 @@ class TransactionGRPCClient:
             )
 
             response = await self.stub.CreateTransaction(
-                request, timeout=settings.GRPC_TIMEOUT
+                request, timeout=settings.GRPC_TIMEOUT,
             )
 
             return TransactionClientMapper.from_create_proto(response)
@@ -74,6 +77,7 @@ class TransactionGRPCClient:
             transaction_id=transaction_id,
         )
 
+
         try:
             req = TransactionClientMapper.to_get_proto(
                 client_id=client_id,
@@ -82,7 +86,7 @@ class TransactionGRPCClient:
             )
 
             response = await self.stub.GetTransaction(
-                req, timeout=settings.GRPC_TIMEOUT
+                req, timeout=settings.GRPC_TIMEOUT,
             )
 
             return TransactionClientMapper.from_get_proto(response)
@@ -108,6 +112,7 @@ class TransactionGRPCClient:
     ) -> TransactionUpdate:
         """Update transaction status via gRPC."""
 
+
         logger.info(
             "grpc_update_status",
             transaction_id=transaction_id,
@@ -123,7 +128,7 @@ class TransactionGRPCClient:
             )
 
             response = await self.stub.UpdateTransactionStatus(
-                req, timeout=settings.GRPC_TIMEOUT
+                req, timeout=settings.GRPC_TIMEOUT,
             )
 
             return TransactionClientMapper.from_update_proto(response)

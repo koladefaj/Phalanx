@@ -10,7 +10,7 @@ class Settings(BaseSettings):
     ENVIRONMENT: str 
     LOG_LEVEL: str = "INFO"
     API_GATEWAY_PORT: int = 8000
-    CORRELATION_ID_HEADER: str = "X-Correlation-ID"
+    CORRELATION_ID_HEADER: str
 
     # JWT
     JWT_SECRET_KEY: str

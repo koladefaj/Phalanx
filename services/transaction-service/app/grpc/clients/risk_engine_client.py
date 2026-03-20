@@ -16,7 +16,8 @@ logger = get_logger("risk_engine_grpc_client")
 
 
 class RiskEngineClient:
-    """"""
+    """
+    Client for communicating with the Risk Engine gRPC service."""
 
     def __init__(self, channel):
         self.channel = channel
@@ -38,6 +39,7 @@ class RiskEngineClient:
             created_at: str | None = None,
     ) -> RiskAssessment:
         """Evaluate transaction risk via gRPC."""
+
 
         logger.info(
             "grpc_evaluate_risk",
@@ -61,10 +63,23 @@ class RiskEngineClient:
 
 
             response = await self.stub.EvaluateRisk(
-                request, timeout=settings.GRPC_TIMEOUT
+                request, timeout=settings.GRPC_TIMEOUT,
             )
 
-            return RiskClientMapper.from_evaluate_proto(response)
+            logger.info(
+                "raw_proto_received",
+                decision=response.decision,
+                risk_score=response.risk_score,
+                risk_level=response.risk_level,
+            )
+            assessment = RiskClientMapper.from_evaluate_proto(response)
+            logger.info(
+                "assessment_after_mapping",
+                decision=assessment.decision.value if hasattr(assessment.decision, 'value') else assessment.decision,
+                risk_score=assessment.risk_score,
+                risk_level=assessment.risk_level.value if hasattr(assessment.risk_level, 'value') else assessment.risk_level,
+            )
+            return assessment
         
         except grpc.RpcError as e:
             logger.error(

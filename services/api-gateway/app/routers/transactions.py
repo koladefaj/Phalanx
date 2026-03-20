@@ -4,7 +4,7 @@ import uuid
 from fastapi import APIRouter, Depends, HTTPException, Request, status
 
 from app.dependencies import get_current_user, get_transaction_client, AuthUser
-from app.grpc_clients.transaction_client import TransactionGRPCClient
+from app.grpc.clients.transaction_client import TransactionGRPCClient
 from aegis_shared.schemas.transaction import TransactionCreate, TransactionAccepted, TransactionResponse
 from aegis_shared.utils.logging import get_logger
 

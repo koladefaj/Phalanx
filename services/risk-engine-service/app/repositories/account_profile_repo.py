@@ -27,12 +27,12 @@ class AccountProfileRepository:
     def __init__(self, session: AsyncSession):
         self.session = session
 
-    async def get(self, account_id: str) -> AccountProfile:
+    async def get(self, account_id: str) -> Optional[AccountProfile]:
         """Fetch account profile by account_id."""
         result = await self.session.execute(
-            select(AccountProfile).where(
-                AccountProfile.account_id == account_id
-            )
+            select(AccountProfile)
+            .where(AccountProfile.account_id == account_id)
+            .execution_options(populate_existing=True)
         )
         return result.scalar_one_or_none()
 

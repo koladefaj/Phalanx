@@ -1,6 +1,5 @@
 # shared/aws/session_manager.py
 import aioboto3
-from typing import Optional
 from aegis_shared.utils.logging import get_logger
 
 logger = get_logger("boto_session")

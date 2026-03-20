@@ -23,15 +23,25 @@ class HighValueRule(BaseRule):
             # Scale score: 0.5 at threshold, 1.0 at 5x threshold
             ratio = min(amount / threshold, 5.0)
             score = min(1.0, 0.5 + (ratio - 1.0) * 0.125)
+            
+            # Determine severity based on score
+            if score >= 0.8:
+                severity = "HIGH"
+            elif score >= 0.5:
+                severity = "MEDIUM"
+            else:
+                severity = "LOW"
 
             return self._result(
                 triggered=True,
                 score=score,
                 reason=f"Transaction amount ${amount:,.2f} exceeds threshold ${threshold:,.2f}",
+                severity=severity,
             )
 
         return self._result(
             triggered=False,
             score=0.0,
             reason=f"Amount ${amount:,.2f} is within normal range",
+            severity="LOW",
         )

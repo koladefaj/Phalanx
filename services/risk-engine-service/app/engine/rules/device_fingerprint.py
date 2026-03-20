@@ -25,6 +25,7 @@ class DeviceFingerprintRule(BaseRule):
                 triggered=True,
                 score=0.4,
                 reason="No device fingerprint provided",
+                severity="MEDIUM",
             )
 
         if is_new_device or (known_devices and device_fingerprint not in known_devices):
@@ -32,10 +33,12 @@ class DeviceFingerprintRule(BaseRule):
                 triggered=True,
                 score=0.6,
                 reason="Transaction from an unrecognized device",
+                severity="MEDIUM",
             )
 
         return self._result(
             triggered=False,
             score=0.0,
             reason="Device fingerprint matches known device",
+            severity="LOW",
         )

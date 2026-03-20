@@ -3,12 +3,11 @@
 from typing import Optional
 from uuid import UUID
 from decimal import Decimal
-from sqlalchemy import select, update
+from sqlalchemy import update
 
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.dialects.postgresql import insert
 
-from app.db.session import get_session
 from app.models.risk_result import RiskResult
 from aegis_shared.utils.logging import get_logger
 
@@ -26,6 +25,7 @@ class RiskResultRepository:
         assessment,
         transaction_data: dict,
         rule_flags: list[dict],
+        rule_score: float,              
         ml_anomaly_score: Optional[float],
         ml_model_version: Optional[str],
         ml_fallback_used: bool,
@@ -44,8 +44,8 @@ class RiskResultRepository:
             risk_level=assessment.risk_level.value,
             decision=assessment.decision,
             confidence=assessment.confidence,
-            rule_score=float(transaction_data.get("rule_score", 0.0)),
-            triggered_rules=[r["rule"] for r in rule_flags if r.get("triggered")],
+            rule_score=rule_score,       
+            triggered_rules=transaction_data.get("triggered_rules", []),  # from payload
             rule_flags=rule_flags,
             ml_anomaly_score=ml_anomaly_score,
             ml_model_version=ml_model_version,

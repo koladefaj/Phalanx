@@ -7,7 +7,7 @@ from typing import Literal
 from uuid import UUID
 
 from aegis_shared.enums import TransactionStatus, RiskDecision, RiskLevel
-from aegis_shared.schemas.risk import RiskFactor  # ✅ import from risk schemas
+from aegis_shared.schemas.risk import RiskFactor 
 from pydantic import BaseModel, Field, field_validator, ConfigDict, model_validator
 
 IDEMPOTENCY_PATTERN = re.compile(r"^[a-zA-Z0-9-_]{10,64}$")
@@ -60,7 +60,7 @@ class TransactionCreate(BaseModel):
 class TransactionAccepted(BaseModel):
     """
     Response when a transaction is accepted and scored.
-    Returned synchronously to the bank — includes risk decision.
+    Returned synchronously — includes risk decision.
     LLM explanation NOT included — delivered async via webhook.
     """
     transaction_id: UUID
@@ -74,12 +74,10 @@ class TransactionAccepted(BaseModel):
     status: TransactionStatus = TransactionStatus.RECEIVED
     created_at: datetime
     already_existed: bool = False
-
-    # ── Risk fields ───────────────────────────────────────────────────────────
     decision: RiskDecision = RiskDecision.REVIEW
-    risk_score: float = 0.0
+    risk_score: float | None = 0.0
     risk_level: RiskLevel = RiskLevel.LOW
-    risk_factors: list[RiskFactor] = []  # ✅ RiskFactor now imported above
+    risk_factors: list[RiskFactor] = []
 
     model_config = ConfigDict(from_attributes=True)
 
@@ -138,10 +136,8 @@ class TransactionEvent(BaseModel):
     channel: Literal["web", "mobile", "api"] = Field(default="web")
     transaction_metadata: dict[str, str] | None = None
     created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
-
-    # ── Risk fields for async post-processing ─────────────────────────────────
-    risk_decision: RiskDecision = RiskDecision.REVIEW  # ✅ use enum not RiskDecisionEnum
-    risk_score: float = 0.0
+    risk_decision: RiskDecision = RiskDecision.REVIEW
+    risk_score: float | None = None
     risk_factors: list[RiskFactor] = []
 
     model_config = ConfigDict(from_attributes=True)
@@ -168,5 +164,5 @@ class TransactionUpdate(BaseModel):
 class ExplanationStreamChunk(BaseModel):
     """A single chunk of the LLM explanation stream."""
     transaction_id: UUID
-    chunk_type: str  # "token", "risk_factors", "recommendation", "done"
+    chunk_type: str
     content: str

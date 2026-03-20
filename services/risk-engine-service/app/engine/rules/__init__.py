@@ -10,6 +10,8 @@ from app.engine.rules.account_age import AccountAgeRule
 from app.engine.rules.failed_burst import FailedBurstRule
 
 
+from app.engine.rules.new_receiver_rule import NewReceiverRule
+
 def get_all_rules() -> list[BaseRule]:
     """Get all configured risk evaluation rules.
 
@@ -24,6 +26,7 @@ def get_all_rules() -> list[BaseRule]:
         UnusualHourRule(),
         AccountAgeRule(),
         FailedBurstRule(),
+        NewReceiverRule(),
     ]
 
 
@@ -36,5 +39,6 @@ __all__ = [
     "UnusualHourRule",
     "AccountAgeRule",
     "FailedBurstRule",
+    "NewReceiverRule",
     "get_all_rules",
 ]

@@ -2,7 +2,6 @@
 
 import json
 import asyncio
-import aioboto3
 from typing import Optional
 from aegis_shared.utils.sqs import get_boto_session
 from app.config import settings

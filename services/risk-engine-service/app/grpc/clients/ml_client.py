@@ -18,7 +18,11 @@ class MLGRPCClient:
         self.address = settings.ML_GRPC_ADDR
         self.channel = grpc.insecure_channel(self.address)
 
-    async def score_transaction(self, transaction_data: dict) -> dict:
+    async def score_transaction(
+        self,
+        transaction_data: dict,
+        features: dict | None = None,  # ✅ add this parameter
+    ) -> dict:
         """Score a transaction for anomalies via gRPC.
 
         Args:

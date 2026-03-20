@@ -8,6 +8,7 @@ class Settings(BaseSettings):
 
     ENVIRONMENT: str 
     LOG_LEVEL: str = "INFO"
+    CORRELATION_ID_HEADER: str 
 
     # gRPC
     GRPC_TIMEOUT: int

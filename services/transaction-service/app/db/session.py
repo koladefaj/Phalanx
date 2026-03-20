@@ -7,7 +7,7 @@ from sqlalchemy.ext.asyncio import async_sessionmaker, AsyncSession, create_asyn
 
 from app.config import settings
 
-# Import sql_logging so the @event.listens_for decorators are registered
+
 import aegis_shared.utils.sql_logging  # noqa: F401
 
 # Create async engine with connection pooling

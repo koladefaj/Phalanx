@@ -35,7 +35,7 @@ class AccountProfile(Base):
         comment="Sender account ID — matches sender_id in transactions table",
     )
 
-    # ── Lifetime counters ─────────────────────────────────────────────────────
+    # ── Lifetime counters ────────────────────────────────
     total_txn_count: Mapped[int] = mapped_column(
         BigInteger,
         nullable=False,
@@ -52,7 +52,7 @@ class AccountProfile(Base):
         comment="Total amount transacted over account lifetime",
     )
 
-    # ── 30-day rolling window ─────────────────────────────────────────────────
+    # ── 30-day rolling window ──────────────────────────────
     total_volume_30d: Mapped[Decimal] = mapped_column(
         Numeric(20, 2),
         nullable=False,
@@ -69,7 +69,7 @@ class AccountProfile(Base):
         comment="Number of transactions in the last 30 days",
     )
 
-    # ── 24-hour rolling window ────────────────────────────────────────────────
+    # ── 24-hour rolling window ────────────────────────────
     total_volume_24h: Mapped[Decimal] = mapped_column(
         Numeric(20, 2),
         nullable=False,
@@ -86,7 +86,7 @@ class AccountProfile(Base):
         comment="Number of transactions in the last 24 hours",
     )
 
-    # ── 1-hour rolling window ─────────────────────────────────────────────────
+    # ── 1-hour rolling window ──────────────────────────────
     txn_count_1h: Mapped[int] = mapped_column(
         Integer,
         nullable=False,
@@ -103,7 +103,7 @@ class AccountProfile(Base):
         comment="Total amount transacted in the last 1 hour",
     )
 
-    # ── Amount statistics ─────────────────────────────────────────────────────
+    # ── Amount statistics ───────────────────────────────
     avg_txn_amount: Mapped[Decimal] = mapped_column(
         Numeric(20, 2),
         nullable=False,
@@ -126,7 +126,7 @@ class AccountProfile(Base):
         comment="Amount of the most recent transaction",
     )
 
-    # ── Behavioural flags ─────────────────────────────────────────────────────
+    # ── Behavioural flags ────────────────────────────────
     is_high_risk: Mapped[bool] = mapped_column(
         Boolean,
         nullable=False,
@@ -159,7 +159,7 @@ class AccountProfile(Base):
         comment="Number of transactions sent to manual review",
     )
 
-    # ── Network features ──────────────────────────────────────────────────────
+    # ── Network features ──────────────────────────────────
     unique_receiver_count: Mapped[int] = mapped_column(
         Integer,
         nullable=False,
@@ -208,7 +208,7 @@ class AccountProfile(Base):
         comment="Array of known receiver countries (ISO 3166-1 alpha-2)",
     )
 
-    # ── Timestamps ────────────────────────────────────────────────────────────
+    # ── Timestamps ─────────────────────────────────────────────
     first_seen_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         nullable=False,
@@ -236,14 +236,14 @@ class AccountProfile(Base):
         comment="When the 1h rolling window was last reset",
     )
 
-    # ── Extra metadata ────────────────────────────────────────────────────────
+    # ── Extra metadata ──────────────────────────────────────────
     profile_metadata: Mapped[Optional[dict[str, Any]]] = mapped_column(
         JSONB,
         nullable=True,
         comment="Arbitrary metadata — notes, manual review flags, etc.",
     )
 
-    # ── Version for optimistic locking ────────────────────────────────────────
+    # ── Version for optimistic locking ─────────────────────────
     version: Mapped[int] = mapped_column(
         Integer,
         nullable=False,
@@ -252,7 +252,7 @@ class AccountProfile(Base):
         comment="Optimistic locking version",
     )
 
-    # ── Indexes ───────────────────────────────────────────────────────────────
+    # ── Indexes ───────────────────────────────────────
     __table_args__ = (
         Index("ix_account_profiles_last_seen_at", "last_seen_at"),
         Index("ix_account_profiles_is_high_risk", "is_high_risk"),
@@ -271,7 +271,7 @@ class AccountProfile(Base):
             f"fraud_count={self.fraud_txn_count}>"
         )
 
-    # ── Properties ────────────────────────────────────────────────────────────
+    # ── Properties ──────────────────────────────────
 
     @property
     def account_age_hours(self) -> float:
@@ -320,7 +320,7 @@ class AccountProfile(Base):
             return 0.0
         return min(self.txn_count_1h / max_expected, 1.0)
 
-    # ── Helper methods ────────────────────────────────────────────────────────
+    # ── Helper methods ───────────────────────────────────
 
     def is_new_receiver(self, receiver_id: str) -> bool:
         """True if this account has never sent to this receiver before."""
@@ -330,8 +330,10 @@ class AccountProfile(Base):
 
     def is_new_device(self, device_fingerprint: Optional[str]) -> bool:
         """True if this device fingerprint has never been seen for this account."""
-        if not device_fingerprint or not self.known_device_fingerprints:
-            return True
+        if not device_fingerprint:        
+            return False                   
+        if not self.known_device_fingerprints:
+            return True                     
         return device_fingerprint not in self.known_device_fingerprints
 
     def update_network_features(
@@ -341,7 +343,7 @@ class AccountProfile(Base):
         country: Optional[str],
     ) -> None:
         """Update network-related features — call from service layer with proper locking."""
-        # ✅ fixed — was inverted (added only if NOT new)
+        
         if receiver_id and self.is_new_receiver(receiver_id):
             self.unique_receiver_count += 1
             self.known_receiver_ids = [*self.known_receiver_ids, receiver_id]

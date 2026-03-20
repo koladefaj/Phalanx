@@ -3,6 +3,7 @@
 from datetime import datetime
 from uuid import UUID
 from decimal import Decimal
+from aegis_shared.utils.logging import get_logger
 
 from aegis_shared.generated.transaction_pb2 import (
     CreateTransactionResponse,
@@ -10,6 +11,8 @@ from aegis_shared.generated.transaction_pb2 import (
     UpdateStatusResponse
 )
 from aegis_shared.generated.transaction_pb2 import RiskFactor as RiskFactorProto
+
+logger = get_logger("transaction_mapper")
 
 class TransactionMapper:
     """Centralized mapping logic between Business Models/ORMs and Protobuf."""
@@ -31,7 +34,7 @@ class TransactionMapper:
     def to_create_proto(cls, internal_obj) -> CreateTransactionResponse:
         """Maps internal transaction data to CreateTransactionResponse proto."""
         
-        # 1. Standardize data access (Pydantic vs Dict vs ORM)
+        # Standardize data access (Pydantic vs Dict vs ORM)
         if hasattr(internal_obj, "model_dump"):
             data = internal_obj.model_dump()
         elif hasattr(internal_obj, "__dict__"):
@@ -39,7 +42,7 @@ class TransactionMapper:
         else:
             data = internal_obj
 
-        # 2. Map nested risk factors into actual Protobuf instances
+        # Map nested risk factors into actual Protobuf instances
         raw_factors = data.get("risk_factors") or []
         proto_factors = []
         for rf in raw_factors:

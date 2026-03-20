@@ -23,6 +23,15 @@ class FailedBurstRule(BaseRule):
 
         if recent_failures >= threshold:
             score = min(1.0, recent_failures / (threshold * 2))
+            
+            # Determine severity based on score
+            if score >= 0.8:
+                severity = "HIGH"
+            elif score >= 0.5:
+                severity = "MEDIUM"
+            else:
+                severity = "LOW"
+                
             return self._result(
                 triggered=True,
                 score=score,
@@ -30,10 +39,12 @@ class FailedBurstRule(BaseRule):
                     f"Account has {recent_failures} failed transactions "
                     f"in the last {window} minutes (threshold: {threshold})"
                 ),
+                severity=severity,
             )
 
         return self._result(
             triggered=False,
             score=0.0,
             reason=f"Failed transaction count ({recent_failures}) within normal range",
+            severity="LOW",
         )

@@ -3,17 +3,16 @@
 from uuid import UUID
 from decimal import Decimal
 from datetime import datetime, UTC
-import grpc
 
 from app.db.session import get_session
-from app.config import settings
 from aegis_shared.schemas.transaction import TransactionAccepted, TransactionResponse, TransactionUpdate
 from aegis_shared.utils.tracing import get_correlation_id
 from app.repo.transaction_repo import TransactionRepository
-from app.grpc_clients.risk_engine_client import RiskEngineClient
-from aegis_shared.schemas.risk import RiskAssessment
+from app.grpc.clients.risk_engine_client import RiskEngineClient
+from aegis_shared.schemas.risk import RiskAssessment, RiskFactor
+
+from aegis_shared.enums import RiskDecision, TransactionStatus
 from app.queue.sqs_publisher import SQSPublisher
-from aegis_shared.enums import TransactionStatus
 from aegis_shared.exceptions import DuplicateTransactionError
 from aegis_shared.utils.logging import get_logger
 
@@ -133,17 +132,28 @@ class TransactionBusinessService:
         # Build event payload
         event_payload = {
             **TransactionAccepted.model_validate(txn).model_dump(mode="json"),
-            "risk_decision": risk_decision.decision.value,
+
+            # Risk decision fields
+            "risk_decision": risk_decision.decision.value if hasattr(risk_decision.decision, "value") else str(risk_decision.decision),
             "risk_score": float(risk_decision.risk_score),
-            "risk_level": risk_decision.risk_level.value,
+            "risk_level": risk_decision.risk_level.value if hasattr(risk_decision.risk_level, "value") else str(risk_decision.risk_level),
             "confidence": risk_decision.confidence,
-            "risk_factors": [rf.dict() for rf in risk_decision.risk_factors],
+            "risk_factors": [rf.model_dump() for rf in risk_decision.risk_factors],
+            "rule_score": float(risk_decision.rule_score) if risk_decision.rule_score is not None else 0.0,
+            "rule_flags": [rf.model_dump() for rf in risk_decision.risk_factors],
+            "triggered_rules": [rf.factor for rf in risk_decision.risk_factors],
+
+            # ML fields
+            "ml_anomaly_score": 0.0,
+            "ml_model_version": risk_decision.model_version,
+            "ml_fallback_used": True,
+
+            # Performance
             "processing_time_ms": risk_decision.processing_time_ms,
             "model_version": risk_decision.model_version,
-            "ml_anomaly_score": float(risk_decision.risk_score),
-            "ml_model_version": risk_decision.model_version,
-            "ml_fallback_used": False,
-            "correlation_id": get_correlation_id(),
+
+            # Tracing
+            "correlation_id": get_correlation_id() or "",
         }
 
         try:
@@ -166,6 +176,8 @@ class TransactionBusinessService:
             created_at=now,
             already_existed=False,
             risk_score=risk_decision.risk_score,
+            rule_score =risk_decision.rule_score,
+            risk_level=risk_decision.risk_level,
             risk_factors=risk_decision.risk_factors,
             decision=risk_decision.decision,
         )
@@ -200,9 +212,10 @@ class TransactionBusinessService:
             logger.error("risk_engine_call_failed", transaction_id=transaction_id, error=str(e))
             return RiskAssessment(
                 transaction_id=str(transaction_id),
-                decision="REVIEW",
+                decision=RiskDecision.REVIEW,
                 risk_score=0.5,
-                risk_factors=[{"factor": "scoring_unavailable", "severity": "MEDIUM", "detail": ""}],
+                rule_score=0.0,
+                risk_factors=[RiskFactor(factor="scoring_unavailable", severity="MEDIUM", detail="")],
             )
 
     async def get_by_id(self, transaction_id: str) -> TransactionResponse | None:

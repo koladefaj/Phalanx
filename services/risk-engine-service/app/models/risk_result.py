@@ -135,11 +135,11 @@ class RiskResult(Base):
         Index("ix_risk_results_correlation_id", "correlation_id"),
         Index("ix_risk_results_risk_level", "risk_level"),
         Index("ix_risk_results_risk_score", "risk_score"),
-        Index("ix_risk_results_decision", "decision"),          # ✅ fixed — was final_decision
+        Index("ix_risk_results_decision", "decision"),        
         Index("ix_risk_results_evaluated_at", "evaluated_at"),
         Index("ix_risk_results_ml_model_version", "ml_model_version"),
         Index("ix_risk_results_level_evaluated", "risk_level", "evaluated_at"),
-        Index("ix_risk_results_decision_evaluated", "decision", "evaluated_at"),  # ✅ fixed
+        Index("ix_risk_results_decision_evaluated", "decision", "evaluated_at"),  
         Index(
             "ix_risk_results_high_risk_only",
             "id",
@@ -175,17 +175,17 @@ class RiskResult(Base):
         return {
             "result_id": str(self.id),
             "transaction_id": str(self.transaction_id),
-            "amount": float(self.amount),               # ✅ fixed field name
-            "currency": self.currency,                  # ✅ fixed field name
+            "amount": float(self.amount),               
+            "currency": self.currency,                
             "sender_id": self.sender_id,
             "receiver_id": self.receiver_id,
             "risk_score": self.risk_score,
             "risk_level": self.risk_level,
-            "decision": self.decision.value if self.decision else None,  # ✅ fixed field name
+            "decision": self.decision.value if self.decision else None,  
             "ml_score": self.ml_anomaly_score,
             "ml_version": self.ml_model_version,
             "ml_fallback": self.ml_fallback_used,
             "llm_fallback": self.llm_fallback_used,
-            "processing_time_ms": self.processing_time_ms,  # ✅ fixed field name
+            "processing_time_ms": self.processing_time_ms,  
             "evaluated_at": self.evaluated_at.isoformat() if self.evaluated_at else None,
         }

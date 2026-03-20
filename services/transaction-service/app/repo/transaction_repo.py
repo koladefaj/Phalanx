@@ -6,7 +6,6 @@ from uuid import UUID
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from aegis_shared.schemas.transaction import TransactionUpdate
-from app.db.session import get_session
 from app.models.transaction import Transaction
 from aegis_shared.enums import TransactionStatus
 from aegis_shared.utils.logging import get_logger

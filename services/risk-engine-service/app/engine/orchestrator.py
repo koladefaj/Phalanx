@@ -6,8 +6,6 @@ LLM explanation is triggered async via SQS and delivered via webhook.
 """
 
 import time
-import uuid
-from datetime import datetime, UTC
 from decimal import Decimal
 
 from app.db.session import get_session
@@ -15,12 +13,9 @@ from app.db.session import get_session
 from app.config import settings
 from app.engine.scorer import RiskScorer
 from app.engine.rules import get_all_rules
-from app.grpc_clients.ml_client import MLGRPCClient
+from app.grpc.clients.ml_client import MLGRPCClient
 from app.repositories.account_profile_repo import AccountProfileRepository
-from aegis_shared.generated.risk_engine_pb2 import RuleFlagResult
-from aegis_shared.generated.transaction_pb2 import RiskFactor
-from aegis_shared.enums import RiskLevel, RiskDecision
-from aegis_shared.schemas.risk import RiskAssessment, RuleFlagResult
+from aegis_shared.schemas.risk import RiskAssessment
 from aegis_shared.utils.logging import get_logger
 
 logger = get_logger("orchestrator")
@@ -68,18 +63,54 @@ class RiskOrchestrator:
             profile = await profile_repo.get_or_create(sender_id)
 
         # Step 2: Enrich transaction with behavioural features
-        # Rules read from transaction["metadata"] — populated here from profile
+        device_fp = transaction_data.get("device_fingerprint") or ""
+        receiver_id = transaction_data.get("receiver_id") or ""
+
+        is_new_device = profile.is_new_device(device_fp)
+        is_new_receiver = profile.is_new_receiver(receiver_id)
+
+        try:
+            from aegis_shared.utils.redis import get_redis
+            redis_client = get_redis()
+            
+            # Use Redis sets to track burst devices and receivers that SQS hasn't committed yet
+            if is_new_device and device_fp:
+                device_key = f"burst:device:{sender_id}"
+                if await redis_client.sadd(device_key, device_fp) == 0:
+                    is_new_device = False
+                await redis_client.expire(device_key, 300)  # 5 min TTL
+                
+            if is_new_receiver and receiver_id:
+                receiver_key = f"burst:receiver:{sender_id}"
+                if await redis_client.sadd(receiver_key, receiver_id) == 0:
+                    is_new_receiver = False
+                await redis_client.expire(receiver_key, 300)
+                
+        # ── Velocity counter — increment on every evaluation ─────────────────
+            # Redis tracks real-time count; DB profile is always behind by ~3s
+            velocity_key = f"velocity:1h:{sender_id}"
+            redis_txn_count = await redis_client.incr(velocity_key)
+            await redis_client.expire(velocity_key, 3600)  # 1 hour TTL
+
+            # ── Failed burst counter ──────────────────────────────────────────────
+            # Read from Redis if available — more accurate than DB profile
+            failed_key = f"failed:1h:{sender_id}"
+            redis_failed = await redis_client.get(failed_key)
+            redis_failed_count = int(redis_failed) if redis_failed else profile.blocked_txn_count
+
+        except Exception as e:
+            logger.warning("redis_burst_cache_error", error=str(e), transaction_id=transaction_id)
+            redis_txn_count = profile.txn_count_1h
+            redis_failed_count = profile.blocked_txn_count
+
+        # Use Redis count (real-time) over DB profile count (async lag)
         transaction_data["metadata"] = {
             "account_age_days": profile.account_age_days,
-            "recent_transaction_count": profile.txn_count_1h,
-            "recent_failed_count": profile.blocked_txn_count,
+            "recent_transaction_count": redis_txn_count,      # ✅ Redis not DB
+            "recent_failed_count": redis_failed_count,         # ✅ Redis not DB
             "known_devices": profile.known_device_fingerprints or [],
-            "is_new_device": profile.is_new_device(
-                transaction_data.get("device_fingerprint", "")
-            ),
-            "is_new_receiver": profile.is_new_receiver(
-                transaction_data.get("receiver_id", "")
-            ),
+            "is_new_device": is_new_device,
+            "is_new_receiver": is_new_receiver,
             "known_receivers": profile.known_receiver_ids or [],
             "fraud_txn_count": profile.fraud_txn_count,
             "is_high_risk_account": profile.is_high_risk,
@@ -90,6 +121,7 @@ class RiskOrchestrator:
         for rule in self.rules:
             try:
                 result = rule.evaluate(transaction_data)
+                result["severity"] = self._score_to_severity(result["score"])
                 rule_results.append(result)
             except Exception as e:
                 logger.error(
@@ -102,6 +134,7 @@ class RiskOrchestrator:
                     "rule": rule.name,
                     "triggered": False,
                     "score": 0.0,
+                    "severity": "LOW", 
                     "reason": f"Rule evaluation failed: {str(e)}",
                 })
 
@@ -120,6 +153,20 @@ class RiskOrchestrator:
 
         risk_level = self.scorer.categorize_risk(final_score)
         decision = self.scorer.make_decision(risk_level)
+
+        # debug logs AFTER all values are computed
+        logger.info(
+            "rule_scores_debug",
+            transaction_id=transaction_id,
+            rules=[{
+                "rule": r["rule"],
+                "triggered": r.get("triggered"),
+                "score": r.get("score"),
+            } for r in rule_results],
+            total_rules=len(rule_results),
+            rule_score=rule_score,
+            final_score=final_score,
+        )
 
         # Step 6: Build risk factors list for explanation — triggered rules + ML anomaly
         risk_factors = [
@@ -145,6 +192,15 @@ class RiskOrchestrator:
             ml_fallback=ml_result.get("fallback_used", False),
         )
 
+        logger.info(
+            "orchestrator_returning",
+            transaction_id=transaction_id,
+            decision=decision.value,
+            risk_level=risk_level.value,
+            final_score=final_score,
+            rule_score=rule_score,
+        )
+
         return RiskAssessment(
             transaction_id=transaction_id,
             decision=decision,
@@ -152,6 +208,7 @@ class RiskOrchestrator:
             risk_level=risk_level,
             confidence=self._score_to_confidence(final_score),
             risk_factors=risk_factors,
+            rule_score=round(rule_score / 100, 4),   # normalized 0–1
             processing_time_ms=round(processing_time_ms, 2),
             model_version=ml_result.get("model_version", "1.0.0"),
         )
@@ -179,7 +236,7 @@ class RiskOrchestrator:
                 transaction_id=transaction_data.get("transaction_id"),
             )
             return {
-                "anomaly_score": 0.5,   # neutral — don't bias the decision
+                "anomaly_score": 0.0,  
                 "model_version": "fallback",
                 "fallback_used": True,
             }
