@@ -19,7 +19,9 @@ from aegis_shared.utils.logging import get_logger
 logger = get_logger("transaction_servicer")
 
 
-class TransactionServicer:
+from aegis_shared.generated import transaction_pb2_grpc
+
+class TransactionServicer(transaction_pb2_grpc.TransactionServiceServicer):
     """gRPC servicer implementing the TransactionService."""
 
     def __init__(self, transaction_service: TransactionBusinessService, idempotency_service: IdempotencyService):
@@ -110,6 +112,7 @@ class TransactionServicer:
                 device_fingerprint=grpc_request.device_fingerprint,
                 ip_address=grpc_request.ip_address,
                 channel=grpc_request.channel,
+                transaction_type=grpc_request.Transaction_type or "TRANSFER",
             )
 
             proto_response = TransactionMapper.to_create_proto(result)

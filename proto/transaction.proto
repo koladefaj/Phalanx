@@ -23,6 +23,7 @@ message CreateTransactionRequest {
   string device_fingerprint = 9;
   string ip_address = 10;
   string channel = 11;
+  string Transaction_type = 12; // "PAYMENT", "TRANSFER", etc.
 }
 
 // Inline risk factor — returned to bank in sync response

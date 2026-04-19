@@ -51,7 +51,7 @@ class TransactionClientMapper:
         )
     
     @staticmethod
-    def to_update_proto(request: Request, transaction_id, new_status, reason) -> transaction_pb2.UpdateStatusRequest:
+    def to_update_proto(request: Request, transaction_id: uuid.UUID, new_status: str, reason: str) -> transaction_pb2.UpdateStatusRequest:
         return transaction_pb2.UpdateStatusRequest(
             metadata=RequestMetadata(
                correlation_id=request.state.correlation_id,

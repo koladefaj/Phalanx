@@ -10,7 +10,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Install poetry    
 RUN pip install --no-cache-dir --timeout 120 --retries 3 poetry
 
-# Copy servie code
+# Copy service code and dependency files
 COPY services/transaction-service/pyproject.toml services/transaction-service/poetry.lock* ./
 
 # Configure poetry
@@ -30,6 +30,8 @@ COPY services/transaction-service/app/ ./app/
 COPY services/transaction-service/alembic/ ./alembic/
 COPY services/transaction-service/alembic.ini ./
 
+# Expose service port
 EXPOSE 50051
 
-CMD ["python", "-m", "app.main"]
+# Run service
+CMD ["sh", "-c", "alembic upgrade head && python -m app.main"]

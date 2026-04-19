@@ -34,4 +34,4 @@ COPY services/risk-engine-service/alembic.ini ./
 
 EXPOSE 50052
 
-CMD ["python", "-m", "app.main"]
+CMD ["sh", "-c", "alembic upgrade head && python -m app.main"]

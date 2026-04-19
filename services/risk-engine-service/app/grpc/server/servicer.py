@@ -13,7 +13,9 @@ from aegis_shared.utils.logging import get_logger
 logger = get_logger("risk_engine_servicer")
 
 
-class RiskEngineServicer:
+from aegis_shared.generated import risk_engine_pb2_grpc
+
+class RiskEngineServicer(risk_engine_pb2_grpc.RiskEngineServiceServicer):
     """gRPC servicer for the Risk Engine.
 
     Provides synchronous risk evaluation and result lookup.

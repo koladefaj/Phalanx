@@ -14,8 +14,8 @@ class LLMGRPCClient:
     Falls back to template-based explanation if unavailable.
     """
 
-    def __init__(self):
-        self.address = settings.LLM_GRPC_ADDR
+    def __init__(self, channel: grpc.aio.Channel):
+        self.channel = channel
 
     async def explain_risk(
         self,
@@ -38,12 +38,10 @@ class LLMGRPCClient:
             Dict with summary, risk_factors, recommendation, confidence, fallback_used.
         """
         try:
-            channel = grpc.insecure_channel(self.address)
             # from aegis_shared.generated import llm_service_pb2, llm_service_pb2_grpc
-            # stub = llm_service_pb2_grpc.LLMServiceStub(channel)
+            # stub = llm_service_pb2_grpc.LLMServiceStub(self.channel)
             # request = llm_service_pb2.ExplainRiskRequest(...)
             # response = stub.ExplainRisk(request, timeout=settings.LLM_TIMEOUT_SECONDS)
-            channel.close()
 
             # Placeholder until proto stubs compiled
             rules_text = ", ".join(triggered_rules) if triggered_rules else "none"

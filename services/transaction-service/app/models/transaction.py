@@ -65,6 +65,13 @@ class Transaction(Base):
         nullable=False,
     )
 
+    transaction_type: Mapped[str] = mapped_column(
+        String(20),
+        nullable=False,
+        default="TRANSFER",
+        server_default=text("'TRANSFER'"),
+    )
+
     device_fingerprint: Mapped[str] = mapped_column(
         String(256),
         nullable=True,
@@ -79,7 +86,7 @@ class Transaction(Base):
         String(20),
         nullable=False,
         default="web",
-        server_default=text("web")
+        server_default=text("'web'")
     )
 
     status: Mapped[str] = mapped_column(

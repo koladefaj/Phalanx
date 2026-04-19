@@ -100,11 +100,18 @@ class TransactionMapper:
         )
 
     @staticmethod
-    def to_update_status_proto(result_dict: dict) -> UpdateStatusResponse:
-        """Maps repository result dict to UpdateStatusResponse proto."""
+    def to_update_status_proto(internal_obj) -> UpdateStatusResponse:
+        """Maps repository result to UpdateStatusResponse proto."""
+        if hasattr(internal_obj, "model_dump"):
+            data = internal_obj.model_dump()
+        elif hasattr(internal_obj, "__dict__"):
+            data = internal_obj.__dict__
+        else:
+            data = internal_obj
+
         return UpdateStatusResponse(
-            transaction_id=str(result_dict.get("transaction_id", "")),
-            previous_status=str(result_dict.get("previous_status", "")),
-            new_status=str(result_dict.get("new_status", "")),
-            success=bool(result_dict.get("success", False))
+            transaction_id=str(data.get("transaction_id", "")),
+            previous_status=str(data.get("previous_status", "")),
+            new_status=str(data.get("new_status", "")),
+            success=bool(data.get("success", False))
         )

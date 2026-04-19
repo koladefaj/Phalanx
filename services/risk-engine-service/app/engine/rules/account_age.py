@@ -30,7 +30,18 @@ class AccountAgeRule(BaseRule):
         threshold = settings.ACCOUNT_AGE_RISK_DAYS
 
         if account_age_days < threshold:
-            # Higher score for newer accounts
+            amount = float(transaction.get("amount", 0))
+            
+            # THE FIX: Grace period for small onboarding transactions
+            if amount <= 50.0:
+                return self._result(
+                    triggered=True,
+                    score=0.2, # Very low penalty
+                    reason=f"New account ({account_age_days:.1f} days), but low amount (${amount})",
+                    severity="LOW",
+                )
+
+            # Otherwise, apply normal strict scoring for larger amounts
             score = min(1.0, 1.0 - (account_age_days / threshold))
             
             # Determine severity based on score

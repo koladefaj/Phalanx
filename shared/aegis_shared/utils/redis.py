@@ -21,7 +21,7 @@ async def init_redis(redis_url: str) -> None:
 def get_redis() -> Redis:
     if redis_client is None:
         logger.error("Redis not initialized")
-        raise RuntimeError("Redis not initialzied")
+        raise RuntimeError("Redis not initialized. Call init_redis() first.")
     
     return redis_client
 

@@ -5,11 +5,11 @@ import asyncio
 import grpc
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI, Depends, status, Request
+from fastapi import FastAPI, status, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+import httpx
 from app.grpc.channel import create_channel
-from aegis_shared.utils.tracing import get_correlation_id
 
 from app.config import settings
 from app.middleware.correlation import CorrelationIdMiddleware
@@ -22,7 +22,6 @@ from aegis_shared.utils.redis import init_redis, close_redis
 
 from app.routers.auth import router as auth_router
 from app.routers.transactions import router as transaction_router
-from app.dependencies import get_current_user, require_role, AuthUser
 
 logger = setup_logger("api-gateway", settings.LOG_LEVEL)
 
@@ -38,6 +37,12 @@ async def lifespan(app: FastAPI):
     except Exception as e:
         logger.error("error_initializing_redis", error=str(e))
         raise
+    
+    app.state.http_client = httpx.AsyncClient(
+        limits=httpx.Limits(max_connections=50, max_keepalive_connections=10),
+        timeout=httpx.Timeout(10.0, connect=5.0)
+    )
+    
 
     # Initialize the client
     transaction_channel = create_channel(settings.TRANSACTION_GRPC_ADDR)
@@ -49,6 +54,7 @@ async def lifespan(app: FastAPI):
     app.state.transaction_client = client
     
     logger.info("api_gateway_starting", port=settings.API_GATEWAY_PORT)
+
     yield
     
     # Clean up resources on shutdown
@@ -58,6 +64,8 @@ async def lifespan(app: FastAPI):
         logger.warning("error_closing_transaction_client", error=str(e))
 
     await close_redis()
+    await app.state.http_client.aclose()
+
     logger.info("api_gateway_shutting_down")
 
 
@@ -70,7 +78,8 @@ app = FastAPI(
     redoc_url="/redoc",
 )
 
-# Middleware
+# ---- Middleware ----------------------------------------------------------
+
 app.add_middleware(CorrelationIdMiddleware)
 app.add_middleware(RequestTimingMiddleware)
 app.add_middleware(
@@ -81,6 +90,8 @@ app.add_middleware(
     allow_headers=["Authorization","Content-Type","Idempotency-Key"],
 )
 
+
+# ---- Global Exception Handlers --------------------------------------------
 
 @app.exception_handler(grpc.RpcError)
 async def grpc_exception_handler(request: Request, exc: grpc.RpcError):
@@ -107,29 +118,16 @@ async def grpc_exception_handler(request: Request, exc: grpc.RpcError):
         status_code=http_status,
         content={
             "detail": detail,
-            "correlation_id": get_correlation_id(),
-            },
-        
+            },    
     )
+
+#---- Routers ---------------------------------------------------------------
 
 app.include_router(auth_router)
 app.include_router(transaction_router)
 
 
-# ── Protected route examples ──────────────────────────────
-
-@app.get("/me")
-def get_me(user: AuthUser = Depends(get_current_user)):
-    """Any authenticated user."""
-    return {"sub": user.sub, "email": user.email, "name": user.name}
-
-
-@app.get("/admin/dashboard")
-def admin_only(user: AuthUser = Depends(require_role("admin"))):
-    """Only users in the Cognito 'admin' group."""
-    return {"message": f"Welcome admin {user.email}"}
-
-
+# Health Check
 @app.get("/health")
 def health():
     return {"status": "ok"}

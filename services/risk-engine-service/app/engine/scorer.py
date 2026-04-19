@@ -69,8 +69,8 @@ class RiskScorer:
         self,
         rule_score: float,
         ml_score: float,
-        rule_weight: float = 0.6,
-        ml_weight: float = 0.4,
+        rule_weight: float = 0.7,  # Increase Rule weight
+        ml_weight: float = 0.3,    # Decrease ML weight
     ) -> float:
         """Calculate weighted final risk score."""
         if abs((rule_weight + ml_weight) - 1.0) > 0.001:
@@ -83,7 +83,13 @@ class RiskScorer:
         if ml_score == 0.0:
             return min(100.0, max(0.0, rule_score))
 
-        ml_contribution = ml_score * 100 * ml_weight
+        # If the ML score is below our threshold (0.90), we dampen it significantly
+        # If it's above, we still respect it but with less "volume"
+        adjusted_ml = ml_score
+        if ml_score < 0.90:
+            adjusted_ml = ml_score * 0.1  # Virtually ignore it if it's not a "Sure Thing"
+
+        ml_contribution = adjusted_ml * 100 * ml_weight
         rule_contribution = rule_score * rule_weight
         final_score = rule_contribution + ml_contribution
 

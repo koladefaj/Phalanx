@@ -1,6 +1,7 @@
 """Transaction API routes."""
 
 import uuid
+from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException, Request, status
 
 from app.dependencies import get_current_user, get_transaction_client, AuthUser
@@ -22,8 +23,8 @@ router = APIRouter(prefix="/transactions", tags=["Transactions"])
 async def create_transaction(
     transaction: TransactionCreate,
     request: Request,
-    user: AuthUser = Depends(get_current_user),               
-    client: TransactionGRPCClient = Depends(get_transaction_client),  
+    user: Annotated[AuthUser, Depends(get_current_user)],               
+    client: Annotated[TransactionGRPCClient, Depends(get_transaction_client)],  
 ):
     """
     Submit a transaction for fraud risk evaluation.
@@ -52,8 +53,8 @@ async def create_transaction(
 async def get_transaction(
     transaction_id: uuid.UUID,
     request: Request,
-    user: AuthUser = Depends(get_current_user),
-    client: TransactionGRPCClient = Depends(get_transaction_client),
+    user: Annotated[AuthUser, Depends(get_current_user)],
+    client: Annotated[TransactionGRPCClient, Depends(get_transaction_client)],
 ):
     """Retrieve a transaction by ID."""
     

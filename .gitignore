@@ -6,6 +6,7 @@ dist/
 build/
 .eggs/
 .ruff_cache/
+README.md
 
 # Virtual environments
 .venv/

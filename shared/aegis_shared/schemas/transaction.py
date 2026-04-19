@@ -14,7 +14,7 @@ IDEMPOTENCY_PATTERN = re.compile(r"^[a-zA-Z0-9-_]{10,64}$")
 
 
 class TransactionCreate(BaseModel):
-    """Schema for creating a new transaction."""
+    """Schema for creating a new transaction. (Client Facing)"""
     idempotency_key: str | None = Field(None, min_length=10, max_length=64)
     amount: Decimal = Field(..., gt=0)
     currency: str = Field(..., min_length=3, max_length=3)
@@ -23,7 +23,10 @@ class TransactionCreate(BaseModel):
     sender_country: str = Field(..., min_length=2, max_length=2)
     receiver_country: str = Field(..., min_length=2, max_length=2)
     device_fingerprint: str | None = Field(None, max_length=128)
-    channel: Literal["web", "mobile", "api"] = Field(default="web")
+    channel: Literal["web", "mobile", "api"] = Field(..., description="Origin channel of the request")
+    transaction_type: Literal["PAYMENT", "TRANSFER", "CASH_OUT", "CASH_IN", "DEBIT"] = Field(
+        ..., description="The type of transaction. Maps directly to ML feature set."
+    )
     transaction_metadata: dict[str, str] | None = Field(default=None)
 
     @field_validator("idempotency_key")
@@ -33,14 +36,9 @@ class TransactionCreate(BaseModel):
             raise ValueError("Invalid idempotency key format")
         return v
 
-    @field_validator("currency")
+    @field_validator("currency", "sender_country", "receiver_country")
     @classmethod
-    def currency_uppercase(cls, v: str) -> str:
-        return v.upper()
-
-    @field_validator("sender_country", "receiver_country")
-    @classmethod
-    def country_uppercase(cls, v: str) -> str:
+    def to_uppercase(cls, v: str) -> str:
         return v.upper()
 
     @model_validator(mode="after")
@@ -76,6 +74,7 @@ class TransactionAccepted(BaseModel):
     already_existed: bool = False
     decision: RiskDecision = RiskDecision.REVIEW
     risk_score: float | None = 0.0
+    rule_score: float | None = 0.0
     risk_level: RiskLevel = RiskLevel.LOW
     risk_factors: list[RiskFactor] = []
 
@@ -161,8 +160,3 @@ class TransactionUpdate(BaseModel):
     success: bool
 
 
-class ExplanationStreamChunk(BaseModel):
-    """A single chunk of the LLM explanation stream."""
-    transaction_id: UUID
-    chunk_type: str
-    content: str

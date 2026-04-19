@@ -1,4 +1,4 @@
-"""gRPC channel setup for API Gateway."""
+"""gRPC channel setup for Transaction Service."""
 
 import grpc
 from aegis_shared.grpc.interceptors.correlation_client import (
@@ -7,8 +7,8 @@ from aegis_shared.grpc.interceptors.correlation_client import (
 
 
 def create_channel(target: str):
-    """Create a gRPC channel with interceptors"""
     interceptor = [CorrelationIdClientInterceptor()]
+
     channel = grpc.aio.insecure_channel(target, interceptors=interceptor)
-    
+
     return channel

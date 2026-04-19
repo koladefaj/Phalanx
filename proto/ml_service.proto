@@ -7,6 +7,18 @@ import "common.proto";
 service MLService {
   rpc ScoreTransaction(ScoreTransactionRequest) returns (ScoreTransactionResponse);
   rpc HealthCheck(aegis.common.HealthCheckRequest) returns (aegis.common.HealthCheckResponse);
+  rpc ReloadModel(ReloadModelRequest) returns (ReloadModelResponse);
+}
+
+message ReloadModelRequest {
+  string s3_bucket = 1;
+  string s3_prefix = 2; // Optional folder path in bucket
+}
+
+message ReloadModelResponse {
+  bool success = 1;
+  string message = 2;
+  string new_version = 3;
 }
 
 message ScoreTransactionRequest {
@@ -21,6 +33,17 @@ message ScoreTransactionRequest {
   string device_fingerprint = 9;
   string channel = 10;
   string created_at = 11;
+
+  // Enrichment fields — populated by risk-engine from account profile + Redis
+  string transaction_type = 12;       // "PAYMENT", "TRANSFER", "CASH_OUT", etc.
+  double old_balance_orig = 13;
+  double old_balance_dest = 14;
+  int32  sender_txn_count = 15;
+  double sender_avg_amount = 16;
+  double sender_max_amount = 17;
+  double sender_total_volume = 18;
+  double account_age_hours = 19;
+  int32  txn_count_1h = 20;
 }
 
 message ScoreTransactionResponse {
@@ -29,4 +52,6 @@ message ScoreTransactionResponse {
   string model_version = 3;
   bool fallback_used = 4;
   repeated string feature_contributions = 5;
+  string decision = 6;               // "APPROVE", "BLOCK", "REVIEW"
+  double processing_time_ms = 7;
 }

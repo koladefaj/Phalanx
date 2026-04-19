@@ -12,6 +12,7 @@ class Settings(BaseSettings):
 
     # gRPC
     RISK_ENGINE_GRPC_PORT: int = 50052
+    GRPC_TIMEOUT: int = 5
 
     # Database
     POSTGRES_USER: str 

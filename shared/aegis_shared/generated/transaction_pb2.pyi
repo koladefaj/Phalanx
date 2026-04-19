@@ -1,4 +1,4 @@
-from aegis_shared.generated import common_pb2 as _common_pb2
+import common_pb2 as _common_pb2
 from google.protobuf.internal import containers as _containers
 from google.protobuf import descriptor as _descriptor
 from google.protobuf import message as _message
@@ -8,7 +8,7 @@ from typing import ClassVar as _ClassVar, Optional as _Optional, Union as _Union
 DESCRIPTOR: _descriptor.FileDescriptor
 
 class CreateTransactionRequest(_message.Message):
-    __slots__ = ("metadata", "idempotency_key", "amount", "currency", "sender_id", "receiver_id", "sender_country", "receiver_country", "device_fingerprint", "ip_address", "channel")
+    __slots__ = ("metadata", "idempotency_key", "amount", "currency", "sender_id", "receiver_id", "sender_country", "receiver_country", "device_fingerprint", "ip_address", "channel", "Transaction_type")
     METADATA_FIELD_NUMBER: _ClassVar[int]
     IDEMPOTENCY_KEY_FIELD_NUMBER: _ClassVar[int]
     AMOUNT_FIELD_NUMBER: _ClassVar[int]
@@ -20,6 +20,7 @@ class CreateTransactionRequest(_message.Message):
     DEVICE_FINGERPRINT_FIELD_NUMBER: _ClassVar[int]
     IP_ADDRESS_FIELD_NUMBER: _ClassVar[int]
     CHANNEL_FIELD_NUMBER: _ClassVar[int]
+    TRANSACTION_TYPE_FIELD_NUMBER: _ClassVar[int]
     metadata: _common_pb2.RequestMetadata
     idempotency_key: str
     amount: str
@@ -31,7 +32,8 @@ class CreateTransactionRequest(_message.Message):
     device_fingerprint: str
     ip_address: str
     channel: str
-    def __init__(self, metadata: _Optional[_Union[_common_pb2.RequestMetadata, _Mapping]] = ..., idempotency_key: _Optional[str] = ..., amount: _Optional[str] = ..., currency: _Optional[str] = ..., sender_id: _Optional[str] = ..., receiver_id: _Optional[str] = ..., sender_country: _Optional[str] = ..., receiver_country: _Optional[str] = ..., device_fingerprint: _Optional[str] = ..., ip_address: _Optional[str] = ..., channel: _Optional[str] = ...) -> None: ...
+    Transaction_type: str
+    def __init__(self, metadata: _Optional[_Union[_common_pb2.RequestMetadata, _Mapping]] = ..., idempotency_key: _Optional[str] = ..., amount: _Optional[str] = ..., currency: _Optional[str] = ..., sender_id: _Optional[str] = ..., receiver_id: _Optional[str] = ..., sender_country: _Optional[str] = ..., receiver_country: _Optional[str] = ..., device_fingerprint: _Optional[str] = ..., ip_address: _Optional[str] = ..., channel: _Optional[str] = ..., Transaction_type: _Optional[str] = ...) -> None: ...
 
 class RiskFactor(_message.Message):
     __slots__ = ("factor", "severity", "detail")

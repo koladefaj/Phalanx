@@ -1,22 +1,39 @@
 [project]
 name = "ml-service"
 version = "0.1.0"
-description = ""
+description = "ML service for AegisRisk"
 authors = [
     {name = "Kolade Fajimi",email = "fajimikolade23@gmail.com"}
 ]
 requires-python = ">=3.11"
 dependencies = [
-    "grpcio (>=1.78.0,<2.0.0)"
+    "grpcio (>=1.78.0,<2.0.0)",
+    "redis (>=7.3.0,<8.0.0)",
+    "protobuf (>=7.34.0,<8.0.0)",
+    "pytest (>=9.0.2,<10.0.0)",
+    "numpy (>=2.4.4,<3.0.0)",
+    "xgboost>=3.0.0",
+    "scikit-learn (>=1.8.0,<2.0.0)",
+    "pandas (>=3.0.2,<4.0.0)",
+    "onnxruntime>=1.18.1",
+    "skl2onnx (>=1.20.0,<2.0.0)",
+    "onnxmltools (>=1.16.0,<2.0.0)",
+    "boto3 (>=1.42.91,<2.0.0)",
 ]
 
 
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+pythonpath = ["."]
+
+[dependency-groups]
+test = [
+    "pytest>=8.0",
+    "pytest-asyncio>=0.24",
+    "aiosqlite>=0.20",
+]
+
 [build-system]
-requires = ["poetry-core>=2.0.0,<3.0.0"]
-build-backend = "poetry.core.masonry.api"
-
-[[tool.poetry.source]]
-name = "safety"
-url = "https://pkgs.safetycli.com/repository/none-19107/pypi/simple/"
-priority = "primary"
-
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"

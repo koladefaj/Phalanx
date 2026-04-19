@@ -1,7 +1,7 @@
 [project]
 name = "transaction-service"
 version = "0.1.0"
-description = ""
+description = "Transaction service for AegisRisk"
 authors = [
     {name = "Kolade Fajimi",email = "fajimikolade23@gmail.com"}
 ]
@@ -14,7 +14,7 @@ dependencies = [
     "aioboto3 (>=15.5.0,<16.0.0)",
     "redis (>=7.3.0,<8.0.0)",
     "protobuf (>=7.34.0,<8.0.0)",
-    "pytest (>=9.0.2,<10.0.0)"
+    "pytest (>=9.0.2,<10.0.0)",
 ]
 
 

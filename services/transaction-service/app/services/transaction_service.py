@@ -38,6 +38,7 @@ class TransactionBusinessService:
         device_fingerprint: str = "",
         ip_address: str = "",
         channel: str = "web",
+        transaction_type: str = "TRANSFER",
     ) -> TransactionAccepted:
 
         now = datetime.now(UTC)
@@ -54,6 +55,7 @@ class TransactionBusinessService:
                 "receiver_id": receiver_id,
                 "sender_country": sender_country,
                 "receiver_country": receiver_country,
+                "transaction_type": transaction_type,
             }
 
             if existing:
@@ -64,6 +66,7 @@ class TransactionBusinessService:
                     "receiver_id": existing.receiver_id,
                     "sender_country": existing.sender_country,
                     "receiver_country": existing.receiver_country,
+                    "transaction_type": existing.transaction_type,
                 }
 
                 if existing_data != request_data:
@@ -89,6 +92,7 @@ class TransactionBusinessService:
                 "receiver_id": receiver_id,
                 "sender_country": sender_country,
                 "receiver_country": receiver_country,
+                "transaction_type": transaction_type,
                 "device_fingerprint": device_fingerprint,
                 "ip_address": ip_address,
                 "channel": channel,
@@ -176,7 +180,7 @@ class TransactionBusinessService:
             created_at=now,
             already_existed=False,
             risk_score=risk_decision.risk_score,
-            rule_score =risk_decision.rule_score,
+            rule_score=risk_decision.rule_score,
             risk_level=risk_decision.risk_level,
             risk_factors=risk_decision.risk_factors,
             decision=risk_decision.decision,

@@ -22,19 +22,24 @@ _runtime_version.ValidateProtobufRuntimeVersion(
 _sym_db = _symbol_database.Default()
 
 
+import common_pb2 as common__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x10ml_service.proto\x12\x10\x61\x65gis.ml_service\x1a\x0c\x63ommon.proto\"\x9f\x02\n\x17ScoreTransactionRequest\x12/\n\x08metadata\x18\x01 \x01(\x0b\x32\x1d.aegis.common.RequestMetadata\x12\x16\n\x0etransaction_id\x18\x02 \x01(\t\x12\x0e\n\x06\x61mount\x18\x03 \x01(\x01\x12\x10\n\x08\x63urrency\x18\x04 \x01(\t\x12\x11\n\tsender_id\x18\x05 \x01(\t\x12\x13\n\x0breceiver_id\x18\x06 \x01(\t\x12\x16\n\x0esender_country\x18\x07 \x01(\t\x12\x18\n\x10receiver_country\x18\x08 \x01(\t\x12\x1a\n\x12\x64\x65vice_fingerprint\x18\t \x01(\t\x12\x0f\n\x07\x63hannel\x18\n \x01(\t\x12\x12\n\ncreated_at\x18\x0b \x01(\t\"\x96\x01\n\x18ScoreTransactionResponse\x12\x16\n\x0etransaction_id\x18\x01 \x01(\t\x12\x15\n\ranomaly_score\x18\x02 \x01(\x01\x12\x15\n\rmodel_version\x18\x03 \x01(\t\x12\x15\n\rfallback_used\x18\x04 \x01(\x08\x12\x1d\n\x15\x66\x65\x61ture_contributions\x18\x05 \x03(\t2\xca\x01\n\tMLService\x12i\n\x10ScoreTransaction\x12).aegis.ml_service.ScoreTransactionRequest\x1a*.aegis.ml_service.ScoreTransactionResponse\x12R\n\x0bHealthCheck\x12 .aegis.common.HealthCheckRequest\x1a!.aegis.common.HealthCheckResponseb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x10ml_service.proto\x12\x10\x61\x65gis.ml_service\x1a\x0c\x63ommon.proto\":\n\x12ReloadModelRequest\x12\x11\n\ts3_bucket\x18\x01 \x01(\t\x12\x11\n\ts3_prefix\x18\x02 \x01(\t\"L\n\x13ReloadModelResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\x12\x0f\n\x07message\x18\x02 \x01(\t\x12\x13\n\x0bnew_version\x18\x03 \x01(\t\"\x8b\x04\n\x17ScoreTransactionRequest\x12/\n\x08metadata\x18\x01 \x01(\x0b\x32\x1d.aegis.common.RequestMetadata\x12\x16\n\x0etransaction_id\x18\x02 \x01(\t\x12\x0e\n\x06\x61mount\x18\x03 \x01(\x01\x12\x10\n\x08\x63urrency\x18\x04 \x01(\t\x12\x11\n\tsender_id\x18\x05 \x01(\t\x12\x13\n\x0breceiver_id\x18\x06 \x01(\t\x12\x16\n\x0esender_country\x18\x07 \x01(\t\x12\x18\n\x10receiver_country\x18\x08 \x01(\t\x12\x1a\n\x12\x64\x65vice_fingerprint\x18\t \x01(\t\x12\x0f\n\x07\x63hannel\x18\n \x01(\t\x12\x12\n\ncreated_at\x18\x0b \x01(\t\x12\x18\n\x10transaction_type\x18\x0c \x01(\t\x12\x18\n\x10old_balance_orig\x18\r \x01(\x01\x12\x18\n\x10old_balance_dest\x18\x0e \x01(\x01\x12\x18\n\x10sender_txn_count\x18\x0f \x01(\x05\x12\x19\n\x11sender_avg_amount\x18\x10 \x01(\x01\x12\x19\n\x11sender_max_amount\x18\x11 \x01(\x01\x12\x1b\n\x13sender_total_volume\x18\x12 \x01(\x01\x12\x19\n\x11\x61\x63\x63ount_age_hours\x18\x13 \x01(\x01\x12\x14\n\x0ctxn_count_1h\x18\x14 \x01(\x05\"\xc4\x01\n\x18ScoreTransactionResponse\x12\x16\n\x0etransaction_id\x18\x01 \x01(\t\x12\x15\n\ranomaly_score\x18\x02 \x01(\x01\x12\x15\n\rmodel_version\x18\x03 \x01(\t\x12\x15\n\rfallback_used\x18\x04 \x01(\x08\x12\x1d\n\x15\x66\x65\x61ture_contributions\x18\x05 \x03(\t\x12\x10\n\x08\x64\x65\x63ision\x18\x06 \x01(\t\x12\x1a\n\x12processing_time_ms\x18\x07 \x01(\x01\x32\xa6\x02\n\tMLService\x12i\n\x10ScoreTransaction\x12).aegis.ml_service.ScoreTransactionRequest\x1a*.aegis.ml_service.ScoreTransactionResponse\x12R\n\x0bHealthCheck\x12 .aegis.common.HealthCheckRequest\x1a!.aegis.common.HealthCheckResponse\x12Z\n\x0bReloadModel\x12$.aegis.ml_service.ReloadModelRequest\x1a%.aegis.ml_service.ReloadModelResponseb\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
 _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'ml_service_pb2', _globals)
 if not _descriptor._USE_C_DESCRIPTORS:
   DESCRIPTOR._loaded_options = None
-  _globals['_SCORETRANSACTIONREQUEST']._serialized_start=53
-  _globals['_SCORETRANSACTIONREQUEST']._serialized_end=340
-  _globals['_SCORETRANSACTIONRESPONSE']._serialized_start=343
-  _globals['_SCORETRANSACTIONRESPONSE']._serialized_end=493
-  _globals['_MLSERVICE']._serialized_start=496
-  _globals['_MLSERVICE']._serialized_end=698
+  _globals['_RELOADMODELREQUEST']._serialized_start=52
+  _globals['_RELOADMODELREQUEST']._serialized_end=110
+  _globals['_RELOADMODELRESPONSE']._serialized_start=112
+  _globals['_RELOADMODELRESPONSE']._serialized_end=188
+  _globals['_SCORETRANSACTIONREQUEST']._serialized_start=191
+  _globals['_SCORETRANSACTIONREQUEST']._serialized_end=714
+  _globals['_SCORETRANSACTIONRESPONSE']._serialized_start=717
+  _globals['_SCORETRANSACTIONRESPONSE']._serialized_end=913
+  _globals['_MLSERVICE']._serialized_start=916
+  _globals['_MLSERVICE']._serialized_end=1210
 # @@protoc_insertion_point(module_scope)
