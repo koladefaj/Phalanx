@@ -55,15 +55,20 @@ class RiskServicerMapper:
         )
 
     @classmethod
-    def to_get_proto(cls, result: RiskResult) -> GetRiskResultResponse:
-        """Convert RiskResult → GetRiskResultResponse.
+    def to_get_result_proto(cls, result) -> GetRiskResultResponse:
+        """Convert RiskResult (SQLAlchemy model) → GetRiskResultResponse.
 
-        This is the ASYNC response — full detail including LLM explanation,
-        rule flags, and ML score. Fetched by bank after webhook notification.
+        This is the ASYNC response — full detail including Agent investigation,
+        rule flags, and ML score. Fetched by client after webhook notification.
         """
-        # ML fields
-        ml_score = result.ml_score
-        llm = result.llm_explanation
+        # Note: 'result' is typically the SQLAlchemy model instance here,
+        # which has flat columns rather than nested MLScore/AgentInvestigation objects.
+        
+        # Safely extract agent fields
+        agent_summary = getattr(result, "agent_summary", "")
+        agent_factors = getattr(result, "agent_risk_factors", [])
+        agent_rec = getattr(result, "agent_recommendation", "")
+        agent_fallback = getattr(result, "agent_fallback_used", True)
 
         return GetRiskResultResponse(
             transaction_id=cls._fmt(result.transaction_id),
@@ -78,33 +83,33 @@ class RiskServicerMapper:
                     severity=rf.severity,
                     detail=rf.detail or "",
                 )
-                for rf in (result.risk_factors or [])
+                for rf in (getattr(result, "risk_factors", []) or [])
             ],
 
             # Rule engine detail
             rule_flags=[
                 RuleFlagResult(
-                    rule_name=rf.rule_name.value if hasattr(rf.rule_name, "value") else str(rf.rule_name),
-                    triggered=rf.triggered,
-                    score=float(rf.score),
-                    reason=rf.reason or "",
+                    rule_name=rf.get("rule", ""),
+                    triggered=rf.get("triggered", False),
+                    score=float(rf.get("score", 0.0)),
+                    reason=rf.get("reason", ""),
                 )
                 for rf in (result.rule_flags or [])
-            ],
+            ] if isinstance(result.rule_flags, list) else [],
 
             # ML detail
-            ml_anomaly_score=float(ml_score.ml_anomaly_score) if ml_score else 0.0,
-            ml_fallback_used=ml_score.ml_fallback_used if ml_score else True,
-            ml_model_version=ml_score.ml_model_version if ml_score else "",
+            ml_anomaly_score=float(getattr(result, "ml_anomaly_score", 0.0) or 0.0),
+            ml_fallback_used=getattr(result, "ml_fallback_used", True),
+            ml_model_version=getattr(result, "ml_model_version", ""),
 
-            # LLM explanation — may be empty if async job not complete yet
-            llm_summary=llm.llm_summary if llm else "",
-            llm_risk_factors=llm.llm_risk_factors if llm else [],
-            llm_recommendation=llm.llm_recommendation if llm else "",
-            llm_fallback_used=llm.llm_fallback_used if llm else True,
+            # Agent investigation — may be empty if async job not complete yet
+            agent_summary=agent_summary or "",
+            agent_risk_factors=agent_factors or [],
+            agent_recommendation=agent_rec or "",
+            agent_fallback_used=agent_fallback,
 
             # Metadata
-            processing_time_ms=float(result.processing_time_ms),
-            worker_id=cls._fmt(result.worker_id),
+            processing_time_ms=float(getattr(result, "processing_time_ms", 0.0) or 0.0),
+            worker_id=cls._fmt(getattr(result, "worker_id", "")),
             evaluated_at=cls._fmt(result.evaluated_at),
         )

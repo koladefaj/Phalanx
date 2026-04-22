@@ -18,10 +18,12 @@ from app.middleware.timing import RequestTimingMiddleware
 from app.grpc.clients.transaction_client import TransactionGRPCClient
 from aegis_shared.utils.logging import setup_logger
 from aegis_shared.utils.redis import init_redis, close_redis
+from aegis_shared.utils.sqs import init_boto_session, get_boto_session
 
 
 from app.routers.auth import router as auth_router
 from app.routers.transactions import router as transaction_router
+from app.routers.mlops import router as mlops_router
 
 logger = setup_logger("api-gateway", settings.LOG_LEVEL)
 
@@ -33,9 +35,14 @@ async def lifespan(app: FastAPI):
     try:
         # Initialize Redis
         await init_redis(settings.REDIS_URL)
-    
+        # Initialize shared AWS session (used by reinvestigate endpoint)
+        await init_boto_session(
+            aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+            aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
+            region_name=settings.AWS_REGION,
+        )
     except Exception as e:
-        logger.error("error_initializing_redis", error=str(e))
+        logger.error("error_initializing_resources", error=str(e))
         raise
     
     app.state.http_client = httpx.AsyncClient(
@@ -52,6 +59,7 @@ async def lifespan(app: FastAPI):
     
     # Store it in app state so dependencies can find it
     app.state.transaction_client = client
+    app.state.boto_session = get_boto_session()   # shared for reinvestigate endpoint
     
     logger.info("api_gateway_starting", port=settings.API_GATEWAY_PORT)
 
@@ -125,6 +133,7 @@ async def grpc_exception_handler(request: Request, exc: grpc.RpcError):
 
 app.include_router(auth_router)
 app.include_router(transaction_router)
+app.include_router(mlops_router)
 
 
 # Health Check

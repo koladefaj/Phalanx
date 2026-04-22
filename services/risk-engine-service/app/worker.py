@@ -28,16 +28,17 @@ class RiskWorker:
 
         1. Update account_profiles with transaction data
         2. Persist full RiskResult to DB
-        3. Trigger LLM explanation (calls llm-service)
-        4. Update RiskResult with LLM fields
-        5. Publish RiskCompleted event (for notification-service webhook)
-        6. Delete message from queue
+        3. Publish investigation trigger to aegis-agent-investigations SQS
+           (the analyst-service worker picks it up and writes back)
+        4. Publish RiskCompleted event (for notification-service webhook)
+        5. Delete message from queue
     """
 
     def __init__(self, orchestrator: RiskOrchestrator):
         self.session = get_boto_session()
         self._queue_url: str | None = None
         self._completed_queue_url: str | None = None
+        self._analyst_queue_url: str | None = None
         self.orchestrator = orchestrator
         self.worker_id = str(settings.WORKER_ID)
 
@@ -66,6 +67,9 @@ class RiskWorker:
         )
         self._completed_queue_url = await self._get_queue_url(
             settings.SQS_RISK_COMPLETED_QUEUE, self._completed_queue_url
+        )
+        self._analyst_queue_url = await self._get_queue_url(
+            settings.SQS_AGENT_INVESTIGATIONS_QUEUE, self._analyst_queue_url
         )
 
         logger.info("worker_started", worker_id=self.worker_id)
@@ -163,30 +167,14 @@ class RiskWorker:
                 model_version=body.get("model_version", "1.0.0"),
             )
 
-            # Step 3: Get LLM explanation
-            llm_result = await self.orchestrator._get_llm_explanation(
-                transaction_id=transaction_id,
-                risk_score=assessment.risk_score * 100,
-                risk_level=(
-                    assessment.risk_level.value
-                    if hasattr(assessment.risk_level, "value")
-                    else assessment.risk_level
-                ),
-                triggered_rules=[rf.factor for rf in assessment.risk_factors],
-                ml_score=float(body.get("ml_anomaly_score", 0.5)),
-                transaction_data=body,
-            )
-
-            # Steps 4 + 5: Persist result + LLM in one session
-            # single session for both — atomic, one commit
+            # Step 3: Persist RiskResult to DB (analyst fields start as NULL)
             async with get_session() as session:
                 result_repo = RiskResultRepository(session)
-
                 await result_repo.save(
                     assessment=assessment,
                     transaction_data=body,
                     rule_flags=body.get("rule_flags", []),
-                    rule_score=float(body.get("rule_score", 0.0)),   # ✅ add
+                    rule_score=float(body.get("rule_score", 0.0)),
                     ml_anomaly_score=float(body.get("ml_anomaly_score", 0.5)),
                     ml_model_version=body.get("ml_model_version", "unknown"),
                     ml_fallback_used=bool(body.get("ml_fallback_used", True)),
@@ -194,27 +182,35 @@ class RiskWorker:
                     correlation_id=correlation_id,
                 )
 
-                await result_repo.update_llm_explanation(
+            # Step 4: Publish investigation trigger ONLY for BLOCK/REVIEW decisions.
+            # APPROVE transactions are low-risk — no point burning Ollama compute on them.
+            risk_decision = body.get("risk_decision", "REVIEW")
+            if risk_decision in ("BLOCK", "REVIEW"):
+                await self._publish_analyst_trigger(
                     transaction_id=transaction_id,
-                    llm_summary=llm_result.get("summary", ""),
-                    llm_risk_factors=llm_result.get("risk_factors", []),
-                    llm_recommendation=llm_result.get("recommendation", ""),
-                    llm_confidence=float(llm_result.get("confidence", 0.7)),
-                    llm_model=llm_result.get("model", "fallback"),
-                    llm_latency_ms=float(llm_result.get("latency_ms", 0)),
-                    llm_fallback_used=bool(llm_result.get("fallback_used", True)),
+                    sender_id=body.get("sender_id", ""),
+                    correlation_id=correlation_id,
+                )
+                logger.info(
+                    "analyst_investigation_trigger_published",
+                    transaction_id=transaction_id,
+                    decision=risk_decision,
+                )
+            else:
+                logger.info(
+                    "analyst_investigation_skipped_low_risk",
+                    transaction_id=transaction_id,
+                    decision=risk_decision,
                 )
 
-
-            # Step 6: Publish RiskCompleted event 
+            # Step 5: Publish RiskCompleted event
             await self._publish_completion(
                 transaction_id=transaction_id,
                 assessment=assessment,
-                llm_result=llm_result,
                 correlation_id=correlation_id,
             )
 
-            # Step 7: Acknowledge message 
+            # Step 6: Acknowledge message
             async with self._client() as client:
                 await client.delete_message(
                     QueueUrl=self._queue_url,
@@ -241,11 +237,38 @@ class RiskWorker:
         finally:
             clear_correlation_id()
 
+    async def _publish_analyst_trigger(
+        self,
+        transaction_id: str,
+        sender_id: str,
+        correlation_id: str,
+    ) -> None:
+        """Publish a lightweight trigger to the analyst-service SQS queue."""
+        payload = {
+            "transaction_id": transaction_id,
+            "sender_id": sender_id,
+            "correlation_id": correlation_id,
+        }
+        try:
+            async with self._client() as client:
+                await client.send_message(
+                    QueueUrl=self._analyst_queue_url,
+                    MessageBody=json.dumps(payload),
+                    MessageAttributes={
+                        "EventType": {
+                            "DataType": "String",
+                            "StringValue": "AnalystInvestigationRequested",
+                        }
+                    },
+                )
+            logger.info("analyst_investigation_trigger_published", transaction_id=transaction_id)
+        except Exception as e:
+            logger.error("analyst_trigger_publish_failed", transaction_id=transaction_id, error=str(e))
+
     async def _publish_completion(
         self,
         transaction_id: str,
         assessment: RiskAssessment,
-        llm_result: dict,
         correlation_id: str,
     ) -> None:
         """Publish RiskCompleted event for notification-service webhook."""
@@ -263,9 +286,7 @@ class RiskWorker:
                 else assessment.risk_level
             ),
             "risk_factors": [rf.model_dump() for rf in assessment.risk_factors],
-            "llm_summary": llm_result.get("summary", ""),
-            "llm_risk_factors": llm_result.get("risk_factors", []),
-            "llm_recommendation": llm_result.get("recommendation", ""),
+            # analyst_summary is written async by the analyst-service worker
             "correlation_id": correlation_id,
         }
 

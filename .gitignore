@@ -6,7 +6,10 @@ dist/
 build/
 .eggs/
 .ruff_cache/
-README.md
+
+# ML datasets
+services/ml-service/app/data/
+*.csv
 
 # Virtual environments
 .venv/

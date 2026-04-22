@@ -98,7 +98,7 @@ class EvaluateRiskResponse(_message.Message):
     def __init__(self, transaction_id: _Optional[str] = ..., decision: _Optional[str] = ..., risk_score: _Optional[float] = ..., risk_level: _Optional[str] = ..., confidence: _Optional[str] = ..., risk_factors: _Optional[_Iterable[_Union[RiskFactor, _Mapping]]] = ..., processing_time_ms: _Optional[float] = ..., model_version: _Optional[str] = ...) -> None: ...
 
 class GetRiskResultResponse(_message.Message):
-    __slots__ = ("transaction_id", "decision", "risk_score", "risk_level", "risk_factors", "rule_flags", "ml_anomaly_score", "ml_fallback_used", "ml_model_version", "llm_summary", "llm_risk_factors", "llm_recommendation", "llm_fallback_used", "processing_time_ms", "worker_id", "evaluated_at")
+    __slots__ = ("transaction_id", "decision", "risk_score", "risk_level", "risk_factors", "rule_flags", "ml_anomaly_score", "ml_fallback_used", "ml_model_version", "agent_summary", "agent_risk_factors", "agent_recommendation", "agent_fallback_used", "processing_time_ms", "worker_id", "evaluated_at")
     TRANSACTION_ID_FIELD_NUMBER: _ClassVar[int]
     DECISION_FIELD_NUMBER: _ClassVar[int]
     RISK_SCORE_FIELD_NUMBER: _ClassVar[int]
@@ -108,10 +108,10 @@ class GetRiskResultResponse(_message.Message):
     ML_ANOMALY_SCORE_FIELD_NUMBER: _ClassVar[int]
     ML_FALLBACK_USED_FIELD_NUMBER: _ClassVar[int]
     ML_MODEL_VERSION_FIELD_NUMBER: _ClassVar[int]
-    LLM_SUMMARY_FIELD_NUMBER: _ClassVar[int]
-    LLM_RISK_FACTORS_FIELD_NUMBER: _ClassVar[int]
-    LLM_RECOMMENDATION_FIELD_NUMBER: _ClassVar[int]
-    LLM_FALLBACK_USED_FIELD_NUMBER: _ClassVar[int]
+    AGENT_SUMMARY_FIELD_NUMBER: _ClassVar[int]
+    AGENT_RISK_FACTORS_FIELD_NUMBER: _ClassVar[int]
+    AGENT_RECOMMENDATION_FIELD_NUMBER: _ClassVar[int]
+    AGENT_FALLBACK_USED_FIELD_NUMBER: _ClassVar[int]
     PROCESSING_TIME_MS_FIELD_NUMBER: _ClassVar[int]
     WORKER_ID_FIELD_NUMBER: _ClassVar[int]
     EVALUATED_AT_FIELD_NUMBER: _ClassVar[int]
@@ -124,14 +124,14 @@ class GetRiskResultResponse(_message.Message):
     ml_anomaly_score: float
     ml_fallback_used: bool
     ml_model_version: str
-    llm_summary: str
-    llm_risk_factors: _containers.RepeatedScalarFieldContainer[str]
-    llm_recommendation: str
-    llm_fallback_used: bool
+    agent_summary: str
+    agent_risk_factors: _containers.RepeatedScalarFieldContainer[str]
+    agent_recommendation: str
+    agent_fallback_used: bool
     processing_time_ms: float
     worker_id: str
     evaluated_at: str
-    def __init__(self, transaction_id: _Optional[str] = ..., decision: _Optional[str] = ..., risk_score: _Optional[float] = ..., risk_level: _Optional[str] = ..., risk_factors: _Optional[_Iterable[_Union[RiskFactor, _Mapping]]] = ..., rule_flags: _Optional[_Iterable[_Union[RuleFlagResult, _Mapping]]] = ..., ml_anomaly_score: _Optional[float] = ..., ml_fallback_used: bool = ..., ml_model_version: _Optional[str] = ..., llm_summary: _Optional[str] = ..., llm_risk_factors: _Optional[_Iterable[str]] = ..., llm_recommendation: _Optional[str] = ..., llm_fallback_used: bool = ..., processing_time_ms: _Optional[float] = ..., worker_id: _Optional[str] = ..., evaluated_at: _Optional[str] = ...) -> None: ...
+    def __init__(self, transaction_id: _Optional[str] = ..., decision: _Optional[str] = ..., risk_score: _Optional[float] = ..., risk_level: _Optional[str] = ..., risk_factors: _Optional[_Iterable[_Union[RiskFactor, _Mapping]]] = ..., rule_flags: _Optional[_Iterable[_Union[RuleFlagResult, _Mapping]]] = ..., ml_anomaly_score: _Optional[float] = ..., ml_fallback_used: bool = ..., ml_model_version: _Optional[str] = ..., agent_summary: _Optional[str] = ..., agent_risk_factors: _Optional[_Iterable[str]] = ..., agent_recommendation: _Optional[str] = ..., agent_fallback_used: bool = ..., processing_time_ms: _Optional[float] = ..., worker_id: _Optional[str] = ..., evaluated_at: _Optional[str] = ...) -> None: ...
 
 class GetRiskResultRequest(_message.Message):
     __slots__ = ("metadata", "transaction_id")

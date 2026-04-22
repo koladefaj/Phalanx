@@ -49,9 +49,35 @@ async def callback(code: Annotated[str, Query()], client: Annotated[httpx.AsyncC
         token_type="Bearer",
     )
     
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+
+oauth2_scheme = HTTPBearer(auto_error=False)
+
 @router.get("/logout")
-def logout(user: Annotated[AuthUser, Depends(get_current_user)]):
-    """Redirect to Cognito logout endpoint."""
+async def logout(
+    client: Annotated[httpx.AsyncClient, Depends(get_http_client)],
+    token: Annotated[HTTPAuthorizationCredentials | None, Depends(oauth2_scheme)] = None
+):
+    """
+    1. Revoke the token with Cognito (if provided)
+    2. Redirect to Cognito Hosted UI logout to clear cookies
+    """
+
+    if token:
+        # Attempt to revoke the token on AWS side
+        try:
+            await client.post(
+                f"{settings.COGNITO_DOMAIN}/oauth2/revoke",
+                data={
+                    "token": token.credentials,
+                    "client_id": settings.COGNITO_APP_CLIENT_ID,
+                    "client_secret": settings.COGNITO_APP_CLIENT_SECRET,
+                },
+                headers={"Content-Type": "application/x-www-form-urlencoded"},
+            )
+        except Exception:
+            # If revocation fails (e.g. token already dead), we still want to redirect
+            pass
 
     url = (
         f"{settings.COGNITO_DOMAIN}/logout"

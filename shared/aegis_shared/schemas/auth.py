@@ -7,6 +7,7 @@ class AuthUser(BaseModel):
     email: str
     name: str = ""
     roles: list[str] = []
+    tenant_id: str | None = None
 
     @field_validator("email")
     @classmethod

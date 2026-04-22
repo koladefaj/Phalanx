@@ -95,6 +95,17 @@ class TransactionClientMapper:
     
     @staticmethod
     def from_get_proto(proto: transaction_pb2.GetTransactionResponse) -> TransactionResponse:
+        analyst = None
+        if proto.HasField("agent_investigation"):
+            ai = proto.agent_investigation
+            analyst = {
+                "agent_summary": ai.agent_summary,
+                "agent_risk_factors": list(ai.agent_risk_factors),
+                "agent_recommendation": ai.agent_recommendation,
+                "agent_confidence": ai.agent_confidence,
+                "agent_fallback_used": ai.agent_fallback_used,
+            }
+
         return TransactionResponse(
             transaction_id=uuid.UUID(proto.transaction_id),
             idempotency_key=proto.idempotency_key,
@@ -108,6 +119,7 @@ class TransactionClientMapper:
             created_at=datetime.fromisoformat(proto.created_at),
             updated_at=datetime.fromisoformat(proto.updated_at)
             if proto.updated_at else None,
+            analyst_investigation=analyst
         )
     
     @staticmethod

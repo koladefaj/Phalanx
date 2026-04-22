@@ -109,11 +109,11 @@ class RiskScorer:
         EPSILON = 0.0001
         pct_score = score * 100 if score < 1 else score
 
-        if pct_score >= 75 - EPSILON:
+        if pct_score >= 80 - EPSILON:
             return RiskLevel.CRITICAL
-        if pct_score >= 45 - EPSILON:      
+        if pct_score >= 60 - EPSILON:      
             return RiskLevel.HIGH
-        if pct_score >= 25 - EPSILON:    
+        if pct_score >= 40 - EPSILON:    
             return RiskLevel.MEDIUM
         return RiskLevel.LOW
 

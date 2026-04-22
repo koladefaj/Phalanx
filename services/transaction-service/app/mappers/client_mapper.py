@@ -4,8 +4,13 @@ from datetime import datetime
 from uuid import UUID
 from decimal import Decimal
 
-from aegis_shared.generated.risk_engine_pb2 import EvaluateRiskRequest, EvaluateRiskResponse
-from aegis_shared.schemas.risk import RiskAssessment, RiskFactor
+from aegis_shared.generated.risk_engine_pb2 import (
+    EvaluateRiskRequest, 
+    EvaluateRiskResponse,
+    GetRiskResultResponse,
+    GetRiskResultRequest
+)
+from aegis_shared.schemas.risk import RiskAssessment, RiskFactor, RiskResultResponse, AnalystInvestigation
 from aegis_shared.enums import RiskDecision, RiskLevel
 
 
@@ -61,10 +66,7 @@ class RiskClientMapper:
 
     @classmethod
     def from_evaluate_proto(cls, proto: EvaluateRiskResponse) -> RiskAssessment:
-        """Convert EvaluateRiskResponse proto → RiskAssessment Pydantic model.
-        
-        This is what transaction-service uses after receiving risk-engine response.
-        """
+        """Convert EvaluateRiskResponse proto → RiskAssessment Pydantic model."""
         risk_factors = [
             RiskFactor(
                 factor=rf.factor,
@@ -76,11 +78,45 @@ class RiskClientMapper:
 
         return RiskAssessment(
             transaction_id=proto.transaction_id,
-            decision=RiskDecision(proto.decision) if proto.decision else RiskDecision.REVIEW,
+            decision=RiskDecision(proto.decision),
             risk_score=float(proto.risk_score),
-            risk_level=RiskLevel(proto.risk_level) if proto.risk_level else RiskLevel.LOW,
+            risk_level=RiskLevel(proto.risk_level),
             confidence=proto.confidence or "MEDIUM",
             risk_factors=risk_factors,
+            rule_score=float(proto.rule_score) if hasattr(proto, "rule_score") else 0.0,
             processing_time_ms=float(proto.processing_time_ms),
             model_version=proto.model_version or "1.0.0",
+        )
+
+    @classmethod
+    def from_get_proto(cls, proto: GetRiskResultResponse) -> RiskResultResponse:
+        """Convert GetRiskResultResponse proto → RiskResultResponse Pydantic model."""
+        risk_factors = [
+            RiskFactor(
+                factor=rf.factor,
+                severity=rf.severity,
+                detail=rf.detail,
+            )
+            for rf in proto.risk_factors
+        ]
+
+        analyst = None
+        if proto.agent_summary:
+            analyst = AnalystInvestigation(
+                agent_summary=proto.agent_summary,
+                agent_risk_factors=list(proto.agent_risk_factors),
+                agent_recommendation=proto.agent_recommendation,
+                agent_confidence=0.8, # Proto doesn't have it yet, using default
+                agent_fallback_used=proto.agent_fallback_used
+            )
+
+        return RiskResultResponse(
+            transaction_id=proto.transaction_id,
+            risk_score=float(proto.risk_score),
+            risk_level=RiskLevel(proto.risk_level),
+            decision=RiskDecision(proto.decision),
+            triggered_rules=list(proto.agent_risk_factors),
+            risk_factors=risk_factors,
+            analyst_investigation=analyst,
+            evaluated_at=datetime.fromisoformat(proto.evaluated_at) if proto.evaluated_at else datetime.now()
         )

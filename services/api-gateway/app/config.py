@@ -44,6 +44,15 @@ class Settings(BaseSettings):
     RISK_ENGINE_GRPC_PORT: int = 50052
     NOTIFICATION_GRPC_HOST: str = "notification-service"
     NOTIFICATION_GRPC_PORT: int = 50055
+    ANALYST_SERVICE_GRPC_HOST: str = "analyst-service"
+    ANALYST_SERVICE_GRPC_PORT: int = 50056
+
+    # AWS / SQS (for reinvestigate endpoint direct-publish)
+    AWS_REGION: str = "us-east-1"
+    AWS_ACCESS_KEY_ID: str = "test"
+    AWS_SECRET_ACCESS_KEY: str = "test"
+    AWS_ENDPOINT_URL: str = "http://localstack:4566"
+    SQS_AGENT_INVESTIGATIONS_QUEUE: str = "aegis-agent-investigations"
 
     @property
     def REDIS_URL(self) -> str:
@@ -64,7 +73,7 @@ class Settings(BaseSettings):
             f"?response_type=code"
             f"&client_id={self.COGNITO_APP_CLIENT_ID}"
             f"&redirect_uri={self.COGNITO_REDIRECT_URI}"
-            f"&scope=openid+email"
+            f"&scope=openid+email+profile"
         )
 
     @property

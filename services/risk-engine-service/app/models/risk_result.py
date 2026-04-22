@@ -85,17 +85,17 @@ class RiskResult(Base):
     ml_features_used: Mapped[Optional[dict[str, float]]] = mapped_column(JSON, nullable=True)
     ml_latency_ms: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
 
-    # ── LLM analysis ──────────────────────────────────────────────────────────
+    # ── Agent analysis ────────────────────────────────────────────────────────
     # All nullable — populated async after sync response is returned
-    llm_summary: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
-    llm_risk_factors: Mapped[Optional[list[str]]] = mapped_column(JSON, nullable=True)
-    llm_recommendation: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
-    llm_confidence: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
-    llm_fallback_used: Mapped[bool] = mapped_column(
+    agent_summary: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    agent_risk_factors: Mapped[Optional[list[str]]] = mapped_column(JSON, nullable=True)
+    agent_recommendation: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
+    agent_confidence: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
+    agent_fallback_used: Mapped[bool] = mapped_column(
         Boolean, nullable=False, default=False, server_default=text("false")
     )
-    llm_model: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)
-    llm_latency_ms: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
+    agent_model: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)
+    agent_latency_ms: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
 
     # ── Performance metrics ───────────────────────────────────────────────────
     processing_time_ms: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
@@ -167,8 +167,8 @@ class RiskResult(Base):
         return self.ml_anomaly_score is not None and not self.ml_fallback_used
 
     @property
-    def is_llm_based(self) -> bool:
-        return self.llm_summary is not None and not self.llm_fallback_used
+    def is_agent_based(self) -> bool:
+        return self.agent_summary is not None and not self.agent_fallback_used
 
     def to_analytics(self) -> dict:
         """Convert to analytics-friendly format."""
@@ -185,7 +185,7 @@ class RiskResult(Base):
             "ml_score": self.ml_anomaly_score,
             "ml_version": self.ml_model_version,
             "ml_fallback": self.ml_fallback_used,
-            "llm_fallback": self.llm_fallback_used,
+            "agent_fallback": self.agent_fallback_used,
             "processing_time_ms": self.processing_time_ms,  
             "evaluated_at": self.evaluated_at.isoformat() if self.evaluated_at else None,
         }

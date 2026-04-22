@@ -8,7 +8,8 @@ from aegis_shared.utils.logging import get_logger
 from aegis_shared.generated.transaction_pb2 import (
     CreateTransactionResponse,
     GetTransactionResponse,
-    UpdateStatusResponse
+    UpdateStatusResponse,
+    AgentInvestigation as AgentInvestigationProto
 )
 from aegis_shared.generated.transaction_pb2 import RiskFactor as RiskFactorProto
 
@@ -85,6 +86,28 @@ class TransactionMapper:
         else:
             data = internal_obj
         
+        analyst_proto = None
+        if data.get("analyst_investigation"):
+            ai = data["analyst_investigation"]
+            # After model_dump(), ai is a plain dict — use dict-safe access
+            if isinstance(ai, dict):
+                analyst_proto = AgentInvestigationProto(
+                    agent_summary=ai.get("agent_summary", ""),
+                    agent_risk_factors=ai.get("agent_risk_factors", []),
+                    agent_recommendation=ai.get("agent_recommendation", ""),
+                    agent_confidence=float(ai.get("agent_confidence", 0.8)),
+                    agent_fallback_used=ai.get("agent_fallback_used", False),
+                )
+            else:
+                # Pydantic model with attribute access
+                analyst_proto = AgentInvestigationProto(
+                    agent_summary=ai.agent_summary,
+                    agent_risk_factors=ai.agent_risk_factors,
+                    agent_recommendation=ai.agent_recommendation,
+                    agent_confidence=float(ai.agent_confidence),
+                    agent_fallback_used=ai.agent_fallback_used,
+                )
+
         return GetTransactionResponse(
             transaction_id=cls._format_field(data.get("transaction_id")),
             idempotency_key=data.get("idempotency_key", ""),
@@ -96,7 +119,8 @@ class TransactionMapper:
             receiver_country=data.get("receiver_country", ""),
             status=cls._format_field(data.get("status")),
             created_at=cls._format_field(data.get("created_at")),
-            updated_at=cls._format_field(data.get("updated_at"))
+            updated_at=cls._format_field(data.get("updated_at")),
+            agent_investigation=analyst_proto
         )
 
     @staticmethod

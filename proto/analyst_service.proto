@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package aegis.analyst_service;
+
+import "common.proto";
+
+service AnalystService {
+  // Run a full fraud investigation on a transaction
+  rpc InvestigateTransaction(InvestigateRequest) returns (InvestigateResponse);
+
+  rpc HealthCheck(aegis.common.HealthCheckRequest) returns (aegis.common.HealthCheckResponse);
+}
+
+message InvestigateRequest {
+  aegis.common.RequestMetadata metadata = 1;
+  string transaction_id = 2;
+  string sender_id = 3;
+}
+
+message InvestigateResponse {
+  string transaction_id = 1;
+  string verdict = 2;           // LEGITIMATE, SUSPICIOUS, FRAUDULENT
+  string confidence = 3;        // LOW, MEDIUM, HIGH
+  string summary = 4;           // Agent's reasoning summary
+  string recommendation = 5;    // ALLOW, REVIEW, BLOCK
+  string agent_name = 6;        // Which agent implementation produced this
+}

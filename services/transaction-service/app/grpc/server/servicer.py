@@ -112,7 +112,8 @@ class TransactionServicer(transaction_pb2_grpc.TransactionServiceServicer):
                 device_fingerprint=grpc_request.device_fingerprint,
                 ip_address=grpc_request.ip_address,
                 channel=grpc_request.channel,
-                transaction_type=grpc_request.Transaction_type or "TRANSFER",
+                client_id=grpc_request.metadata.client_id,
+                transaction_type=getattr(grpc_request, "transaction_type", "TRANSFER"),
             )
 
             proto_response = TransactionMapper.to_create_proto(result)
@@ -145,10 +146,11 @@ class TransactionServicer(transaction_pb2_grpc.TransactionServiceServicer):
     async def GetTransaction(self, grpc_request, context):
         """Retrieve a transaction by ID."""
         transaction_id = grpc_request.transaction_id
-        logger.info("get_transaction_rpc", transaction_id=transaction_id)
+        client_id = grpc_request.metadata.client_id
+        logger.info("get_transaction_rpc", transaction_id=transaction_id, client_id=client_id)
 
         try:
-            result = await self.transaction_service.get_by_id(transaction_id)
+            result = await self.transaction_service.get_by_id(transaction_id, client_id=client_id)
             if result is None:
                 await context.abort(grpc.StatusCode.NOT_FOUND, f"Transaction {transaction_id} not found")
 

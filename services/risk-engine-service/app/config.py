@@ -36,6 +36,7 @@ class Settings(BaseSettings):
     SQS_TRANSACTION_QUEUE: str 
     SQS_RISK_COMPLETED_QUEUE: str
     SQS_TRANSACTION_DLQ: str
+    SQS_AGENT_INVESTIGATIONS_QUEUE: str = "aegis-agent-investigations"
 
     # Worker config
     WORKER_POLL_INTERVAL: int = 5
@@ -46,8 +47,8 @@ class Settings(BaseSettings):
     # gRPC downstream services
     ML_SERVICE_GRPC_HOST: str = "ml-service"
     ML_SERVICE_GRPC_PORT: int
-    LLM_SERVICE_GRPC_HOST: str = "llm-service"
-    LLM_SERVICE_GRPC_PORT: int
+    ANALYST_SERVICE_GRPC_HOST: str = "analyst-service"
+    ANALYST_SERVICE_GRPC_PORT: int
     TRANSACTION_GRPC_HOST: str = "transaction-service"
     TRANSACTION_GRPC_PORT: int
 
@@ -82,8 +83,8 @@ class Settings(BaseSettings):
         return f"{self.ML_SERVICE_GRPC_HOST}:{self.ML_SERVICE_GRPC_PORT}"
 
     @property
-    def LLM_GRPC_ADDR(self) -> str:
-        return f"{self.LLM_SERVICE_GRPC_HOST}:{self.LLM_SERVICE_GRPC_PORT}"
+    def ANALYST_GRPC_ADDR(self) -> str:
+        return f"{self.ANALYST_SERVICE_GRPC_HOST}:{self.ANALYST_SERVICE_GRPC_PORT}"
 
     @property
     def TRANSACTION_GRPC_ADDR(self) -> str:

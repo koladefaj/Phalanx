@@ -8,7 +8,7 @@ import aegis_shared.generated.common_pb2  # noqa: F401
 from app.grpc.server.setup import create_grpc_server
 from app.engine.scorer import RiskScorer
 from app.grpc.clients.ml_client import MLGRPCClient
-from app.grpc.clients.llm_client import LLMGRPCClient
+from app.grpc.clients.analyst_client import AnalystClient
 from app.config import settings
 from app.engine.orchestrator import RiskOrchestrator
 from app.grpc.server.servicer import RiskEngineServicer
@@ -42,12 +42,12 @@ async def serve():
 
 
     ml_channel = create_channel(settings.ML_GRPC_ADDR)
-    llm_channel = create_channel(settings.LLM_GRPC_ADDR)
+    analyst_channel = create_channel(settings.ANALYST_GRPC_ADDR)
 
     orchestrator = RiskOrchestrator(
         scorer=RiskScorer(),
         ml_client=MLGRPCClient(channel=ml_channel),
-        llm_client=LLMGRPCClient(channel=llm_channel),
+        analyst_client=AnalystClient(channel=analyst_channel),
     )
 
     server = create_grpc_server()
@@ -86,8 +86,8 @@ async def serve():
         
         try:
             await orchestrator.ml_client.close()
-            if orchestrator.llm_client:
-                await orchestrator.llm_client.channel.close()
+            if orchestrator.analyst_client:
+                await orchestrator.analyst_client.channel.close()
         except Exception as e:
             logger.error("error_closing_grpc_clients", error=str(e))
 

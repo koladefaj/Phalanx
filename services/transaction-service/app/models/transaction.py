@@ -34,6 +34,14 @@ class Transaction(Base):
         index=True,
     )
 
+    client_id: Mapped[str] = mapped_column(
+        String(128),
+        nullable=False,
+        index=True,
+        default="legacy",
+        server_default=text("'legacy'"),
+    )
+
     amount: Mapped[Decimal] = mapped_column(
         Numeric(10, 2),
         nullable=False,

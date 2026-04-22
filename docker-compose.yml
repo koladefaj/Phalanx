@@ -98,7 +98,7 @@ services:
         condition: service_healthy
       ml-service:
         condition: service_started
-      llm-service:
+      analyst-service:
         condition: service_started
     networks:
       - aegis-net
@@ -112,14 +112,21 @@ services:
     networks:
       - aegis-net
 
-  # ─── LLM Service ────────────────────────────────────────
-  llm-service:
+  # ─── Analyst Service ────────────────────────────────────
+  analyst-service:
     build:
       context: .
-      dockerfile: services/llm-service/Dockerfile
+      dockerfile: services/analyst-service/Dockerfile
     env_file: .env
+    depends_on:
+      postgres:
+        condition: service_healthy
     networks:
       - aegis-net
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${RISK_DB_NAME}
+      - OLLAMA_BASE_URL=http://host.docker.internal:11434
+      - OLLAMA_MODEL=gemma3:12b
 
   # ─── Notification Service ───────────────────────────────
   notification-service:

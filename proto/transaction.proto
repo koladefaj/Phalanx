@@ -56,6 +56,14 @@ message GetTransactionRequest {
   string transaction_id = 2;
 }
 
+message AgentInvestigation {
+  string agent_summary = 1;
+  repeated string agent_risk_factors = 2;
+  string agent_recommendation = 3;
+  double agent_confidence = 4;
+  bool agent_fallback_used = 5;
+}
+
 message GetTransactionResponse {
   string transaction_id = 1;
   string idempotency_key = 2;
@@ -68,6 +76,7 @@ message GetTransactionResponse {
   string status = 9;
   string created_at = 10;
   string updated_at = 11;
+  AgentInvestigation agent_investigation = 12;
 }
 
 message UpdateStatusRequest {

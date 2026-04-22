@@ -7,6 +7,7 @@ LLM explanation is triggered async via SQS and delivered via webhook.
 
 import time
 from decimal import Decimal
+from typing import Optional, Any
 
 from app.db.session import get_session
 
@@ -14,8 +15,9 @@ from app.config import settings
 from app.engine.scorer import RiskScorer
 from app.engine.rules import get_all_rules
 from app.grpc.clients.ml_client import MLGRPCClient
-from app.grpc.clients.llm_client import LLMGRPCClient
+from app.grpc.clients.analyst_client import AnalystClient
 from app.repositories.account_profile_repo import AccountProfileRepository
+from app.repositories.risk_repo import RiskResultRepository
 from aegis_shared.schemas.risk import RiskAssessment
 from aegis_shared.utils.logging import get_logger
 
@@ -37,11 +39,11 @@ class RiskOrchestrator:
     consumer and is delivered to the bank via webhook.
     """
 
-    def __init__(self, scorer: RiskScorer, ml_client: MLGRPCClient, llm_client: LLMGRPCClient | None = None):
+    def __init__(self, scorer: RiskScorer, ml_client: MLGRPCClient, analyst_client: AnalystClient | None = None):
         self.rules = get_all_rules()
         self.scorer = scorer
         self.ml_client = ml_client
-        self.llm_client = llm_client
+        self.analyst_client = analyst_client
 
     async def evaluate(self, transaction_data: dict) -> RiskAssessment:
         """Run the synchronous risk evaluation pipeline.
@@ -145,6 +147,16 @@ class RiskOrchestrator:
         # Step 4: ML anomaly score (with fallback)
         ml_result = await self._get_ml_score(transaction_data, profile)
 
+        # THE FIX: If it's a brand new account and a small amount, 
+        # the ML model is statistically unreliable.
+        if profile.account_age_days < 0.1 and amount < 250.0:
+            logger.info(
+                "suppressing_ml_for_new_user_onboarding", 
+                transaction_id=transaction_id, 
+                original_anomaly_score=ml_result["anomaly_score"]
+            )
+            ml_result["anomaly_score"] = float(Decimal(str(ml_result["anomaly_score"])) * Decimal("0.1"))
+
         # Step 5: Calculate final score → level → decision
         final_score = self.scorer.calculate_final_score(
             rule_score=rule_score,
@@ -180,6 +192,14 @@ class RiskOrchestrator:
             for r in rule_results
             if r.get("triggered", False)
         ]
+
+        # Explicitly add ML Anomaly if it's significant (> 0.5)
+        if ml_result["anomaly_score"] > 0.5:
+            risk_factors.append({
+                "factor": "ML_ANOMALY_DETECTION",
+                "severity": "HIGH" if ml_result["anomaly_score"] > 0.8 else "MEDIUM",
+                "detail": f"Unusual behavioral pattern detected by XGBoost model (Score: {ml_result['anomaly_score']:.2f})"
+            })
 
         processing_time_ms = (time.perf_counter() - start_time) * 1000
 
@@ -243,42 +263,29 @@ class RiskOrchestrator:
                 "fallback_used": True,
             }
         
-    async def _get_llm_explanation(self, transaction_id, risk_score, risk_level, triggered_rules, ml_score, transaction_data) -> dict:
-        """Call LLM service for explanation, with fallback."""
-        if not self.llm_client:
+    async def _get_analyst_investigation(self, transaction_id, sender_id, correlation_id="") -> dict:
+        """Call AI Analyst service for investigation, with fallback."""
+        if not self.analyst_client:
             return {
-                "summary": f"LLM analysis unavailable for transaction {transaction_id}.",
-                "risk_factors": triggered_rules,
-                "recommendation": "Review",
-                "confidence": 0.5,
-                "model": "fallback",
-                "latency_ms": 0,
+                "summary": f"Analyst analysis unavailable for transaction {transaction_id}.",
+                "verdict": "SUSPICIOUS",
+                "recommendation": "REVIEW",
+                "confidence": "LOW",
+                "agent_name": "fallback",
                 "fallback_used": True
             }
             
-        try:
-            return await self.llm_client.explain_risk(
-                transaction_id=transaction_id,
-                risk_score=risk_score,
-                risk_level=risk_level,
-                triggered_rules=triggered_rules,
-                ml_score=ml_score,
-                amount=float(transaction_data.get("amount", 0.0)),
-                currency=transaction_data.get("currency", "USD"),
-                sender_country=transaction_data.get("sender_country", ""),
-                receiver_country=transaction_data.get("receiver_country", ""),
-            )
-        except Exception as e:
-            logger.warning("llm_explanation_failed", error=str(e), transaction_id=transaction_id)
-            return {
-                "summary": f"LLM failure fallback for {transaction_id}.",
-                "risk_factors": triggered_rules,
-                "recommendation": "Review",
-                "confidence": 0.5,
-                "model": "fallback",
-                "latency_ms": 0,
-                "fallback_used": True
-            }
+        return await self.analyst_client.investigate_transaction(
+            transaction_id=transaction_id,
+            sender_id=sender_id,
+            correlation_id=correlation_id,
+        )
+
+    async def get_result(self, transaction_id: str) -> Optional[RiskAssessment]:
+        """Fetch a stored risk result from the database."""
+        async with get_session() as session:
+            repo = RiskResultRepository(session)
+            return await repo.get_by_transaction_id(transaction_id)
 
     @staticmethod
     def _score_to_severity(score: float) -> str:

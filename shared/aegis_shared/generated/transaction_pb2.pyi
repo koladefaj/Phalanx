@@ -87,8 +87,22 @@ class GetTransactionRequest(_message.Message):
     transaction_id: str
     def __init__(self, metadata: _Optional[_Union[_common_pb2.RequestMetadata, _Mapping]] = ..., transaction_id: _Optional[str] = ...) -> None: ...
 
+class AgentInvestigation(_message.Message):
+    __slots__ = ("agent_summary", "agent_risk_factors", "agent_recommendation", "agent_confidence", "agent_fallback_used")
+    AGENT_SUMMARY_FIELD_NUMBER: _ClassVar[int]
+    AGENT_RISK_FACTORS_FIELD_NUMBER: _ClassVar[int]
+    AGENT_RECOMMENDATION_FIELD_NUMBER: _ClassVar[int]
+    AGENT_CONFIDENCE_FIELD_NUMBER: _ClassVar[int]
+    AGENT_FALLBACK_USED_FIELD_NUMBER: _ClassVar[int]
+    agent_summary: str
+    agent_risk_factors: _containers.RepeatedScalarFieldContainer[str]
+    agent_recommendation: str
+    agent_confidence: float
+    agent_fallback_used: bool
+    def __init__(self, agent_summary: _Optional[str] = ..., agent_risk_factors: _Optional[_Iterable[str]] = ..., agent_recommendation: _Optional[str] = ..., agent_confidence: _Optional[float] = ..., agent_fallback_used: bool = ...) -> None: ...
+
 class GetTransactionResponse(_message.Message):
-    __slots__ = ("transaction_id", "idempotency_key", "amount", "currency", "sender_id", "receiver_id", "sender_country", "receiver_country", "status", "created_at", "updated_at")
+    __slots__ = ("transaction_id", "idempotency_key", "amount", "currency", "sender_id", "receiver_id", "sender_country", "receiver_country", "status", "created_at", "updated_at", "agent_investigation")
     TRANSACTION_ID_FIELD_NUMBER: _ClassVar[int]
     IDEMPOTENCY_KEY_FIELD_NUMBER: _ClassVar[int]
     AMOUNT_FIELD_NUMBER: _ClassVar[int]
@@ -100,6 +114,7 @@ class GetTransactionResponse(_message.Message):
     STATUS_FIELD_NUMBER: _ClassVar[int]
     CREATED_AT_FIELD_NUMBER: _ClassVar[int]
     UPDATED_AT_FIELD_NUMBER: _ClassVar[int]
+    AGENT_INVESTIGATION_FIELD_NUMBER: _ClassVar[int]
     transaction_id: str
     idempotency_key: str
     amount: str
@@ -111,7 +126,8 @@ class GetTransactionResponse(_message.Message):
     status: str
     created_at: str
     updated_at: str
-    def __init__(self, transaction_id: _Optional[str] = ..., idempotency_key: _Optional[str] = ..., amount: _Optional[str] = ..., currency: _Optional[str] = ..., sender_id: _Optional[str] = ..., receiver_id: _Optional[str] = ..., sender_country: _Optional[str] = ..., receiver_country: _Optional[str] = ..., status: _Optional[str] = ..., created_at: _Optional[str] = ..., updated_at: _Optional[str] = ...) -> None: ...
+    agent_investigation: AgentInvestigation
+    def __init__(self, transaction_id: _Optional[str] = ..., idempotency_key: _Optional[str] = ..., amount: _Optional[str] = ..., currency: _Optional[str] = ..., sender_id: _Optional[str] = ..., receiver_id: _Optional[str] = ..., sender_country: _Optional[str] = ..., receiver_country: _Optional[str] = ..., status: _Optional[str] = ..., created_at: _Optional[str] = ..., updated_at: _Optional[str] = ..., agent_investigation: _Optional[_Union[AgentInvestigation, _Mapping]] = ...) -> None: ...
 
 class UpdateStatusRequest(_message.Message):
     __slots__ = ("metadata", "transaction_id", "new_status", "reason")

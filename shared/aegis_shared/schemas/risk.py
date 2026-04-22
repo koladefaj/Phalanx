@@ -29,13 +29,13 @@ class MLScore(BaseModel):
     ml_fallback_used: bool = False
 
 
-class LLMExplanation(BaseModel):
-    """LLM-generated explanation — populated async after decision."""
-    llm_summary: str
-    llm_risk_factors: list[str]
-    llm_recommendation: str
-    llm_confidence: float = Field(..., ge=0.0, le=1.0)
-    llm_fallback_used: bool = False
+class AnalystInvestigation(BaseModel):
+    """AI Analyst investigation result — populated async after decision."""
+    agent_summary: str
+    agent_risk_factors: list[str]
+    agent_recommendation: str
+    agent_confidence: float = Field(..., ge=0.0, le=1.0)
+    agent_fallback_used: bool = False
 
 
 class RiskAssessment(BaseModel):
@@ -73,7 +73,7 @@ class RiskResult(BaseModel):
     decision: RiskDecision
     rule_flags: list[RuleFlagResult]
     ml_score: MLScore | None = None
-    llm_explanation: LLMExplanation | None = None
+    analyst_investigation: AnalystInvestigation | None = None
     rule_score: float = Field(..., ge=0.0, le=1.0)
     processing_time_ms: float
     worker_id: UUID
@@ -90,5 +90,5 @@ class RiskResultResponse(BaseModel):
     decision: RiskDecision
     triggered_rules: list[str]
     risk_factors: list[RiskFactor] = []
-    llm_explanation: LLMExplanation | None = None
+    analyst_investigation: AnalystInvestigation | None = None
     evaluated_at: datetime = Field(default_factory=lambda: datetime.now(UTC))

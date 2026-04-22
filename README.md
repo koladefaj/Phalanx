@@ -1,66 +1,214 @@
 # Aegis Risk Engine
 
-Aegis Risk is an advanced, microsecond-latency ML-driven microservice orchestration designed to intercept and evaluate financial transactions for fraud asynchronously. It seamlessly blends hard business rules with predictive intelligence across a containerized, decoupled architecture.
+Aegis Risk is a production-grade, microsecond-latency ML-driven microservice architecture designed to intercept, evaluate, and orchestrate financial transactions for fraud asynchronously. It demonstrates advanced distributed systems patterns, combining hard business rules with predictive intelligence, AI-driven investigations, and self-healing MLOps.
 
 ---
 
-## Service Architecture
+## 🚀 Quickstart (Running Locally)
 
-The system is split into four highly specialized microservices, communicating synchronously via **gRPC** and asynchronously via **AWS SQS** streams.
+Aegis Risk is fully containerized. You can spin up the entire microservice ecosystem, including local mocks for AWS (LocalStack), Postgres, and Redis, using a single command.
+
+### 1. Prerequisites
+- **Docker** & **Docker Compose**
+- **Ollama** (Running locally on your host machine for the Agentic AI to use `gemma3:12b` or `llama3`)
+
+### 2. Bootstrapping the Environment
+Clone the repository and spin up the infrastructure:
+```bash
+# Start all microservices in detached mode
+docker compose up -d --build
+```
+
+### 3. Seeding the Database
+To avoid cold-start issues with the ML models and to establish historical profiles for our test personas, generate and inject the seed data:
+```bash
+# Generate the SQL seed file
+python generate_seed_data.py
+
+# Pipe it directly into the Postgres container
+cat seed_data.sql | docker exec -i aegis-risk-postgres-1 psql -U aegis
+```
+
+### 4. Configuring AWS Cognito (Optional)
+By default, the `.env` uses LocalStack for AWS services. However, Aegis Risk relies heavily on **AWS Cognito** for Multi-Tenancy (via `custom:tenant_id` claims) and Role-Based Access Control (RBAC). 
+
+If you wish to attach your own real AWS Cognito User Pool:
+1. Create a Cognito User Pool with a custom attribute named `custom:tenant_id`.
+2. Create an App Client and ensure it has **Read Access** to `custom:tenant_id`.
+3. Update your `.env` file with your real AWS credentials and Cognito details:
+```env
+AWS_ENDPOINT_URL= # Leave blank to bypass LocalStack
+COGNITO_REGION=us-east-1
+COGNITO_USER_POOL_ID=us-east-1_XXXXX
+COGNITO_APP_CLIENT_ID=your_client_id
+COGNITO_APP_CLIENT_SECRET=your_client_secret
+COGNITO_DOMAIN=https://your-domain.auth.us-east-1.amazoncognito.com
+```
+
+### 5. Accessing the APIs
+- **API Gateway (Swagger UI):** `http://localhost:8000/docs`
+- **Authentication:** To get a valid JWT, visit `http://localhost:8000/auth/login`. This will execute the OAuth2 flow and return an ID token with the necessary `profile` scopes and tenant mapping.
+
+---
+
+## 🏛 Architecture Overview
+
+The system is split into highly specialized microservices. It favors **gRPC** for internal, sub-millisecond synchronous communication, and **AWS SQS** for asynchronous, fault-tolerant background processing. 
 
 ### 1. API Gateway (`api-gateway`)
 The edge of the network. It handles all Internet-facing interactions over REST HTTP.
-- **Edge Security**: Exposes public REST API endpoints (`/transactions`, `/auth`) built entirely in `FastAPI`.
-- **JWT & Rate Limiting**: Intercepts packets to validate asymmetric JWT access tokens and enforces strict rate limiting decoupled via `Redis`.
-- **gRPC Translation**: Validates massive incoming JSON structures using Pydantic, instantly translating them into strictly typed Protobuf messages and dispatching them down to the internal subnet via high-speed gRPC Channels.
+- **Edge Security**: Exposes public REST API endpoints (`/transactions`, `/auth`) built in `FastAPI`.
+- **JWT & Rate Limiting**: Intercepts requests to validate asymmetric JWT access tokens from AWS Cognito and enforces strict rate limiting decoupled via `Redis`.
+- **gRPC Translation**: Validates incoming JSON structures using Pydantic, instantly translating them into strictly typed Protobuf messages and dispatching them to the internal subnet via high-speed gRPC Channels.
 
 ### 2. Transaction Service (`transaction-service`)
-The system's mission-critical ledger ingress and data harmonization layer.
+The system's mission-critical ledger ingress and data harmonization layer. 
 - **State Persistence**: Handles raw transaction lifecycle management through `PostgreSQL` using `SQLAlchemy` ORM native async drivers.
 - **Strict Two-Way Idempotency**:
-  - **Ingress Safety (DB Level)**: Transactions submitted with identical `idempotency_key` arguments are evaluated mathematically. If standard inputs strictly match an existing identical record, it catches the request and safely surfaces the historical response. If they conflict, it surfaces a lethal `DuplicateTransactionError` to prevent replay collisions.
+  - **Ingress Safety (Redis + DB Constraints)**: Utilizes a distributed lock in `Redis` to prevent "thundering herd" race conditions. It caches the full final response payload in Redis; subsequent retries with the same `idempotency_key` are served directly from the cache, completely bypassing the database and the downstream microservices.
   - **Egress Safety (SQS)**: Operations execute asynchronously downstream via SQS queues containing rigid payload correlation IDs. Downstream workers can infinitely replay dropped SQS events without mutating side-effects.
 
 ### 3. Risk Engine Service (`risk-engine-service`)
 The operational orchestrator of business intelligence. It does not blindly trust AI; it operates as an intelligent governor.
-- **Rules-First Heuristic Engine**: Checks incoming transactions against a modular pipeline of Python-based hard heuristics (E.g. `AccountAgeRule`, `VelocityRule`). It guarantees absolute, deterministic compliance limits are honored natively (like offering $50.00 grace periods for onboarding accounts).
-- **ML Aggregation (The Scorer)**: Dynamically weights Rule-based intelligence against purely statistical ML Intelligence in a default `70% / 30%` mix. It algorithmically suppresses and penalizes false positive probability noise dynamically generated by the ML model.
-- **Decision Engine**: Calculates floating thresholds to surface terminal mapping choices (`APPROVE / REVIEW / BLOCK`) which lock the pipeline.
+- **Rules-First Heuristic Engine**: Checks incoming transactions against a modular pipeline of Python-based hard heuristics (E.g. `AccountAgeRule`, `VelocityRule`). It guarantees absolute, deterministic compliance limits are honored natively (e.g., offering grace periods for onboarding accounts).
+- **ML Aggregation (The Scorer)**: Dynamically weights Rule-based intelligence against purely statistical ML Intelligence. It algorithmically suppresses and penalizes false positive probability noise dynamically generated by the ML model.
+- **Asynchronous Post-Processing**: To maintain microsecond latency on the critical path, the Risk Engine returns its verdict instantly. Writing the full Risk Result to the database, dispatching webhooks, and triggering the Analyst Service are all offloaded to a background SQS Worker.
 
 ### 4. ML Service (`ml-service`)
 Sub-millisecond machine learning inference isolation module. Designed purely for statistical pattern recognition.
-- **ONNX Predictor**: Wraps heavily imbalanced, high-depth XGBoost Fraud logic (trained on standard financial anomaly data like *PaySim*) natively into `ONNX runtime`.
-- **Hot-Swapping (Zero Downtime)**: Features a Thread-Safe singleton lock pattern coupled natively to a `Boto3 S3Client`.
-    - Integrates a `ReloadModel` gRPC RPC that securely pulls `risk_model.onnx` and its mapping schemas from AWS S3 natively into memory, hot-swapping the inference brain locally without dropping a single TCP connection.
+- **ONNX Predictor**: Wraps heavily imbalanced, high-depth XGBoost Fraud logic natively into `ONNX runtime` for blazing-fast inference.
+- **Zero-Downtime Hot-Swapping**: Features a Thread-Safe singleton lock pattern coupled to a `Boto3 S3Client`. It exposes a `ReloadModel` gRPC RPC that securely pulls `risk_model.onnx` from AWS S3 natively into memory, hot-swapping the inference brain locally *without dropping a single TCP connection* or requiring a container restart.
+
+## 🧪 Testing & Guided Personas (For Evaluators)
+
+To save you from manually generating dozens of transactions to "warm up" the ML models, the databases have been pre-seeded with 6 months of historical data mapped to specific personas. You can use these `sender_id`s in your API requests to immediately see the Risk Engine and Agentic AI in action.
+
+### Persona 1: The Loyal Customer (B2B Client 1)
+- **Tenant ID (Client 1):** `56f292e4-80f1-704a-38f4-42f883cf5d91`
+- **Background:** An established account with 6 months of history, consistently making high-value transactions (£500 - £2,500) using a trusted device and known receivers.
+- **Expected Outcome:** Fast `APPROVE` with a low risk score, demonstrating that the ML model understands user baseline behavior and doesn't just blindly block high amounts.
+
+**Test Payload (`POST /transactions` using Client 1 JWT):**
+```json
+{
+  "amount": 2450.00,
+  "currency": "GBP",
+  "sender_id": "good_user_01",
+  "receiver_id": "merchant_trusted",
+  "sender_country": "GB",
+  "receiver_country": "GB",
+  "device_fingerprint": "device_good_1",
+  "ip_address": "192.168.1.5",
+  "idempotency_key": "test_good_high_01",
+  "channel": "web",
+  "transaction_type": "PAYMENT"
+}
+```
+
+### Persona 2: The Erratic Fraudster (B2B Client 2)
+- **Tenant ID (Client 2):** `5692b244-30d1-7072-584e-1b3637f04ab7`
+- **Background:** Brand new account that has made 15+ massive transactions spanning Russia, Nigeria, and the US in the last 48 hours using untrusted devices.
+- **Expected Outcome:** Triggers the ML anomaly detection and velocity rules, resulting in a `REVIEW` or `BLOCK`. This instantly queues an automated Agentic AI Deep-Dive.
+
+**Test Payload (`POST /transactions` using Client 2 JWT):**
+```json
+{
+  "amount": 4800.00,
+  "currency": "GBP",
+  "sender_id": "good_user_01",
+  "receiver_id": "shady_crypto_wallet",
+  "sender_country": "GB",
+  "receiver_country": "RU",
+  "device_fingerprint": "device_new_untrusted",
+  "ip_address": "103.45.2.19",
+  "idempotency_key": "test_bad_spike_01",
+  "channel": "mobile_app",
+  "transaction_type": "TRANSFER"
+}
+```
+
+### 5. Analyst Service (`analyst-service`)
+The investigation and MLOps orchestration hub. It isolates heavy LLM inference from the low-latency Risk Engine.
+- **AI Fraud Investigation**: When a transaction is flagged for `REVIEW` or `BLOCK`, the Risk Engine publishes an SQS message. The Analyst Service consumes this message and triggers a **ReAct Agent** (powered by an LLM like Llama 3) to reason about the risk factors, generating a human-readable investigation report for the dashboard.
+- **Self-Healing MLOps**: Implements a deterministic **LlamaIndex Workflow** that monitors model performance (e.g., false-positive rates). If the LLM determines that Concept or Data Drift has occurred, it automatically triggers a retraining pipeline and calls the ML Service's hot-swap endpoint.
 
 ---
 
-## Future Scaling & MLOps
+## 🧠 Architectural Decisions: The "Why"
 
-Because fraud methodologies shift universally due to Data Drift, Aegis Risk implements a **Thread-Safe Hot-Swapping Architecture** allowing Airflow pipelines to natively push parameter iterations in production continuously.
+**Why gRPC instead of REST internally?**
+REST relies on HTTP/1.1 and JSON parsing, which introduces unacceptable latency overhead for a synchronous fraud evaluation pipeline. By utilizing gRPC, Aegis Risk benefits from HTTP/2 multiplexing and strongly typed Protobuf serialization, allowing the Risk Engine to query the ML Service in under 1ms.
 
-```mermaid
-sequenceDiagram
-    participant Pipeline as MLOps Retraining Pipeline
-    participant S3 as Object Storage (S3)
-    participant ML_SVC as ml-service (Predictor)
-    participant RiskEngine as risk-engine-service
-    
-    Pipeline->>Pipeline: Extract new transaction ledger dataset
-    Pipeline->>Pipeline: Train updated XGBoost Model (v1.1)
-    Pipeline->>S3: Push [risk_model.onnx, features.json, metadata.json]
-    Pipeline->>ML_SVC: gRPC rpc ReloadModel()
-    
-    activate ML_SVC
-    ML_SVC->>S3: aws s3 sync /models
-    S3-->>ML_SVC: Download successful (v1.1)
-    
-    ML_SVC->>ML_SVC: Acquire threading.Lock()
-    ML_SVC->>ML_SVC: Reload ONNX InferenceSession (v1.1)
-    ML_SVC->>ML_SVC: Release threading.Lock()
-    ML_SVC-->>Pipeline: ReloadModelResponse(Success, v1.1)
-    deactivate ML_SVC
+**Why decouple the Analyst Service from the Risk Engine?**
+The Risk Engine must return a deterministic `APPROVE/REVIEW/BLOCK` verdict in milliseconds. LLMs (used for generating human-readable fraud reports) can take seconds to stream a response. By moving the LLM investigation to the `analyst-service` and triggering it asynchronously via SQS, the critical path remains blazing fast while analysts still receive deep-dive reports.
 
-    RiskEngine->>ML_SVC: gRPC rpc ScoreTransaction()
-    ML_SVC-->>RiskEngine: Returns Prediction (using v1.1 model)
+**Why use Redis AND Database Constraints for Idempotency?**
+Database Unique Constraints are the ultimate source of truth but are expensive to hit under load. To protect the database and handle high-concurrency race conditions, the `transaction-service` implements a **Double-Checked Locking** pattern using Redis:
+1. **Initial Cache Hit**: Instantly returns a cached response for known keys.
+2. **Atomic Distributed Lock**: Uses Redis `SET key value NX` to ensure only one worker can process a specific `idempotency_key` at a time.
+3. **Double-Check**: Re-verifies the cache after acquiring the lock to ensure a concurrent request didn't finish during the acquisition window.
+This multi-layered approach solves the "thundering herd" problem and guarantees that even under extreme load, a transaction is never processed twice.
+
+**Why use ONNX for ML Inference?**
+Python-based ML frameworks (like Scikit-Learn or XGBoost native predictors) carry significant overhead and struggle with Python's Global Interpreter Lock (GIL) during concurrent requests. Compiling the model to ONNX allows the `ml-service` to execute the computational graph directly in C++, utilizing thread pools effectively and dropping inference times to sub-millisecond levels.
+
+**How do we ensure tasks aren't lost if a service crashes?**
+Aegis Risk implements a **Reliable Consumer (acks_late)** pattern using SQS. Instead of deleting a message immediately upon receipt, the workers (Risk Engine and Analyst Service) only invoke `delete_message` *after* the entire processing pipeline—database writes, external calls, and event publishing—is successfully completed. If a container crashes mid-task, the SQS visibility timeout expires, and the message is automatically returned to the queue for another worker to pick up, guaranteeing **at-least-once delivery** and zero data loss.
+
+### 🔒 Security & Access Control
+
+**Serverless RBAC via AWS Cognito Lambda Triggers**
+Aegis Risk implements zero-touch Role-Based Access Control (RBAC). Rather than manually assigning permissions, the system utilizes an AWS Cognito **Post-Confirmation Lambda Trigger**. Upon successful user registration, the Lambda inspects the `email` attribute. If the email originates from the internal corporate domain (`@aegisrisk.internal`), the user is automatically elevated to the `admin` IAM group. Otherwise, they are assigned to the default `client` group. 
+
+This guarantees strict segregation of duties at the API Gateway level—where endpoints like manual re-investigation require `admin` JWT scopes—while remaining entirely automated.
+
+```python
+# Cognito Post-Confirmation Trigger
+def lambda_handler(event, context):
+    import boto3
+    client = boto3.client('cognito-idp', region_name=event.get('region', 'eu-west-2'))
+    
+    email = event['request']['userAttributes'].get('email', '')
+    
+    # Domain-based auto-assignment
+    if email.endswith('@aegisrisk.internal'):
+        group = 'admin'
+    elif email.endswith('@analyst.aegisrisk.internal'):
+        group = 'analyst'
+    else:
+        group = 'client'
+
+    client.admin_add_user_to_group(
+        UserPoolId=event['userPoolId'],
+        Username=event['userName'],
+        GroupName=group
+    )
+    return event
 ```
+
+**Manual User Bootstrapping (for Testing)**
+To test the RBAC implementation without the full email verification flow, you can use the AWS CLI to create pre-confirmed users:
+
+```bash
+# 1. Create a Pre-Confirmed Admin
+aws cognito-idp admin-create-user \
+    --user-pool-id <POOL_ID> \
+    --username test_admin \
+    --user-attributes Name=email,Value=test@aegisrisk.internal Name=email_verified,Value=true \
+    --message-action SUPPRESS
+
+# 2. Set permanent password
+aws cognito-idp admin-set-user-password \
+    --user-pool-id <POOL_ID> \
+    --username test_admin \
+    --password "AegisTest123!" \
+    --permanent
+```
+
+### 💰 Efficiency & Operations
+
+**AI Cost Optimization**
+The `analyst-service` uses expensive LLM tokens sparingly. The system only triggers an AI investigation when the Risk Engine returns a `BLOCK` or `REVIEW` decision. `APPROVE` decisions skip the LLM entirely, drastically reducing compute costs while focusing human-analyst-ready intelligence only on suspicious behavior.
+
+**Manual Re-Investigation**
+The API Gateway exposes a `POST /transactions/{transaction_id}/reinvestigate` endpoint. This allows human analysts or automated triggers to manually re-queue a transaction for the `analyst-service`. This is critical for operational resilience, allowing for re-tries if the original AI inference failed or if a fresh report is needed after new data becomes available.

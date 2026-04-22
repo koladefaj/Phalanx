@@ -3,8 +3,8 @@
 import grpc
 import warnings
 
+import analyst_service_pb2 as analyst__service__pb2
 import common_pb2 as common__pb2
-import llm_service_pb2 as llm__service__pb2
 
 GRPC_GENERATED_VERSION = '1.78.0'
 GRPC_VERSION = grpc.__version__
@@ -19,14 +19,14 @@ except ImportError:
 if _version_not_supported:
     raise RuntimeError(
         f'The grpc package installed is at version {GRPC_VERSION},'
-        + ' but the generated code in llm_service_pb2_grpc.py depends on'
+        + ' but the generated code in analyst_service_pb2_grpc.py depends on'
         + f' grpcio>={GRPC_GENERATED_VERSION}.'
         + f' Please upgrade your grpc module to grpcio>={GRPC_GENERATED_VERSION}'
         + f' or downgrade your generated code using grpcio-tools<={GRPC_VERSION}.'
     )
 
 
-class LLMServiceStub(object):
+class AnalystServiceStub(object):
     """Missing associated documentation comment in .proto file."""
 
     def __init__(self, channel):
@@ -35,36 +35,23 @@ class LLMServiceStub(object):
         Args:
             channel: A grpc.Channel.
         """
-        self.ExplainRisk = channel.unary_unary(
-                '/aegis.llm_service.LLMService/ExplainRisk',
-                request_serializer=llm__service__pb2.ExplainRiskRequest.SerializeToString,
-                response_deserializer=llm__service__pb2.ExplainRiskResponse.FromString,
-                _registered_method=True)
-        self.StreamExplainRisk = channel.unary_stream(
-                '/aegis.llm_service.LLMService/StreamExplainRisk',
-                request_serializer=llm__service__pb2.ExplainRiskRequest.SerializeToString,
-                response_deserializer=llm__service__pb2.ExplanationChunk.FromString,
+        self.InvestigateTransaction = channel.unary_unary(
+                '/aegis.analyst_service.AnalystService/InvestigateTransaction',
+                request_serializer=analyst__service__pb2.InvestigateRequest.SerializeToString,
+                response_deserializer=analyst__service__pb2.InvestigateResponse.FromString,
                 _registered_method=True)
         self.HealthCheck = channel.unary_unary(
-                '/aegis.llm_service.LLMService/HealthCheck',
+                '/aegis.analyst_service.AnalystService/HealthCheck',
                 request_serializer=common__pb2.HealthCheckRequest.SerializeToString,
                 response_deserializer=common__pb2.HealthCheckResponse.FromString,
                 _registered_method=True)
 
 
-class LLMServiceServicer(object):
+class AnalystServiceServicer(object):
     """Missing associated documentation comment in .proto file."""
 
-    def ExplainRisk(self, request, context):
-        """Unary RPC — full structured JSON response
-        """
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
-    def StreamExplainRisk(self, request, context):
-        """Server-streaming RPC — token-by-token SSE-compatible output
-        Makes LLM inference feel ~2s instead of 8-10s
+    def InvestigateTransaction(self, request, context):
+        """Run a full fraud investigation on a transaction
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -77,17 +64,12 @@ class LLMServiceServicer(object):
         raise NotImplementedError('Method not implemented!')
 
 
-def add_LLMServiceServicer_to_server(servicer, server):
+def add_AnalystServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
-            'ExplainRisk': grpc.unary_unary_rpc_method_handler(
-                    servicer.ExplainRisk,
-                    request_deserializer=llm__service__pb2.ExplainRiskRequest.FromString,
-                    response_serializer=llm__service__pb2.ExplainRiskResponse.SerializeToString,
-            ),
-            'StreamExplainRisk': grpc.unary_stream_rpc_method_handler(
-                    servicer.StreamExplainRisk,
-                    request_deserializer=llm__service__pb2.ExplainRiskRequest.FromString,
-                    response_serializer=llm__service__pb2.ExplanationChunk.SerializeToString,
+            'InvestigateTransaction': grpc.unary_unary_rpc_method_handler(
+                    servicer.InvestigateTransaction,
+                    request_deserializer=analyst__service__pb2.InvestigateRequest.FromString,
+                    response_serializer=analyst__service__pb2.InvestigateResponse.SerializeToString,
             ),
             'HealthCheck': grpc.unary_unary_rpc_method_handler(
                     servicer.HealthCheck,
@@ -96,17 +78,17 @@ def add_LLMServiceServicer_to_server(servicer, server):
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'aegis.llm_service.LLMService', rpc_method_handlers)
+            'aegis.analyst_service.AnalystService', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
-    server.add_registered_method_handlers('aegis.llm_service.LLMService', rpc_method_handlers)
+    server.add_registered_method_handlers('aegis.analyst_service.AnalystService', rpc_method_handlers)
 
 
  # This class is part of an EXPERIMENTAL API.
-class LLMService(object):
+class AnalystService(object):
     """Missing associated documentation comment in .proto file."""
 
     @staticmethod
-    def ExplainRisk(request,
+    def InvestigateTransaction(request,
             target,
             options=(),
             channel_credentials=None,
@@ -119,36 +101,9 @@ class LLMService(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/aegis.llm_service.LLMService/ExplainRisk',
-            llm__service__pb2.ExplainRiskRequest.SerializeToString,
-            llm__service__pb2.ExplainRiskResponse.FromString,
-            options,
-            channel_credentials,
-            insecure,
-            call_credentials,
-            compression,
-            wait_for_ready,
-            timeout,
-            metadata,
-            _registered_method=True)
-
-    @staticmethod
-    def StreamExplainRisk(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_stream(
-            request,
-            target,
-            '/aegis.llm_service.LLMService/StreamExplainRisk',
-            llm__service__pb2.ExplainRiskRequest.SerializeToString,
-            llm__service__pb2.ExplanationChunk.FromString,
+            '/aegis.analyst_service.AnalystService/InvestigateTransaction',
+            analyst__service__pb2.InvestigateRequest.SerializeToString,
+            analyst__service__pb2.InvestigateResponse.FromString,
             options,
             channel_credentials,
             insecure,
@@ -173,7 +128,7 @@ class LLMService(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/aegis.llm_service.LLMService/HealthCheck',
+            '/aegis.analyst_service.AnalystService/HealthCheck',
             common__pb2.HealthCheckRequest.SerializeToString,
             common__pb2.HealthCheckResponse.FromString,
             options,

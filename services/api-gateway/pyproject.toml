@@ -19,6 +19,7 @@ dependencies = [
     "redis (>=7.3.0,<8.0.0)",
     "protobuf (>=7.34.0,<8.0.0)",
     "fastapi[standard] (>=0.135.3,<0.136.0)",
+    "aioboto3 (>=13.4.0,<14.0.0)",
 ]
 
 [build-system]

@@ -7,7 +7,7 @@ from typing import Literal
 from uuid import UUID
 
 from aegis_shared.enums import TransactionStatus, RiskDecision, RiskLevel
-from aegis_shared.schemas.risk import RiskFactor 
+from aegis_shared.schemas.risk import RiskFactor, AnalystInvestigation 
 from pydantic import BaseModel, Field, field_validator, ConfigDict, model_validator
 
 IDEMPOTENCY_PATTERN = re.compile(r"^[a-zA-Z0-9-_]{10,64}$")
@@ -77,6 +77,7 @@ class TransactionAccepted(BaseModel):
     rule_score: float | None = 0.0
     risk_level: RiskLevel = RiskLevel.LOW
     risk_factors: list[RiskFactor] = []
+    analyst_investigation: AnalystInvestigation | None = None
 
     model_config = ConfigDict(from_attributes=True)
 
@@ -105,6 +106,7 @@ class TransactionResponse(BaseModel):
     status: TransactionStatus
     created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
     updated_at: datetime | None = None
+    analyst_investigation: AnalystInvestigation | None = None
 
     model_config = ConfigDict(from_attributes=True)
 

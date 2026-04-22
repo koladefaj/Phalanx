@@ -58,32 +58,40 @@ class TransactionRepository:
         logger.info("transaction_created", transaction_id=str(txn.transaction_id))
         return txn
 
-    async def find_by_id(self, transaction_id: UUID) -> Transaction | None:
+    async def find_by_id(self, transaction_id: UUID, client_id: str | None = None) -> Transaction | None:
         """Find a transaction by ID.
 
         Args:
             transaction_id: Transaction UUID.
+            client_id: Optional client ID for data isolation check.
 
         Returns:
             Transaction ORM instance or None.
         """
         
         stmt = select(Transaction).where(Transaction.transaction_id == transaction_id)
+        if client_id and client_id != "admin":
+            stmt = stmt.where(Transaction.client_id == client_id)
+        
         result = await self.session.execute(stmt)
         txn = result.scalar_one_or_none()
         return txn
 
-    async def find_by_idempotency_key(self, idempotency_key: str) -> Transaction | None:
+    async def find_by_idempotency_key(self, idempotency_key: str, client_id: str | None = None) -> Transaction | None:
         """Find a transaction by idempotency key.
 
         Args:
             idempotency_key: Client-provided unique key.
+            client_id: Optional client ID for data isolation check.
 
         Returns:
             Transaction ORM instance or None.
         """
         
         stmt = select(Transaction).where(Transaction.idempotency_key == idempotency_key)
+        if client_id and client_id != "admin":
+            stmt = stmt.where(Transaction.client_id == client_id)
+            
         result = await self.session.execute(stmt)
         txn = result.scalar_one_or_none()
         return txn

@@ -3,8 +3,8 @@
 import grpc
 import uuid
 from decimal import Decimal
-from aegis_shared.generated import risk_engine_pb2_grpc
-from aegis_shared.schemas.risk import RiskAssessment
+from aegis_shared.generated import risk_engine_pb2, risk_engine_pb2_grpc, common_pb2
+from aegis_shared.schemas.risk import RiskAssessment, RiskResultResponse
 
 from app.mappers.client_mapper import RiskClientMapper
 from app.config import settings
@@ -88,6 +88,23 @@ class RiskEngineClient:
                 code=str(e.code()),
                 details=e.details(),
             )
+            raise
+
+    async def get_risk_result(self, transaction_id: str, correlation_id: str = "") -> RiskResultResponse | None:
+        """Fetch full risk result including agent investigation."""
+        try:
+            metadata = common_pb2.RequestMetadata(correlation_id=correlation_id)
+            request = risk_engine_pb2.GetRiskResultRequest(
+                metadata=metadata,
+                transaction_id=transaction_id
+            )
+
+            response = await self.stub.GetRiskResult(request, timeout=settings.GRPC_TIMEOUT)
+            return RiskClientMapper.from_get_proto(response)
+        except grpc.RpcError as e:
+            if e.code() == grpc.StatusCode.NOT_FOUND:
+                return None
+            logger.error("get_risk_result_failed", transaction_id=transaction_id, error=str(e))
             raise
     
     async def close(self) -> None:

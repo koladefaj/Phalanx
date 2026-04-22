@@ -77,10 +77,10 @@ message GetRiskResultResponse {
   double ml_anomaly_score = 7;
   bool ml_fallback_used = 8;
   string ml_model_version = 9;
-  string llm_summary = 10;
-  repeated string llm_risk_factors = 11;
-  string llm_recommendation = 12;
-  bool llm_fallback_used = 13;
+  string agent_summary = 10;
+  repeated string agent_risk_factors = 11;
+  string agent_recommendation = 12;
+  bool agent_fallback_used = 13;
   double processing_time_ms = 14;
   string worker_id = 15;
   string evaluated_at = 16;

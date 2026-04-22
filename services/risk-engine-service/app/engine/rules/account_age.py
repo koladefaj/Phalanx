@@ -29,16 +29,30 @@ class AccountAgeRule(BaseRule):
 
         threshold = settings.ACCOUNT_AGE_RISK_DAYS
 
+        # format as hours if less than 1 day, else days rounded to 1dp
+        if account_age_days < 1:
+            age_display = f"{account_age_days * 24:.1f} hours"
+        else:
+            age_display = f"{account_age_days:.1f} days"
+
         if account_age_days < threshold:
             amount = float(transaction.get("amount", 0))
             
-            # THE FIX: Grace period for small onboarding transactions
-            if amount <= 50.0:
+            # THE FIX: Grace period for onboarding transactions
+            if amount <= 250.0:
                 return self._result(
                     triggered=True,
-                    score=0.2, # Very low penalty
-                    reason=f"New account ({account_age_days:.1f} days), but low amount (${amount})",
+                    score=0.1, # Negligible penalty
+                    reason=f"New account ({age_display}), but low amount (${amount})",
                     severity="LOW",
+                )
+
+            if amount <= 500.0:
+                return self._result(
+                    triggered=True,
+                    score=0.3, # Mild penalty
+                    reason=f"New account ({age_display}), medium amount (${amount})",
+                    severity="MEDIUM",
                 )
 
             # Otherwise, apply normal strict scoring for larger amounts
@@ -51,12 +65,6 @@ class AccountAgeRule(BaseRule):
                 severity = "MEDIUM"
             else:
                 severity = "LOW"
-
-            # format as hours if less than 1 day, else days rounded to 1dp
-            if account_age_days < 1:
-                age_display = f"{account_age_days * 24:.1f} hours"
-            else:
-                age_display = f"{account_age_days:.1f} days"
                 
             return self._result(
                 triggered=True,

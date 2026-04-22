@@ -35,6 +35,7 @@ class TransactionBusinessService:
         receiver_id: str,
         sender_country: str,
         receiver_country: str,
+        client_id: str,
         device_fingerprint: str = "",
         ip_address: str = "",
         channel: str = "web",
@@ -47,7 +48,7 @@ class TransactionBusinessService:
             repo = TransactionRepository(session)
 
             # Check idempotency
-            existing = await repo.find_by_idempotency_key(idempotency_key)
+            existing = await repo.find_by_idempotency_key(idempotency_key, client_id=client_id)
             request_data = {
                 "amount": amount,
                 "currency": currency,
@@ -96,6 +97,7 @@ class TransactionBusinessService:
                 "device_fingerprint": device_fingerprint,
                 "ip_address": ip_address,
                 "channel": channel,
+                "client_id": client_id,
                 "status": TransactionStatus.RECEIVED.value,
                 "created_at": now,
             }
@@ -222,7 +224,7 @@ class TransactionBusinessService:
                 risk_factors=[RiskFactor(factor="scoring_unavailable", severity="MEDIUM", detail="")],
             )
 
-    async def get_by_id(self, transaction_id: str) -> TransactionResponse | None:
+    async def get_by_id(self, transaction_id: str, client_id: str | None = None) -> TransactionResponse | None:
         import uuid
         try:
             parsed_id = uuid.UUID(transaction_id)
@@ -231,10 +233,24 @@ class TransactionBusinessService:
 
         async with get_session() as session:
             repo = TransactionRepository(session)
-            result = await repo.find_by_id(parsed_id)
+            result = await repo.find_by_id(parsed_id, client_id=client_id)
         if result is None:
             return None
-        return TransactionResponse.model_validate(result)
+        
+        response = TransactionResponse.model_validate(result)
+        
+        # Enrich with Risk Engine data
+        try:
+            risk_result = await self.risk_engine.get_risk_result(
+                transaction_id=transaction_id,
+                correlation_id=get_correlation_id() or ""
+            )
+            if risk_result:
+                response.analyst_investigation = risk_result.analyst_investigation
+        except Exception as e:
+            logger.warning("risk_enrichment_failed", transaction_id=transaction_id, error=str(e))
+            
+        return response
 
     async def update_status(
         self,
