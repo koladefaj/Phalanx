@@ -1,4 +1,4 @@
-# Aegis Risk Engine
+# Phalanx - Risk Engine
 
 Aegis Risk is a production-grade, microsecond-latency ML-driven microservice architecture designed to intercept, evaluate, and orchestrate financial transactions for fraud asynchronously. It demonstrates advanced distributed systems patterns, combining hard business rules with predictive intelligence, AI-driven investigations, and self-healing MLOps.
 
