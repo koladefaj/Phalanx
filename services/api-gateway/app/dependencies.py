@@ -3,6 +3,7 @@
 from fastapi import HTTPException, status, Depends, Request
 from typing import Annotated
 import httpx
+from app.config import settings
 from app.middleware.auth.enums import UserRole
 from aegis_shared.schemas.auth import AuthUser
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
@@ -12,17 +13,28 @@ from app.middleware.auth.cognito import verify_token
 oauth2_scheme = HTTPBearer(auto_error=False)
 
 async def get_current_user(
-    token: HTTPAuthorizationCredentials = Depends(oauth2_scheme)
+    request: Request,
+    token: HTTPAuthorizationCredentials = Depends(oauth2_scheme),
 ) -> AuthUser:
     """Extract and verify JWT token, returning an AuthUser."""
-    
+
+    if settings.DEV_BYPASS_AUTH:
+        tenant_id = request.headers.get("X-Dev-Tenant-Id", "dev-tenant-local")
+        role = request.headers.get("X-Dev-Role", "client")
+        return AuthUser(
+            sub="dev-user",
+            email="dev@local",
+            name="Dev User",
+            roles=[role, "client"],
+            tenant_id=tenant_id,
+        )
+
     if not token:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Not authenticated"
         )
 
-    
     claims = verify_token(token.credentials)
 
     groups = claims.get("cognito:groups", [])

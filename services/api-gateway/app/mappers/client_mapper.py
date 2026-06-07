@@ -89,8 +89,10 @@ class TransactionClientMapper:
             already_existed=proto.already_existed,
             decision=proto.decision,
             risk_score=proto.risk_score,
+            rule_score=proto.rule_score,
+            ml_score=proto.ml_score,
             risk_level=proto.risk_level,
-            risk_factors=risk_factors_list
+            risk_factors=risk_factors_list,
         )
     
     @staticmethod

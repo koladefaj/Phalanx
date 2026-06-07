@@ -3,8 +3,8 @@
 import grpc
 import warnings
 
-import common_pb2 as common__pb2
-import transaction_pb2 as transaction__pb2
+from aegis_shared.generated import common_pb2 as common__pb2
+from aegis_shared.generated import transaction_pb2 as transaction__pb2
 
 GRPC_GENERATED_VERSION = '1.78.0'
 GRPC_VERSION = grpc.__version__

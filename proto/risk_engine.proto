@@ -59,12 +59,14 @@ message RuleFlagResult {
 message EvaluateRiskResponse {
   string transaction_id = 1;
   string decision = 2;              // "APPROVE", "BLOCK", "REVIEW"
-  double risk_score = 3;            // 0.0 - 1.0
+  double risk_score = 3;            // 0.0 - 1.0 composite (rules 70% + ML 30%)
   string risk_level = 4;            // "LOW", "MEDIUM", "HIGH", "CRITICAL"
   string confidence = 5;            // "HIGH", "MEDIUM", "LOW"
   repeated RiskFactor risk_factors = 6;  // human-readable reasons for bank
   double processing_time_ms = 7;
   string model_version = 8;
+  double rule_score = 9;            // 0.0 - 1.0 contribution from rules only
+  double ml_score = 10;             // 0.0 - 1.0 raw ML anomaly score
 }
 
 message GetRiskResultResponse {

@@ -5,20 +5,25 @@ import botocore
 from pathlib import Path
 from typing import Tuple
 from app.config import settings
-import logging
+from aegis_shared.utils.sqs import get_boto_session
+from aegis_shared.utils.logging import get_logger
 
-logger = logging.getLogger("ml_s3_client")
+logger = get_logger("ml_s3_client")
 
 class S3Client:
     """Handles S3 synchronization for hot-swapping ML models without downtime."""
     
     def __init__(self):
         # Configure Boto3, utilizing Localstack if running locally
-        self.s3 = boto3.client(
-            "s3",
-            endpoint_url=settings.AWS_ENDPOINT_URL if settings.AWS_ENDPOINT_URL else None,
-            aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
-            aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
+        self.session = get_boto_session()
+
+        def _client(self):
+            """Return a configured S3 client context manager."""
+            return self.session.client(
+                "s3",
+                endpoint_url=settings.AWS_ENDPOINT_URL if settings.AWS_ENDPOINT_URL else None,
+                aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+                aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
             region_name=settings.AWS_REGION
         )
         
@@ -35,7 +40,7 @@ class S3Client:
                 local_path = f"models/{file}"
                 logger.info(f"Downloading {s3_key} from {bucket} to {local_path}...")
                 
-                self.s3.download_file(bucket, s3_key, local_path)
+                self._client().download_file(bucket, s3_key, local_path)
                 
             return True, "Artifacts synchronized successfully."
         except botocore.exceptions.ClientError as e:

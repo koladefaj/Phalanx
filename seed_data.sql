@@ -10,9 +10,9 @@ TRUNCATE TABLE risk_results RESTART IDENTITY CASCADE;
         sender_country, receiver_country, device_fingerprint, ip_address, channel, 
         status, created_at, client_id, transaction_type
     ) VALUES (
-        'dd5ef6de-c6b0-4542-b8bc-82257d5cba46', 'idemp_good_dd5ef6de-c6b0-4542-b8bc-82257d5cba46', 1343.47, 'GBP', 'good_user_01', 'merchant_trusted', 
+        'dd5abf0c-0d4d-4de8-8ad9-dfaa86bdae13', 'idemp_good_dd5abf0c-0d4d-4de8-8ad9-dfaa86bdae13', 2021.44, 'GBP', 'good_user_01', 'merchant_trusted', 
         'GB', 'GB', 'device_good_1', '192.168.1.5', 'web', 
-        'COMPLETED', '2025-10-24T22:13:05.817710+00:00', '56f292e4-80f1-704a-38f4-42f883cf5d91', 'PAYMENT'
+        'COMPLETED', '2025-12-09T00:47:20.028682+00:00', '56f292e4-80f1-704a-38f4-42f883cf5d91', 'PAYMENT'
     );
     
 
@@ -21,9 +21,9 @@ TRUNCATE TABLE risk_results RESTART IDENTITY CASCADE;
         sender_country, receiver_country, device_fingerprint, ip_address, channel, 
         status, created_at, client_id, transaction_type
     ) VALUES (
-        '051d5602-7bf8-49e7-825c-1a2df6d986d8', 'idemp_good_051d5602-7bf8-49e7-825c-1a2df6d986d8', 756.1, 'GBP', 'good_user_01', 'merchant_trusted', 
+        'fcc8da34-ad34-402b-967d-88904816b054', 'idemp_good_fcc8da34-ad34-402b-967d-88904816b054', 712.76, 'GBP', 'good_user_01', 'merchant_trusted', 
         'GB', 'GB', 'device_good_1', '192.168.1.5', 'web', 
-        'COMPLETED', '2025-10-28T20:58:04.584549+00:00', '56f292e4-80f1-704a-38f4-42f883cf5d91', 'PAYMENT'
+        'COMPLETED', '2025-12-11T15:00:45.750868+00:00', '56f292e4-80f1-704a-38f4-42f883cf5d91', 'PAYMENT'
     );
     
 
@@ -32,9 +32,9 @@ TRUNCATE TABLE risk_results RESTART IDENTITY CASCADE;
         sender_country, receiver_country, device_fingerprint, ip_address, channel, 
         status, created_at, client_id, transaction_type
     ) VALUES (
-        'f86994d0-6c11-466d-a04b-800f006bbe7d', 'idemp_good_f86994d0-6c11-466d-a04b-800f006bbe7d', 1298.8, 'GBP', 'good_user_01', 'merchant_trusted', 
+        '1d82d0ef-3e2b-43c5-b899-68c4e08e29b0', 'idemp_good_1d82d0ef-3e2b-43c5-b899-68c4e08e29b0', 848.28, 'GBP', 'good_user_01', 'merchant_trusted', 
         'GB', 'GB', 'device_good_1', '192.168.1.5', 'web', 
-        'COMPLETED', '2025-10-31T12:44:49.287954+00:00', '56f292e4-80f1-704a-38f4-42f883cf5d91', 'PAYMENT'
+        'COMPLETED', '2025-12-15T10:55:06.265996+00:00', '56f292e4-80f1-704a-38f4-42f883cf5d91', 'PAYMENT'
     );
     
 
@@ -43,9 +43,9 @@ TRUNCATE TABLE risk_results RESTART IDENTITY CASCADE;
         sender_country, receiver_country, device_fingerprint, ip_address, channel, 
         status, created_at, client_id, transaction_type
     ) VALUES (
-        'cbec25c1-9955-458a-9437-cdbc1ad98924', 'idemp_good_cbec25c1-9955-458a-9437-cdbc1ad98924', 1832.2, 'GBP', 'good_user_01', 'merchant_trusted', 
+        '3977a1d6-f315-4877-b59a-3e461f117e40', 'idemp_good_3977a1d6-f315-4877-b59a-3e461f117e40', 1112.6, 'GBP', 'good_user_01', 'merchant_trusted', 
         'GB', 'GB', 'device_good_1', '192.168.1.5', 'web', 
-        'COMPLETED', '2025-11-04T11:31:37.368535+00:00', '56f292e4-80f1-704a-38f4-42f883cf5d91', 'PAYMENT'
+        'COMPLETED', '2025-12-18T10:19:46.929842+00:00', '56f292e4-80f1-704a-38f4-42f883cf5d91', 'PAYMENT'
     );
     
 
@@ -54,9 +54,9 @@ TRUNCATE TABLE risk_results RESTART IDENTITY CASCADE;
         sender_country, receiver_country, device_fingerprint, ip_address, channel, 
         status, created_at, client_id, transaction_type
     ) VALUES (
-        '02b2572a-8f96-4ded-a124-f4495bde52c0', 'idemp_good_02b2572a-8f96-4ded-a124-f4495bde52c0', 681.65, 'GBP', 'good_user_01', 'merchant_trusted', 
+        '08e7d488-fefe-425e-b443-41b3d5d8ccd4', 'idemp_good_08e7d488-fefe-425e-b443-41b3d5d8ccd4', 1824.52, 'GBP', 'good_user_01', 'merchant_trusted', 
         'GB', 'GB', 'device_good_1', '192.168.1.5', 'web', 
-        'COMPLETED', '2025-11-07T17:04:48.370480+00:00', '56f292e4-80f1-704a-38f4-42f883cf5d91', 'PAYMENT'
+        'COMPLETED', '2025-12-20T23:03:02.710083+00:00', '56f292e4-80f1-704a-38f4-42f883cf5d91', 'PAYMENT'
     );
     
 
@@ -65,9 +65,9 @@ TRUNCATE TABLE risk_results RESTART IDENTITY CASCADE;
         sender_country, receiver_country, device_fingerprint, ip_address, channel, 
         status, created_at, client_id, transaction_type
     ) VALUES (
-        '17c92e75-f947-433d-bdc5-beb05bb0e0dd', 'idemp_good_17c92e75-f947-433d-bdc5-beb05bb0e0dd', 2284.69, 'GBP', 'good_user_01', 'merchant_trusted', 
+        '424164c2-c3fd-4000-838d-88a1bb0fce56', 'idemp_good_424164c2-c3fd-4000-838d-88a1bb0fce56', 1448.15, 'GBP', 'good_user_01', 'merchant_trusted', 
         'GB', 'GB', 'device_good_1', '192.168.1.5', 'web', 
-        'COMPLETED', '2025-11-09T17:39:12.979984+00:00', '56f292e4-80f1-704a-38f4-42f883cf5d91', 'PAYMENT'
+        'COMPLETED', '2025-12-23T10:45:26.034656+00:00', '56f292e4-80f1-704a-38f4-42f883cf5d91', 'PAYMENT'
     );
     
 
@@ -76,9 +76,9 @@ TRUNCATE TABLE risk_results RESTART IDENTITY CASCADE;
         sender_country, receiver_country, device_fingerprint, ip_address, channel, 
         status, created_at, client_id, transaction_type
     ) VALUES (
-        'd0edea20-613b-4aeb-9a30-c9701a7a8a14', 'idemp_good_d0edea20-613b-4aeb-9a30-c9701a7a8a14', 2117.03, 'GBP', 'good_user_01', 'merchant_trusted', 
+        'aa093056-33a8-491e-9bf0-f7831d0034d6', 'idemp_good_aa093056-33a8-491e-9bf0-f7831d0034d6', 2218.94, 'GBP', 'good_user_01', 'merchant_trusted', 
         'GB', 'GB', 'device_good_1', '192.168.1.5', 'web', 
-        'COMPLETED', '2025-11-13T20:35:33.816418+00:00', '56f292e4-80f1-704a-38f4-42f883cf5d91', 'PAYMENT'
+        'COMPLETED', '2025-12-28T09:23:01.947039+00:00', '56f292e4-80f1-704a-38f4-42f883cf5d91', 'PAYMENT'
     );
     
 
@@ -87,9 +87,9 @@ TRUNCATE TABLE risk_results RESTART IDENTITY CASCADE;
         sender_country, receiver_country, device_fingerprint, ip_address, channel, 
         status, created_at, client_id, transaction_type
     ) VALUES (
-        '1cadbd46-12e7-4066-924a-c1417c1f7619', 'idemp_good_1cadbd46-12e7-4066-924a-c1417c1f7619', 2022.43, 'GBP', 'good_user_01', 'merchant_trusted', 
+        'a0edc42e-2230-4761-a51c-257c8516e82b', 'idemp_good_a0edc42e-2230-4761-a51c-257c8516e82b', 1988.16, 'GBP', 'good_user_01', 'merchant_trusted', 
         'GB', 'GB', 'device_good_1', '192.168.1.5', 'web', 
-        'COMPLETED', '2025-11-16T10:14:53.826014+00:00', '56f292e4-80f1-704a-38f4-42f883cf5d91', 'PAYMENT'
+        'COMPLETED', '2025-12-30T17:11:05.623980+00:00', '56f292e4-80f1-704a-38f4-42f883cf5d91', 'PAYMENT'
     );
     
 
@@ -98,9 +98,9 @@ TRUNCATE TABLE risk_results RESTART IDENTITY CASCADE;
         sender_country, receiver_country, device_fingerprint, ip_address, channel, 
         status, created_at, client_id, transaction_type
     ) VALUES (
-        '7b34304c-fd15-4d8c-a1d5-87d84b94f0a6', 'idemp_good_7b34304c-fd15-4d8c-a1d5-87d84b94f0a6', 1468.87, 'GBP', 'good_user_01', 'merchant_trusted', 
+        '539e5708-9c0b-413d-9159-49ae54c2032b', 'idemp_good_539e5708-9c0b-413d-9159-49ae54c2032b', 1019.09, 'GBP', 'good_user_01', 'merchant_trusted', 
         'GB', 'GB', 'device_good_1', '192.168.1.5', 'web', 
-        'COMPLETED', '2025-11-20T21:27:12.634526+00:00', '56f292e4-80f1-704a-38f4-42f883cf5d91', 'PAYMENT'
+        'COMPLETED', '2026-01-02T10:31:48.749728+00:00', '56f292e4-80f1-704a-38f4-42f883cf5d91', 'PAYMENT'
     );
     
 
@@ -109,9 +109,9 @@ TRUNCATE TABLE risk_results RESTART IDENTITY CASCADE;
         sender_country, receiver_country, device_fingerprint, ip_address, channel, 
         status, created_at, client_id, transaction_type
     ) VALUES (
-        'eaafdc1d-e4ac-4630-b5ca-c926be2f5ab8', 'idemp_good_eaafdc1d-e4ac-4630-b5ca-c926be2f5ab8', 1300.62, 'GBP', 'good_user_01', 'merchant_trusted', 
+        '68454d0b-6fb0-42e7-b49e-805d911af7d9', 'idemp_good_68454d0b-6fb0-42e7-b49e-805d911af7d9', 1744.25, 'GBP', 'good_user_01', 'merchant_trusted', 
         'GB', 'GB', 'device_good_1', '192.168.1.5', 'web', 
-        'COMPLETED', '2025-11-23T16:54:02.560058+00:00', '56f292e4-80f1-704a-38f4-42f883cf5d91', 'PAYMENT'
+        'COMPLETED', '2026-01-06T11:32:25.395268+00:00', '56f292e4-80f1-704a-38f4-42f883cf5d91', 'PAYMENT'
     );
     
 
@@ -120,9 +120,9 @@ TRUNCATE TABLE risk_results RESTART IDENTITY CASCADE;
         sender_country, receiver_country, device_fingerprint, ip_address, channel, 
         status, created_at, client_id, transaction_type
     ) VALUES (
-        '80705785-b644-4a7c-9395-740a17eecd1d', 'idemp_good_80705785-b644-4a7c-9395-740a17eecd1d', 823.45, 'GBP', 'good_user_01', 'merchant_trusted', 
+        '0fef6303-92f9-4623-a0d5-4e094e73d5e1', 'idemp_good_0fef6303-92f9-4623-a0d5-4e094e73d5e1', 824.51, 'GBP', 'good_user_01', 'merchant_trusted', 
         'GB', 'GB', 'device_good_1', '192.168.1.5', 'web', 
-        'COMPLETED', '2025-11-27T01:24:25.259485+00:00', '56f292e4-80f1-704a-38f4-42f883cf5d91', 'PAYMENT'
+        'COMPLETED', '2026-01-11T11:15:00.710993+00:00', '56f292e4-80f1-704a-38f4-42f883cf5d91', 'PAYMENT'
     );
     
 
@@ -131,9 +131,9 @@ TRUNCATE TABLE risk_results RESTART IDENTITY CASCADE;
         sender_country, receiver_country, device_fingerprint, ip_address, channel, 
         status, created_at, client_id, transaction_type
     ) VALUES (
-        'b5dd326d-9628-4b94-8709-4bb467b063c2', 'idemp_good_b5dd326d-9628-4b94-8709-4bb467b063c2', 2223.41, 'GBP', 'good_user_01', 'merchant_trusted', 
+        'd1a10f90-e531-4c35-a5ae-e0a813352639', 'idemp_good_d1a10f90-e531-4c35-a5ae-e0a813352639', 2051.4, 'GBP', 'good_user_01', 'merchant_trusted', 
         'GB', 'GB', 'device_good_1', '192.168.1.5', 'web', 
-        'COMPLETED', '2025-11-29T14:45:34.717458+00:00', '56f292e4-80f1-704a-38f4-42f883cf5d91', 'PAYMENT'
+        'COMPLETED', '2026-01-13T22:10:51.344749+00:00', '56f292e4-80f1-704a-38f4-42f883cf5d91', 'PAYMENT'
     );
     
 
@@ -142,9 +142,9 @@ TRUNCATE TABLE risk_results RESTART IDENTITY CASCADE;
         sender_country, receiver_country, device_fingerprint, ip_address, channel, 
         status, created_at, client_id, transaction_type
     ) VALUES (
-        'e3bb5265-96c6-4296-93b3-17db54b36369', 'idemp_good_e3bb5265-96c6-4296-93b3-17db54b36369', 999.61, 'GBP', 'good_user_01', 'merchant_trusted', 
+        '81e6e721-f8de-4c7a-a578-f25d6ecdfd2a', 'idemp_good_81e6e721-f8de-4c7a-a578-f25d6ecdfd2a', 2310.16, 'GBP', 'good_user_01', 'merchant_trusted', 
         'GB', 'GB', 'device_good_1', '192.168.1.5', 'web', 
-        'COMPLETED', '2025-12-01T19:14:05.022185+00:00', '56f292e4-80f1-704a-38f4-42f883cf5d91', 'PAYMENT'
+        'COMPLETED', '2026-01-17T22:46:02.716518+00:00', '56f292e4-80f1-704a-38f4-42f883cf5d91', 'PAYMENT'
     );
     
 
@@ -153,9 +153,9 @@ TRUNCATE TABLE risk_results RESTART IDENTITY CASCADE;
         sender_country, receiver_country, device_fingerprint, ip_address, channel, 
         status, created_at, client_id, transaction_type
     ) VALUES (
-        '2a8bf5f3-1a96-4fa1-b5d1-ba3e5c53592c', 'idemp_good_2a8bf5f3-1a96-4fa1-b5d1-ba3e5c53592c', 2130.73, 'GBP', 'good_user_01', 'merchant_trusted', 
+        '75d44ba2-5a17-4f17-bb9c-cd43f9607f0a', 'idemp_good_75d44ba2-5a17-4f17-bb9c-cd43f9607f0a', 609.43, 'GBP', 'good_user_01', 'merchant_trusted', 
         'GB', 'GB', 'device_good_1', '192.168.1.5', 'web', 
-        'COMPLETED', '2025-12-04T01:30:27.087525+00:00', '56f292e4-80f1-704a-38f4-42f883cf5d91', 'PAYMENT'
+        'COMPLETED', '2026-01-20T17:14:50.258214+00:00', '56f292e4-80f1-704a-38f4-42f883cf5d91', 'PAYMENT'
     );
     
 
@@ -164,9 +164,9 @@ TRUNCATE TABLE risk_results RESTART IDENTITY CASCADE;
         sender_country, receiver_country, device_fingerprint, ip_address, channel, 
         status, created_at, client_id, transaction_type
     ) VALUES (
-        '5cee1e09-d5dc-4fb0-abc2-4a148ad4cf57', 'idemp_good_5cee1e09-d5dc-4fb0-abc2-4a148ad4cf57', 719.72, 'GBP', 'good_user_01', 'merchant_trusted', 
+        'b44b55cf-1fbb-4a2f-a8c6-9301028245af', 'idemp_good_b44b55cf-1fbb-4a2f-a8c6-9301028245af', 1764.12, 'GBP', 'good_user_01', 'merchant_trusted', 
         'GB', 'GB', 'device_good_1', '192.168.1.5', 'web', 
-        'COMPLETED', '2025-12-06T13:09:10.462534+00:00', '56f292e4-80f1-704a-38f4-42f883cf5d91', 'PAYMENT'
+        'COMPLETED', '2026-01-23T04:33:57.664493+00:00', '56f292e4-80f1-704a-38f4-42f883cf5d91', 'PAYMENT'
     );
     
 
@@ -175,9 +175,9 @@ TRUNCATE TABLE risk_results RESTART IDENTITY CASCADE;
         sender_country, receiver_country, device_fingerprint, ip_address, channel, 
         status, created_at, client_id, transaction_type
     ) VALUES (
-        '0f8b67a3-15f4-45f0-b1bb-a32b687c58aa', 'idemp_good_0f8b67a3-15f4-45f0-b1bb-a32b687c58aa', 760.18, 'GBP', 'good_user_01', 'merchant_trusted', 
+        '85fdd9a0-809b-42f0-b026-8fe34f980471', 'idemp_good_85fdd9a0-809b-42f0-b026-8fe34f980471', 1171.03, 'GBP', 'good_user_01', 'merchant_trusted', 
         'GB', 'GB', 'device_good_1', '192.168.1.5', 'web', 
-        'COMPLETED', '2025-12-11T11:07:44.103972+00:00', '56f292e4-80f1-704a-38f4-42f883cf5d91', 'PAYMENT'
+        'COMPLETED', '2026-01-27T11:49:27.533371+00:00', '56f292e4-80f1-704a-38f4-42f883cf5d91', 'PAYMENT'
     );
     
 
@@ -186,9 +186,9 @@ TRUNCATE TABLE risk_results RESTART IDENTITY CASCADE;
         sender_country, receiver_country, device_fingerprint, ip_address, channel, 
         status, created_at, client_id, transaction_type
     ) VALUES (
-        '0b6a8d1d-b135-43c3-8cac-d6e7b8342c4f', 'idemp_good_0b6a8d1d-b135-43c3-8cac-d6e7b8342c4f', 2283.74, 'GBP', 'good_user_01', 'merchant_trusted', 
+        'a9d0de82-5d43-4640-b173-98641fa7f61b', 'idemp_good_a9d0de82-5d43-4640-b173-98641fa7f61b', 1792.25, 'GBP', 'good_user_01', 'merchant_trusted', 
         'GB', 'GB', 'device_good_1', '192.168.1.5', 'web', 
-        'COMPLETED', '2025-12-13T16:20:45.735502+00:00', '56f292e4-80f1-704a-38f4-42f883cf5d91', 'PAYMENT'
+        'COMPLETED', '2026-01-30T09:23:11.705673+00:00', '56f292e4-80f1-704a-38f4-42f883cf5d91', 'PAYMENT'
     );
     
 
@@ -197,9 +197,9 @@ TRUNCATE TABLE risk_results RESTART IDENTITY CASCADE;
         sender_country, receiver_country, device_fingerprint, ip_address, channel, 
         status, created_at, client_id, transaction_type
     ) VALUES (
-        '3cd3b10b-01b7-4cc9-8229-3fc3ffb57563', 'idemp_good_3cd3b10b-01b7-4cc9-8229-3fc3ffb57563', 995.3, 'GBP', 'good_user_01', 'merchant_trusted', 
+        'ff2616a7-5794-41f3-9ce1-2ed42a834a36', 'idemp_good_ff2616a7-5794-41f3-9ce1-2ed42a834a36', 2028.97, 'GBP', 'good_user_01', 'merchant_trusted', 
         'GB', 'GB', 'device_good_1', '192.168.1.5', 'web', 
-        'COMPLETED', '2025-12-18T00:02:33.293462+00:00', '56f292e4-80f1-704a-38f4-42f883cf5d91', 'PAYMENT'
+        'COMPLETED', '2026-02-02T04:20:13.681861+00:00', '56f292e4-80f1-704a-38f4-42f883cf5d91', 'PAYMENT'
     );
     
 
@@ -208,9 +208,9 @@ TRUNCATE TABLE risk_results RESTART IDENTITY CASCADE;
         sender_country, receiver_country, device_fingerprint, ip_address, channel, 
         status, created_at, client_id, transaction_type
     ) VALUES (
-        'cd0bcf57-5eeb-41de-9ccd-de2c476f726d', 'idemp_good_cd0bcf57-5eeb-41de-9ccd-de2c476f726d', 1083.96, 'GBP', 'good_user_01', 'merchant_trusted', 
+        '1e73520c-25e4-43ae-a7b6-2c15492ced31', 'idemp_good_1e73520c-25e4-43ae-a7b6-2c15492ced31', 607.59, 'GBP', 'good_user_01', 'merchant_trusted', 
         'GB', 'GB', 'device_good_1', '192.168.1.5', 'web', 
-        'COMPLETED', '2025-12-22T08:26:43.090288+00:00', '56f292e4-80f1-704a-38f4-42f883cf5d91', 'PAYMENT'
+        'COMPLETED', '2026-02-06T08:54:51.059411+00:00', '56f292e4-80f1-704a-38f4-42f883cf5d91', 'PAYMENT'
     );
     
 
@@ -219,9 +219,9 @@ TRUNCATE TABLE risk_results RESTART IDENTITY CASCADE;
         sender_country, receiver_country, device_fingerprint, ip_address, channel, 
         status, created_at, client_id, transaction_type
     ) VALUES (
-        '095e2f38-8a69-418c-9740-2926b9c97233', 'idemp_good_095e2f38-8a69-418c-9740-2926b9c97233', 2360.75, 'GBP', 'good_user_01', 'merchant_trusted', 
+        '2f91b15f-219b-45ce-ad03-2deb5d0a95fe', 'idemp_good_2f91b15f-219b-45ce-ad03-2deb5d0a95fe', 1959.55, 'GBP', 'good_user_01', 'merchant_trusted', 
         'GB', 'GB', 'device_good_1', '192.168.1.5', 'web', 
-        'COMPLETED', '2025-12-27T05:45:15.230971+00:00', '56f292e4-80f1-704a-38f4-42f883cf5d91', 'PAYMENT'
+        'COMPLETED', '2026-02-11T05:38:37.584958+00:00', '56f292e4-80f1-704a-38f4-42f883cf5d91', 'PAYMENT'
     );
     
 
@@ -230,9 +230,9 @@ TRUNCATE TABLE risk_results RESTART IDENTITY CASCADE;
         sender_country, receiver_country, device_fingerprint, ip_address, channel, 
         status, created_at, client_id, transaction_type
     ) VALUES (
-        'd82d8011-d133-4a0c-ba8f-81b4780b9b21', 'idemp_good_d82d8011-d133-4a0c-ba8f-81b4780b9b21', 1676.95, 'GBP', 'good_user_01', 'merchant_trusted', 
+        'cbcbe393-525f-4c2e-aa61-8e11b7c0fc5f', 'idemp_good_cbcbe393-525f-4c2e-aa61-8e11b7c0fc5f', 529.81, 'GBP', 'good_user_01', 'merchant_trusted', 
         'GB', 'GB', 'device_good_1', '192.168.1.5', 'web', 
-        'COMPLETED', '2025-12-31T10:05:20.326349+00:00', '56f292e4-80f1-704a-38f4-42f883cf5d91', 'PAYMENT'
+        'COMPLETED', '2026-02-13T21:11:07.786742+00:00', '56f292e4-80f1-704a-38f4-42f883cf5d91', 'PAYMENT'
     );
     
 
@@ -241,9 +241,9 @@ TRUNCATE TABLE risk_results RESTART IDENTITY CASCADE;
         sender_country, receiver_country, device_fingerprint, ip_address, channel, 
         status, created_at, client_id, transaction_type
     ) VALUES (
-        'be40bb84-ef57-49f9-bd94-8d1fe1ae1922', 'idemp_good_be40bb84-ef57-49f9-bd94-8d1fe1ae1922', 1763.65, 'GBP', 'good_user_01', 'merchant_trusted', 
+        '242d6c85-55bd-4fc5-916f-2043a0e79a7f', 'idemp_good_242d6c85-55bd-4fc5-916f-2043a0e79a7f', 656.38, 'GBP', 'good_user_01', 'merchant_trusted', 
         'GB', 'GB', 'device_good_1', '192.168.1.5', 'web', 
-        'COMPLETED', '2026-01-04T20:18:41.805775+00:00', '56f292e4-80f1-704a-38f4-42f883cf5d91', 'PAYMENT'
+        'COMPLETED', '2026-02-18T09:08:04.416912+00:00', '56f292e4-80f1-704a-38f4-42f883cf5d91', 'PAYMENT'
     );
     
 
@@ -252,9 +252,9 @@ TRUNCATE TABLE risk_results RESTART IDENTITY CASCADE;
         sender_country, receiver_country, device_fingerprint, ip_address, channel, 
         status, created_at, client_id, transaction_type
     ) VALUES (
-        'ed3606a8-b96d-4157-9f7e-8d07d61b6127', 'idemp_good_ed3606a8-b96d-4157-9f7e-8d07d61b6127', 935.79, 'GBP', 'good_user_01', 'merchant_trusted', 
+        '7c60c73c-1909-4083-bac0-3c6de55c000c', 'idemp_good_7c60c73c-1909-4083-bac0-3c6de55c000c', 2341.26, 'GBP', 'good_user_01', 'merchant_trusted', 
         'GB', 'GB', 'device_good_1', '192.168.1.5', 'web', 
-        'COMPLETED', '2026-01-07T03:46:15.404448+00:00', '56f292e4-80f1-704a-38f4-42f883cf5d91', 'PAYMENT'
+        'COMPLETED', '2026-02-22T02:44:02.405491+00:00', '56f292e4-80f1-704a-38f4-42f883cf5d91', 'PAYMENT'
     );
     
 
@@ -263,9 +263,9 @@ TRUNCATE TABLE risk_results RESTART IDENTITY CASCADE;
         sender_country, receiver_country, device_fingerprint, ip_address, channel, 
         status, created_at, client_id, transaction_type
     ) VALUES (
-        'e42d90a3-f99c-4e9d-b775-e00211541af2', 'idemp_good_e42d90a3-f99c-4e9d-b775-e00211541af2', 2359.73, 'GBP', 'good_user_01', 'merchant_trusted', 
+        '293d97fd-434c-430f-98cf-bdbc1965e77b', 'idemp_good_293d97fd-434c-430f-98cf-bdbc1965e77b', 981.78, 'GBP', 'good_user_01', 'merchant_trusted', 
         'GB', 'GB', 'device_good_1', '192.168.1.5', 'web', 
-        'COMPLETED', '2026-01-09T08:10:46.292263+00:00', '56f292e4-80f1-704a-38f4-42f883cf5d91', 'PAYMENT'
+        'COMPLETED', '2026-02-26T20:28:06.207661+00:00', '56f292e4-80f1-704a-38f4-42f883cf5d91', 'PAYMENT'
     );
     
 
@@ -274,9 +274,9 @@ TRUNCATE TABLE risk_results RESTART IDENTITY CASCADE;
         sender_country, receiver_country, device_fingerprint, ip_address, channel, 
         status, created_at, client_id, transaction_type
     ) VALUES (
-        'f2454ed4-bc19-48e7-9480-4d85ea7e53d4', 'idemp_good_f2454ed4-bc19-48e7-9480-4d85ea7e53d4', 717.77, 'GBP', 'good_user_01', 'merchant_trusted', 
+        'a9e29b75-34e5-4f24-a638-2a2d54decaad', 'idemp_good_a9e29b75-34e5-4f24-a638-2a2d54decaad', 728.24, 'GBP', 'good_user_01', 'merchant_trusted', 
         'GB', 'GB', 'device_good_1', '192.168.1.5', 'web', 
-        'COMPLETED', '2026-01-12T15:14:21.119346+00:00', '56f292e4-80f1-704a-38f4-42f883cf5d91', 'PAYMENT'
+        'COMPLETED', '2026-03-01T03:47:23.952775+00:00', '56f292e4-80f1-704a-38f4-42f883cf5d91', 'PAYMENT'
     );
     
 
@@ -285,9 +285,9 @@ TRUNCATE TABLE risk_results RESTART IDENTITY CASCADE;
         sender_country, receiver_country, device_fingerprint, ip_address, channel, 
         status, created_at, client_id, transaction_type
     ) VALUES (
-        '429a211d-f762-44a2-a824-71e593ce87b0', 'idemp_good_429a211d-f762-44a2-a824-71e593ce87b0', 1180.79, 'GBP', 'good_user_01', 'merchant_trusted', 
+        '718b965b-7438-4d6e-af0d-041a03515049', 'idemp_good_718b965b-7438-4d6e-af0d-041a03515049', 1832.73, 'GBP', 'good_user_01', 'merchant_trusted', 
         'GB', 'GB', 'device_good_1', '192.168.1.5', 'web', 
-        'COMPLETED', '2026-01-16T19:27:20.052630+00:00', '56f292e4-80f1-704a-38f4-42f883cf5d91', 'PAYMENT'
+        'COMPLETED', '2026-03-05T14:09:12.373646+00:00', '56f292e4-80f1-704a-38f4-42f883cf5d91', 'PAYMENT'
     );
     
 
@@ -296,9 +296,9 @@ TRUNCATE TABLE risk_results RESTART IDENTITY CASCADE;
         sender_country, receiver_country, device_fingerprint, ip_address, channel, 
         status, created_at, client_id, transaction_type
     ) VALUES (
-        'b6bead0c-cf1e-486a-924f-9d997f10cdcf', 'idemp_good_b6bead0c-cf1e-486a-924f-9d997f10cdcf', 1649.74, 'GBP', 'good_user_01', 'merchant_trusted', 
+        '07d33ae2-2583-4d2d-afd7-cd9e5fb11330', 'idemp_good_07d33ae2-2583-4d2d-afd7-cd9e5fb11330', 1203.01, 'GBP', 'good_user_01', 'merchant_trusted', 
         'GB', 'GB', 'device_good_1', '192.168.1.5', 'web', 
-        'COMPLETED', '2026-01-20T11:41:40.639516+00:00', '56f292e4-80f1-704a-38f4-42f883cf5d91', 'PAYMENT'
+        'COMPLETED', '2026-03-10T04:01:44.357620+00:00', '56f292e4-80f1-704a-38f4-42f883cf5d91', 'PAYMENT'
     );
     
 
@@ -307,9 +307,9 @@ TRUNCATE TABLE risk_results RESTART IDENTITY CASCADE;
         sender_country, receiver_country, device_fingerprint, ip_address, channel, 
         status, created_at, client_id, transaction_type
     ) VALUES (
-        '2393c01f-20ce-45ba-a88b-a17de7f01d69', 'idemp_good_2393c01f-20ce-45ba-a88b-a17de7f01d69', 1598.32, 'GBP', 'good_user_01', 'merchant_trusted', 
+        'd3e31d5a-bb4a-43ff-8d1b-4a2e14307ced', 'idemp_good_d3e31d5a-bb4a-43ff-8d1b-4a2e14307ced', 740.03, 'GBP', 'good_user_01', 'merchant_trusted', 
         'GB', 'GB', 'device_good_1', '192.168.1.5', 'web', 
-        'COMPLETED', '2026-01-24T13:24:55.500305+00:00', '56f292e4-80f1-704a-38f4-42f883cf5d91', 'PAYMENT'
+        'COMPLETED', '2026-03-14T02:33:32.788774+00:00', '56f292e4-80f1-704a-38f4-42f883cf5d91', 'PAYMENT'
     );
     
 
@@ -318,9 +318,9 @@ TRUNCATE TABLE risk_results RESTART IDENTITY CASCADE;
         sender_country, receiver_country, device_fingerprint, ip_address, channel, 
         status, created_at, client_id, transaction_type
     ) VALUES (
-        '94b60215-a44c-4712-a88d-7d2891f4d72b', 'idemp_good_94b60215-a44c-4712-a88d-7d2891f4d72b', 1081.67, 'GBP', 'good_user_01', 'merchant_trusted', 
+        '3131c057-422e-4908-9c1f-872ec6abae02', 'idemp_good_3131c057-422e-4908-9c1f-872ec6abae02', 2173.9, 'GBP', 'good_user_01', 'merchant_trusted', 
         'GB', 'GB', 'device_good_1', '192.168.1.5', 'web', 
-        'COMPLETED', '2026-01-27T01:30:29.707602+00:00', '56f292e4-80f1-704a-38f4-42f883cf5d91', 'PAYMENT'
+        'COMPLETED', '2026-03-16T14:08:57.939480+00:00', '56f292e4-80f1-704a-38f4-42f883cf5d91', 'PAYMENT'
     );
     
 
@@ -329,9 +329,9 @@ TRUNCATE TABLE risk_results RESTART IDENTITY CASCADE;
         sender_country, receiver_country, device_fingerprint, ip_address, channel, 
         status, created_at, client_id, transaction_type
     ) VALUES (
-        '14121b7e-9a6c-4b38-9884-090d4cb909a4', 'idemp_good_14121b7e-9a6c-4b38-9884-090d4cb909a4', 2112.1, 'GBP', 'good_user_01', 'merchant_trusted', 
+        '95844a02-f365-4a36-88ea-2e9fad704ccf', 'idemp_good_95844a02-f365-4a36-88ea-2e9fad704ccf', 1985.43, 'GBP', 'good_user_01', 'merchant_trusted', 
         'GB', 'GB', 'device_good_1', '192.168.1.5', 'web', 
-        'COMPLETED', '2026-01-29T05:21:22.832799+00:00', '56f292e4-80f1-704a-38f4-42f883cf5d91', 'PAYMENT'
+        'COMPLETED', '2026-03-20T23:27:21.091843+00:00', '56f292e4-80f1-704a-38f4-42f883cf5d91', 'PAYMENT'
     );
     
 
@@ -340,9 +340,9 @@ TRUNCATE TABLE risk_results RESTART IDENTITY CASCADE;
         sender_country, receiver_country, device_fingerprint, ip_address, channel, 
         status, created_at, client_id, transaction_type
     ) VALUES (
-        'aaf0e5e9-df38-431b-9401-13496cb55f1f', 'idemp_good_aaf0e5e9-df38-431b-9401-13496cb55f1f', 624.96, 'GBP', 'good_user_01', 'merchant_trusted', 
+        '24ea7977-e6d4-4b65-9233-93a16f6d2106', 'idemp_good_24ea7977-e6d4-4b65-9233-93a16f6d2106', 820.79, 'GBP', 'good_user_01', 'merchant_trusted', 
         'GB', 'GB', 'device_good_1', '192.168.1.5', 'web', 
-        'COMPLETED', '2026-01-31T20:09:27.625327+00:00', '56f292e4-80f1-704a-38f4-42f883cf5d91', 'PAYMENT'
+        'COMPLETED', '2026-03-24T21:11:25.800072+00:00', '56f292e4-80f1-704a-38f4-42f883cf5d91', 'PAYMENT'
     );
     
 
@@ -351,9 +351,9 @@ TRUNCATE TABLE risk_results RESTART IDENTITY CASCADE;
         sender_country, receiver_country, device_fingerprint, ip_address, channel, 
         status, created_at, client_id, transaction_type
     ) VALUES (
-        '0331e63a-8b81-476a-8ac3-39668044977b', 'idemp_good_0331e63a-8b81-476a-8ac3-39668044977b', 2233.33, 'GBP', 'good_user_01', 'merchant_trusted', 
+        '86aa6649-aec2-4fc2-8e1d-5359b41fca61', 'idemp_good_86aa6649-aec2-4fc2-8e1d-5359b41fca61', 2252.18, 'GBP', 'good_user_01', 'merchant_trusted', 
         'GB', 'GB', 'device_good_1', '192.168.1.5', 'web', 
-        'COMPLETED', '2026-02-04T23:49:03.565298+00:00', '56f292e4-80f1-704a-38f4-42f883cf5d91', 'PAYMENT'
+        'COMPLETED', '2026-03-27T18:05:12.520904+00:00', '56f292e4-80f1-704a-38f4-42f883cf5d91', 'PAYMENT'
     );
     
 
@@ -362,9 +362,9 @@ TRUNCATE TABLE risk_results RESTART IDENTITY CASCADE;
         sender_country, receiver_country, device_fingerprint, ip_address, channel, 
         status, created_at, client_id, transaction_type
     ) VALUES (
-        'e3ef5370-8310-4431-8c0c-f2fc35f94839', 'idemp_good_e3ef5370-8310-4431-8c0c-f2fc35f94839', 1076.76, 'GBP', 'good_user_01', 'merchant_trusted', 
+        '269bd5b9-8b58-4a3b-bb7f-29ff211306b3', 'idemp_good_269bd5b9-8b58-4a3b-bb7f-29ff211306b3', 958.78, 'GBP', 'good_user_01', 'merchant_trusted', 
         'GB', 'GB', 'device_good_1', '192.168.1.5', 'web', 
-        'COMPLETED', '2026-02-07T21:37:20.509367+00:00', '56f292e4-80f1-704a-38f4-42f883cf5d91', 'PAYMENT'
+        'COMPLETED', '2026-04-01T09:27:48.480479+00:00', '56f292e4-80f1-704a-38f4-42f883cf5d91', 'PAYMENT'
     );
     
 
@@ -373,9 +373,9 @@ TRUNCATE TABLE risk_results RESTART IDENTITY CASCADE;
         sender_country, receiver_country, device_fingerprint, ip_address, channel, 
         status, created_at, client_id, transaction_type
     ) VALUES (
-        '35bbb34c-8ec9-42fd-8cda-7c51b8dbd047', 'idemp_good_35bbb34c-8ec9-42fd-8cda-7c51b8dbd047', 1329.37, 'GBP', 'good_user_01', 'merchant_trusted', 
+        '3723fae1-ffc5-4803-81dc-66ae5940edb3', 'idemp_good_3723fae1-ffc5-4803-81dc-66ae5940edb3', 2236.07, 'GBP', 'good_user_01', 'merchant_trusted', 
         'GB', 'GB', 'device_good_1', '192.168.1.5', 'web', 
-        'COMPLETED', '2026-02-10T02:20:10.600478+00:00', '56f292e4-80f1-704a-38f4-42f883cf5d91', 'PAYMENT'
+        'COMPLETED', '2026-04-06T07:15:53.894741+00:00', '56f292e4-80f1-704a-38f4-42f883cf5d91', 'PAYMENT'
     );
     
 
@@ -384,9 +384,9 @@ TRUNCATE TABLE risk_results RESTART IDENTITY CASCADE;
         sender_country, receiver_country, device_fingerprint, ip_address, channel, 
         status, created_at, client_id, transaction_type
     ) VALUES (
-        '2d729ca4-4182-47a1-a2c2-a123b26366ae', 'idemp_good_2d729ca4-4182-47a1-a2c2-a123b26366ae', 1651.93, 'GBP', 'good_user_01', 'merchant_trusted', 
+        '5a5100ec-e28d-4257-941b-f6cd4d78a666', 'idemp_good_5a5100ec-e28d-4257-941b-f6cd4d78a666', 1017.72, 'GBP', 'good_user_01', 'merchant_trusted', 
         'GB', 'GB', 'device_good_1', '192.168.1.5', 'web', 
-        'COMPLETED', '2026-02-14T12:06:10.437176+00:00', '56f292e4-80f1-704a-38f4-42f883cf5d91', 'PAYMENT'
+        'COMPLETED', '2026-04-08T19:08:24.888127+00:00', '56f292e4-80f1-704a-38f4-42f883cf5d91', 'PAYMENT'
     );
     
 
@@ -395,9 +395,9 @@ TRUNCATE TABLE risk_results RESTART IDENTITY CASCADE;
         sender_country, receiver_country, device_fingerprint, ip_address, channel, 
         status, created_at, client_id, transaction_type
     ) VALUES (
-        '2bb17094-7ecc-4d26-a124-b651465c4dee', 'idemp_good_2bb17094-7ecc-4d26-a124-b651465c4dee', 2378.71, 'GBP', 'good_user_01', 'merchant_trusted', 
+        '2cdba975-c0a0-4760-abba-caf514d191f6', 'idemp_good_2cdba975-c0a0-4760-abba-caf514d191f6', 1456.05, 'GBP', 'good_user_01', 'merchant_trusted', 
         'GB', 'GB', 'device_good_1', '192.168.1.5', 'web', 
-        'COMPLETED', '2026-02-17T04:02:39.724392+00:00', '56f292e4-80f1-704a-38f4-42f883cf5d91', 'PAYMENT'
+        'COMPLETED', '2026-04-12T05:59:56.251208+00:00', '56f292e4-80f1-704a-38f4-42f883cf5d91', 'PAYMENT'
     );
     
 
@@ -406,9 +406,9 @@ TRUNCATE TABLE risk_results RESTART IDENTITY CASCADE;
         sender_country, receiver_country, device_fingerprint, ip_address, channel, 
         status, created_at, client_id, transaction_type
     ) VALUES (
-        '7d202f31-c290-4689-a11e-6344c66194dc', 'idemp_good_7d202f31-c290-4689-a11e-6344c66194dc', 1530.59, 'GBP', 'good_user_01', 'merchant_trusted', 
+        '7b09ecaf-729e-4036-8598-5ca92f4b9e2e', 'idemp_good_7b09ecaf-729e-4036-8598-5ca92f4b9e2e', 913.81, 'GBP', 'good_user_01', 'merchant_trusted', 
         'GB', 'GB', 'device_good_1', '192.168.1.5', 'web', 
-        'COMPLETED', '2026-02-22T02:33:51.216425+00:00', '56f292e4-80f1-704a-38f4-42f883cf5d91', 'PAYMENT'
+        'COMPLETED', '2026-04-14T06:45:58.833856+00:00', '56f292e4-80f1-704a-38f4-42f883cf5d91', 'PAYMENT'
     );
     
 
@@ -417,9 +417,9 @@ TRUNCATE TABLE risk_results RESTART IDENTITY CASCADE;
         sender_country, receiver_country, device_fingerprint, ip_address, channel, 
         status, created_at, client_id, transaction_type
     ) VALUES (
-        'fd578d7a-a2a3-43d6-9b0c-aae814f6f924', 'idemp_good_fd578d7a-a2a3-43d6-9b0c-aae814f6f924', 825.27, 'GBP', 'good_user_01', 'merchant_trusted', 
+        '6b14dcda-c8b5-4707-beae-0cd7a75067be', 'idemp_good_6b14dcda-c8b5-4707-beae-0cd7a75067be', 683.11, 'GBP', 'good_user_01', 'merchant_trusted', 
         'GB', 'GB', 'device_good_1', '192.168.1.5', 'web', 
-        'COMPLETED', '2026-02-24T05:01:17.734773+00:00', '56f292e4-80f1-704a-38f4-42f883cf5d91', 'PAYMENT'
+        'COMPLETED', '2026-04-16T17:55:02.495099+00:00', '56f292e4-80f1-704a-38f4-42f883cf5d91', 'PAYMENT'
     );
     
 
@@ -428,9 +428,9 @@ TRUNCATE TABLE risk_results RESTART IDENTITY CASCADE;
         sender_country, receiver_country, device_fingerprint, ip_address, channel, 
         status, created_at, client_id, transaction_type
     ) VALUES (
-        '6c03a03d-4a61-4311-8078-8968d1cfcba4', 'idemp_good_6c03a03d-4a61-4311-8078-8968d1cfcba4', 1043.05, 'GBP', 'good_user_01', 'merchant_trusted', 
+        'a6e21347-81f8-4c56-80da-e32c192be8d2', 'idemp_good_a6e21347-81f8-4c56-80da-e32c192be8d2', 1135.72, 'GBP', 'good_user_01', 'merchant_trusted', 
         'GB', 'GB', 'device_good_1', '192.168.1.5', 'web', 
-        'COMPLETED', '2026-02-28T12:27:04.703941+00:00', '56f292e4-80f1-704a-38f4-42f883cf5d91', 'PAYMENT'
+        'COMPLETED', '2026-04-20T11:31:19.265044+00:00', '56f292e4-80f1-704a-38f4-42f883cf5d91', 'PAYMENT'
     );
     
 
@@ -439,9 +439,9 @@ TRUNCATE TABLE risk_results RESTART IDENTITY CASCADE;
         sender_country, receiver_country, device_fingerprint, ip_address, channel, 
         status, created_at, client_id, transaction_type
     ) VALUES (
-        '21fea940-3fb1-4303-97f6-0230458a4572', 'idemp_good_21fea940-3fb1-4303-97f6-0230458a4572', 669.41, 'GBP', 'good_user_01', 'merchant_trusted', 
+        '6b6a1e1a-188e-44d4-9dec-17cb423028de', 'idemp_good_6b6a1e1a-188e-44d4-9dec-17cb423028de', 2497.11, 'GBP', 'good_user_01', 'merchant_trusted', 
         'GB', 'GB', 'device_good_1', '192.168.1.5', 'web', 
-        'COMPLETED', '2026-03-02T18:55:38.891078+00:00', '56f292e4-80f1-704a-38f4-42f883cf5d91', 'PAYMENT'
+        'COMPLETED', '2026-04-24T18:12:34.783173+00:00', '56f292e4-80f1-704a-38f4-42f883cf5d91', 'PAYMENT'
     );
     
 
@@ -450,9 +450,9 @@ TRUNCATE TABLE risk_results RESTART IDENTITY CASCADE;
         sender_country, receiver_country, device_fingerprint, ip_address, channel, 
         status, created_at, client_id, transaction_type
     ) VALUES (
-        '4070961c-9f01-4834-8041-b671c4f85ee2', 'idemp_good_4070961c-9f01-4834-8041-b671c4f85ee2', 852.49, 'GBP', 'good_user_01', 'merchant_trusted', 
+        '531fe382-2922-43cd-ad67-cb9412f6b6d8', 'idemp_good_531fe382-2922-43cd-ad67-cb9412f6b6d8', 1392.41, 'GBP', 'good_user_01', 'merchant_trusted', 
         'GB', 'GB', 'device_good_1', '192.168.1.5', 'web', 
-        'COMPLETED', '2026-03-05T15:17:11.740115+00:00', '56f292e4-80f1-704a-38f4-42f883cf5d91', 'PAYMENT'
+        'COMPLETED', '2026-04-28T01:27:56.440624+00:00', '56f292e4-80f1-704a-38f4-42f883cf5d91', 'PAYMENT'
     );
     
 
@@ -461,9 +461,9 @@ TRUNCATE TABLE risk_results RESTART IDENTITY CASCADE;
         sender_country, receiver_country, device_fingerprint, ip_address, channel, 
         status, created_at, client_id, transaction_type
     ) VALUES (
-        '4c01e8a5-c13b-447a-89bd-09dae9ef273a', 'idemp_good_4c01e8a5-c13b-447a-89bd-09dae9ef273a', 1184.77, 'GBP', 'good_user_01', 'merchant_trusted', 
+        '564d64f8-7df7-4f6b-97ec-90d8fa806cd7', 'idemp_good_564d64f8-7df7-4f6b-97ec-90d8fa806cd7', 623.75, 'GBP', 'good_user_01', 'merchant_trusted', 
         'GB', 'GB', 'device_good_1', '192.168.1.5', 'web', 
-        'COMPLETED', '2026-03-08T04:05:31.318462+00:00', '56f292e4-80f1-704a-38f4-42f883cf5d91', 'PAYMENT'
+        'COMPLETED', '2026-05-01T23:36:43.782615+00:00', '56f292e4-80f1-704a-38f4-42f883cf5d91', 'PAYMENT'
     );
     
 
@@ -472,9 +472,9 @@ TRUNCATE TABLE risk_results RESTART IDENTITY CASCADE;
         sender_country, receiver_country, device_fingerprint, ip_address, channel, 
         status, created_at, client_id, transaction_type
     ) VALUES (
-        '42983ae4-b52d-4999-adf9-1d542893d1ef', 'idemp_good_42983ae4-b52d-4999-adf9-1d542893d1ef', 1211.23, 'GBP', 'good_user_01', 'merchant_trusted', 
+        'c4410c99-76ae-46d8-9cc9-caefc4548788', 'idemp_good_c4410c99-76ae-46d8-9cc9-caefc4548788', 1278.08, 'GBP', 'good_user_01', 'merchant_trusted', 
         'GB', 'GB', 'device_good_1', '192.168.1.5', 'web', 
-        'COMPLETED', '2026-03-12T18:39:56.582131+00:00', '56f292e4-80f1-704a-38f4-42f883cf5d91', 'PAYMENT'
+        'COMPLETED', '2026-05-04T13:19:44.785392+00:00', '56f292e4-80f1-704a-38f4-42f883cf5d91', 'PAYMENT'
     );
     
 
@@ -483,9 +483,9 @@ TRUNCATE TABLE risk_results RESTART IDENTITY CASCADE;
         sender_country, receiver_country, device_fingerprint, ip_address, channel, 
         status, created_at, client_id, transaction_type
     ) VALUES (
-        'f35b2b8a-7440-4dff-bfde-c66b4fcd7386', 'idemp_good_f35b2b8a-7440-4dff-bfde-c66b4fcd7386', 1669.12, 'GBP', 'good_user_01', 'merchant_trusted', 
+        'd558a9b5-752d-483a-a99e-ab95b85a047d', 'idemp_good_d558a9b5-752d-483a-a99e-ab95b85a047d', 666.61, 'GBP', 'good_user_01', 'merchant_trusted', 
         'GB', 'GB', 'device_good_1', '192.168.1.5', 'web', 
-        'COMPLETED', '2026-03-16T12:42:28.414810+00:00', '56f292e4-80f1-704a-38f4-42f883cf5d91', 'PAYMENT'
+        'COMPLETED', '2026-05-08T06:14:08.309858+00:00', '56f292e4-80f1-704a-38f4-42f883cf5d91', 'PAYMENT'
     );
     
 
@@ -494,9 +494,9 @@ TRUNCATE TABLE risk_results RESTART IDENTITY CASCADE;
         sender_country, receiver_country, device_fingerprint, ip_address, channel, 
         status, created_at, client_id, transaction_type
     ) VALUES (
-        'b4ba5161-c305-441b-a789-2f2011fb3921', 'idemp_good_b4ba5161-c305-441b-a789-2f2011fb3921', 1993.28, 'GBP', 'good_user_01', 'merchant_trusted', 
+        '6d6af1f3-340a-4b5b-b77a-efe7075ecca6', 'idemp_good_6d6af1f3-340a-4b5b-b77a-efe7075ecca6', 2368.32, 'GBP', 'good_user_01', 'merchant_trusted', 
         'GB', 'GB', 'device_good_1', '192.168.1.5', 'web', 
-        'COMPLETED', '2026-03-20T13:34:22.861721+00:00', '56f292e4-80f1-704a-38f4-42f883cf5d91', 'PAYMENT'
+        'COMPLETED', '2026-05-10T21:18:05.325209+00:00', '56f292e4-80f1-704a-38f4-42f883cf5d91', 'PAYMENT'
     );
     
 
@@ -505,9 +505,9 @@ TRUNCATE TABLE risk_results RESTART IDENTITY CASCADE;
         sender_country, receiver_country, device_fingerprint, ip_address, channel, 
         status, created_at, client_id, transaction_type
     ) VALUES (
-        '058b0381-9e2f-4a0d-af4f-f044f1a9b01d', 'idemp_good_058b0381-9e2f-4a0d-af4f-f044f1a9b01d', 1854.48, 'GBP', 'good_user_01', 'merchant_trusted', 
+        'd022a480-618c-4d90-8079-743353a045d1', 'idemp_good_d022a480-618c-4d90-8079-743353a045d1', 1483.07, 'GBP', 'good_user_01', 'merchant_trusted', 
         'GB', 'GB', 'device_good_1', '192.168.1.5', 'web', 
-        'COMPLETED', '2026-03-24T15:19:36.325071+00:00', '56f292e4-80f1-704a-38f4-42f883cf5d91', 'PAYMENT'
+        'COMPLETED', '2026-05-12T22:29:24.775606+00:00', '56f292e4-80f1-704a-38f4-42f883cf5d91', 'PAYMENT'
     );
     
 
@@ -516,9 +516,9 @@ TRUNCATE TABLE risk_results RESTART IDENTITY CASCADE;
         sender_country, receiver_country, device_fingerprint, ip_address, channel, 
         status, created_at, client_id, transaction_type
     ) VALUES (
-        'e9a5282d-a3ef-476c-a7cf-863ac311148b', 'idemp_good_e9a5282d-a3ef-476c-a7cf-863ac311148b', 2476.98, 'GBP', 'good_user_01', 'merchant_trusted', 
+        '1b814af6-d14d-4b81-9a03-ec1eff399a5c', 'idemp_good_1b814af6-d14d-4b81-9a03-ec1eff399a5c', 646.42, 'GBP', 'good_user_01', 'merchant_trusted', 
         'GB', 'GB', 'device_good_1', '192.168.1.5', 'web', 
-        'COMPLETED', '2026-03-28T18:05:01.488608+00:00', '56f292e4-80f1-704a-38f4-42f883cf5d91', 'PAYMENT'
+        'COMPLETED', '2026-05-15T09:15:52.172030+00:00', '56f292e4-80f1-704a-38f4-42f883cf5d91', 'PAYMENT'
     );
     
 
@@ -527,9 +527,9 @@ TRUNCATE TABLE risk_results RESTART IDENTITY CASCADE;
         sender_country, receiver_country, device_fingerprint, ip_address, channel, 
         status, created_at, client_id, transaction_type
     ) VALUES (
-        'b27aa081-97f0-4abb-baf6-8f236e2fbe8f', 'idemp_good_b27aa081-97f0-4abb-baf6-8f236e2fbe8f', 526.38, 'GBP', 'good_user_01', 'merchant_trusted', 
+        '5278a072-a4d6-4b08-af29-7fec3ed8c171', 'idemp_good_5278a072-a4d6-4b08-af29-7fec3ed8c171', 2143.69, 'GBP', 'good_user_01', 'merchant_trusted', 
         'GB', 'GB', 'device_good_1', '192.168.1.5', 'web', 
-        'COMPLETED', '2026-04-02T11:21:00.987711+00:00', '56f292e4-80f1-704a-38f4-42f883cf5d91', 'PAYMENT'
+        'COMPLETED', '2026-05-19T06:48:14.293072+00:00', '56f292e4-80f1-704a-38f4-42f883cf5d91', 'PAYMENT'
     );
     
 
@@ -538,9 +538,9 @@ TRUNCATE TABLE risk_results RESTART IDENTITY CASCADE;
         sender_country, receiver_country, device_fingerprint, ip_address, channel, 
         status, created_at, client_id, transaction_type
     ) VALUES (
-        '70536d7a-7e30-4ef1-9302-00ef9ef2b2c1', 'idemp_good_70536d7a-7e30-4ef1-9302-00ef9ef2b2c1', 703.09, 'GBP', 'good_user_01', 'merchant_trusted', 
+        '773f0264-5cb1-42e2-a768-4e1b2c61c9fd', 'idemp_good_773f0264-5cb1-42e2-a768-4e1b2c61c9fd', 2377.77, 'GBP', 'good_user_01', 'merchant_trusted', 
         'GB', 'GB', 'device_good_1', '192.168.1.5', 'web', 
-        'COMPLETED', '2026-04-04T16:27:01.818069+00:00', '56f292e4-80f1-704a-38f4-42f883cf5d91', 'PAYMENT'
+        'COMPLETED', '2026-05-23T17:18:11.769883+00:00', '56f292e4-80f1-704a-38f4-42f883cf5d91', 'PAYMENT'
     );
     
 
@@ -549,9 +549,9 @@ TRUNCATE TABLE risk_results RESTART IDENTITY CASCADE;
         sender_country, receiver_country, device_fingerprint, ip_address, channel, 
         status, created_at, client_id, transaction_type
     ) VALUES (
-        'ddc3bfd5-0bb0-4082-8456-9b1e25e32470', 'idemp_good_ddc3bfd5-0bb0-4082-8456-9b1e25e32470', 1197.03, 'GBP', 'good_user_01', 'merchant_trusted', 
+        '38925c9d-d761-45a1-bf4d-1962e16f28a6', 'idemp_good_38925c9d-d761-45a1-bf4d-1962e16f28a6', 1087.65, 'GBP', 'good_user_01', 'merchant_trusted', 
         'GB', 'GB', 'device_good_1', '192.168.1.5', 'web', 
-        'COMPLETED', '2026-04-09T09:27:55.451791+00:00', '56f292e4-80f1-704a-38f4-42f883cf5d91', 'PAYMENT'
+        'COMPLETED', '2026-05-28T15:48:36.796968+00:00', '56f292e4-80f1-704a-38f4-42f883cf5d91', 'PAYMENT'
     );
     
 
@@ -560,9 +560,9 @@ TRUNCATE TABLE risk_results RESTART IDENTITY CASCADE;
         sender_country, receiver_country, device_fingerprint, ip_address, channel, 
         status, created_at, client_id, transaction_type
     ) VALUES (
-        '9bc20636-b0f5-4083-94be-b05379d29f55', 'idemp_good_9bc20636-b0f5-4083-94be-b05379d29f55', 1400.32, 'GBP', 'good_user_01', 'merchant_trusted', 
+        '1ec13e16-d7ef-4e8e-b06e-8328ffb2f39f', 'idemp_good_1ec13e16-d7ef-4e8e-b06e-8328ffb2f39f', 1482.27, 'GBP', 'good_user_01', 'merchant_trusted', 
         'GB', 'GB', 'device_good_1', '192.168.1.5', 'web', 
-        'COMPLETED', '2026-04-14T06:21:44.005970+00:00', '56f292e4-80f1-704a-38f4-42f883cf5d91', 'PAYMENT'
+        'COMPLETED', '2026-05-30T19:14:44.114981+00:00', '56f292e4-80f1-704a-38f4-42f883cf5d91', 'PAYMENT'
     );
     
 
@@ -571,9 +571,9 @@ TRUNCATE TABLE risk_results RESTART IDENTITY CASCADE;
         sender_country, receiver_country, device_fingerprint, ip_address, channel, 
         status, created_at, client_id, transaction_type
     ) VALUES (
-        'db945165-89c7-4592-ab42-3c71370e4468', 'idemp_good_db945165-89c7-4592-ab42-3c71370e4468', 1498.0, 'GBP', 'good_user_01', 'merchant_trusted', 
+        '12167401-aabb-40dd-b66e-37dba0c4d273', 'idemp_good_12167401-aabb-40dd-b66e-37dba0c4d273', 1052.43, 'GBP', 'good_user_01', 'merchant_trusted', 
         'GB', 'GB', 'device_good_1', '192.168.1.5', 'web', 
-        'COMPLETED', '2026-04-17T13:51:19.126851+00:00', '56f292e4-80f1-704a-38f4-42f883cf5d91', 'PAYMENT'
+        'COMPLETED', '2026-06-03T21:46:57.729741+00:00', '56f292e4-80f1-704a-38f4-42f883cf5d91', 'PAYMENT'
     );
     
 
@@ -582,9 +582,9 @@ TRUNCATE TABLE risk_results RESTART IDENTITY CASCADE;
         sender_country, receiver_country, device_fingerprint, ip_address, channel, 
         status, created_at, client_id, transaction_type
     ) VALUES (
-        'd9a9d0c7-4166-4211-b5c7-0aa3be7951d6', 'idemp_good_d9a9d0c7-4166-4211-b5c7-0aa3be7951d6', 1591.28, 'GBP', 'good_user_01', 'merchant_trusted', 
+        '22e7faec-8424-47bb-a2bf-aff039127c96', 'idemp_good_22e7faec-8424-47bb-a2bf-aff039127c96', 722.86, 'GBP', 'good_user_01', 'merchant_trusted', 
         'GB', 'GB', 'device_good_1', '192.168.1.5', 'web', 
-        'COMPLETED', '2026-04-19T15:57:39.454382+00:00', '56f292e4-80f1-704a-38f4-42f883cf5d91', 'PAYMENT'
+        'COMPLETED', '2026-06-06T15:43:54.777551+00:00', '56f292e4-80f1-704a-38f4-42f883cf5d91', 'PAYMENT'
     );
     
 
@@ -593,9 +593,9 @@ TRUNCATE TABLE risk_results RESTART IDENTITY CASCADE;
         sender_country, receiver_country, device_fingerprint, ip_address, channel, 
         status, created_at, client_id, transaction_type
     ) VALUES (
-        '0e55fdb3-70ff-4933-82a3-66c5a9b08cc2', 'idemp_good_0e55fdb3-70ff-4933-82a3-66c5a9b08cc2', 2132.06, 'GBP', 'good_user_01', 'merchant_trusted', 
-        'GB', 'GB', 'device_good_1', '192.168.1.5', 'web', 
-        'COMPLETED', '2026-04-21T18:18:01.075701+00:00', '56f292e4-80f1-704a-38f4-42f883cf5d91', 'PAYMENT'
+        '6682b32d-fbe2-4d1c-b73d-0fe5910d23f4', 'idemp_bad_6682b32d-fbe2-4d1c-b73d-0fe5910d23f4', 3469.94, 'USD', 'bad_user_01', 'unknown_crypto_exchange', 
+        'NG', 'CY', 'device_bad_2', '10.0.165.139', 'api', 
+        'COMPLETED', '2026-06-05T00:47:20.028682+00:00', '5692b244-30d1-7072-584e-1b3637f04ab7', 'CRYPTO_PURCHASE'
     );
     
 
@@ -604,9 +604,9 @@ TRUNCATE TABLE risk_results RESTART IDENTITY CASCADE;
         sender_country, receiver_country, device_fingerprint, ip_address, channel, 
         status, created_at, client_id, transaction_type
     ) VALUES (
-        'cc134e03-57c6-4d13-80cf-efabbd01ef50', 'idemp_bad_cc134e03-57c6-4d13-80cf-efabbd01ef50', 2653.32, 'USD', 'bad_user_01', 'unknown_crypto_exchange', 
-        'RU', 'CY', 'device_bad_1', '10.0.236.216', 'api', 
-        'COMPLETED', '2026-04-20T22:13:05.817710+00:00', '5692b244-30d1-7072-584e-1b3637f04ab7', 'CRYPTO_PURCHASE'
+        '50caa56b-9a22-4a5c-877d-f8651574c47e', 'idemp_bad_50caa56b-9a22-4a5c-877d-f8651574c47e', 1999.76, 'USD', 'bad_user_01', 'unknown_crypto_exchange', 
+        'CN', 'CY', 'device_bad_1', '10.0.65.8', 'api', 
+        'COMPLETED', '2026-06-05T02:38:30.635162+00:00', '5692b244-30d1-7072-584e-1b3637f04ab7', 'CRYPTO_PURCHASE'
     );
     
 
@@ -615,9 +615,9 @@ TRUNCATE TABLE risk_results RESTART IDENTITY CASCADE;
         sender_country, receiver_country, device_fingerprint, ip_address, channel, 
         status, created_at, client_id, transaction_type
     ) VALUES (
-        'bda4ee41-a463-4bf1-8402-7a057e0464fb', 'idemp_bad_bda4ee41-a463-4bf1-8402-7a057e0464fb', 3247.77, 'USD', 'bad_user_01', 'unknown_crypto_exchange', 
-        'CN', 'CY', 'device_bad_1', '10.0.168.89', 'api', 
-        'COMPLETED', '2026-04-21T00:16:45.860351+00:00', '5692b244-30d1-7072-584e-1b3637f04ab7', 'CRYPTO_PURCHASE'
+        '85ba86a2-5713-478b-8785-8bdfad26ccd8', 'idemp_bad_85ba86a2-5713-478b-8785-8bdfad26ccd8', 4123.57, 'USD', 'bad_user_01', 'unknown_crypto_exchange', 
+        'NG', 'CY', 'device_bad_3', '10.0.175.12', 'api', 
+        'COMPLETED', '2026-06-05T03:18:50.370062+00:00', '5692b244-30d1-7072-584e-1b3637f04ab7', 'CRYPTO_PURCHASE'
     );
     
 
@@ -626,9 +626,9 @@ TRUNCATE TABLE risk_results RESTART IDENTITY CASCADE;
         sender_country, receiver_country, device_fingerprint, ip_address, channel, 
         status, created_at, client_id, transaction_type
     ) VALUES (
-        'fd3797cc-6c7d-4f41-9a2b-4d3970384649', 'idemp_bad_fd3797cc-6c7d-4f41-9a2b-4d3970384649', 2923.66, 'USD', 'bad_user_01', 'unknown_crypto_exchange', 
-        'CN', 'CY', 'device_bad_1', '10.0.40.13', 'api', 
-        'COMPLETED', '2026-04-21T02:15:39.127842+00:00', '5692b244-30d1-7072-584e-1b3637f04ab7', 'CRYPTO_PURCHASE'
+        '1a1f9c75-2e2d-4d07-b75f-2622295ec482', 'idemp_bad_1a1f9c75-2e2d-4d07-b75f-2622295ec482', 4568.61, 'USD', 'bad_user_01', 'unknown_crypto_exchange', 
+        'RU', 'CY', 'device_bad_2', '10.0.162.82', 'api', 
+        'COMPLETED', '2026-06-05T04:40:11.092215+00:00', '5692b244-30d1-7072-584e-1b3637f04ab7', 'CRYPTO_PURCHASE'
     );
     
 
@@ -637,9 +637,9 @@ TRUNCATE TABLE risk_results RESTART IDENTITY CASCADE;
         sender_country, receiver_country, device_fingerprint, ip_address, channel, 
         status, created_at, client_id, transaction_type
     ) VALUES (
-        'af54e674-c07e-4040-b4d6-6f0d87c9728e', 'idemp_bad_af54e674-c07e-4040-b4d6-6f0d87c9728e', 4944.77, 'USD', 'bad_user_01', 'unknown_crypto_exchange', 
-        'GB', 'CY', 'device_bad_3', '10.0.82.181', 'api', 
-        'COMPLETED', '2026-04-21T03:35:42.601231+00:00', '5692b244-30d1-7072-584e-1b3637f04ab7', 'CRYPTO_PURCHASE'
+        'e85520d7-c8fa-402a-932a-b5f06a1f3b36', 'idemp_bad_e85520d7-c8fa-402a-932a-b5f06a1f3b36', 2086.2, 'USD', 'bad_user_01', 'unknown_crypto_exchange', 
+        'CN', 'CY', 'device_bad_1', '10.0.72.220', 'api', 
+        'COMPLETED', '2026-06-05T07:10:54.205729+00:00', '5692b244-30d1-7072-584e-1b3637f04ab7', 'CRYPTO_PURCHASE'
     );
     
 
@@ -648,9 +648,9 @@ TRUNCATE TABLE risk_results RESTART IDENTITY CASCADE;
         sender_country, receiver_country, device_fingerprint, ip_address, channel, 
         status, created_at, client_id, transaction_type
     ) VALUES (
-        '6e5a0dea-6dea-4273-9ef4-296bf6ce8988', 'idemp_bad_6e5a0dea-6dea-4273-9ef4-296bf6ce8988', 2731.64, 'USD', 'bad_user_01', 'unknown_crypto_exchange', 
-        'CN', 'CY', 'device_bad_4', '10.0.138.63', 'api', 
-        'COMPLETED', '2026-04-21T06:06:02.574725+00:00', '5692b244-30d1-7072-584e-1b3637f04ab7', 'CRYPTO_PURCHASE'
+        '89345e90-9ea4-485c-b753-4fb37195ffdc', 'idemp_bad_89345e90-9ea4-485c-b753-4fb37195ffdc', 1985.15, 'USD', 'bad_user_01', 'unknown_crypto_exchange', 
+        'RU', 'CY', 'device_bad_2', '10.0.25.108', 'api', 
+        'COMPLETED', '2026-06-05T08:58:30.909642+00:00', '5692b244-30d1-7072-584e-1b3637f04ab7', 'CRYPTO_PURCHASE'
     );
     
 
@@ -659,9 +659,9 @@ TRUNCATE TABLE risk_results RESTART IDENTITY CASCADE;
         sender_country, receiver_country, device_fingerprint, ip_address, channel, 
         status, created_at, client_id, transaction_type
     ) VALUES (
-        'dd4a6b6b-f1bd-42c2-b6e6-0f0a174b1be7', 'idemp_bad_dd4a6b6b-f1bd-42c2-b6e6-0f0a174b1be7', 3181.73, 'USD', 'bad_user_01', 'unknown_crypto_exchange', 
-        'RU', 'CY', 'device_bad_3', '10.0.135.131', 'api', 
-        'COMPLETED', '2026-04-21T08:57:47.439754+00:00', '5692b244-30d1-7072-584e-1b3637f04ab7', 'CRYPTO_PURCHASE'
+        'd550b949-8008-42ab-9421-988c4a136879', 'idemp_bad_d550b949-8008-42ab-9421-988c4a136879', 1297.29, 'USD', 'bad_user_01', 'unknown_crypto_exchange', 
+        'RU', 'CY', 'device_bad_2', '10.0.107.72', 'api', 
+        'COMPLETED', '2026-06-05T11:15:25.576762+00:00', '5692b244-30d1-7072-584e-1b3637f04ab7', 'CRYPTO_PURCHASE'
     );
     
 
@@ -670,9 +670,9 @@ TRUNCATE TABLE risk_results RESTART IDENTITY CASCADE;
         sender_country, receiver_country, device_fingerprint, ip_address, channel, 
         status, created_at, client_id, transaction_type
     ) VALUES (
-        '130d9741-b2b2-4947-93c0-114fb43c5017', 'idemp_bad_130d9741-b2b2-4947-93c0-114fb43c5017', 3698.47, 'USD', 'bad_user_01', 'unknown_crypto_exchange', 
-        'GB', 'CY', 'device_bad_1', '10.0.207.150', 'api', 
-        'COMPLETED', '2026-04-21T09:38:23.007660+00:00', '5692b244-30d1-7072-584e-1b3637f04ab7', 'CRYPTO_PURCHASE'
+        'dabe88bc-3249-4f39-8933-3daed0b5f53f', 'idemp_bad_dabe88bc-3249-4f39-8933-3daed0b5f53f', 1475.56, 'USD', 'bad_user_01', 'unknown_crypto_exchange', 
+        'US', 'CY', 'device_bad_2', '10.0.210.48', 'api', 
+        'COMPLETED', '2026-06-05T13:26:09.797228+00:00', '5692b244-30d1-7072-584e-1b3637f04ab7', 'CRYPTO_PURCHASE'
     );
     
 
@@ -681,9 +681,9 @@ TRUNCATE TABLE risk_results RESTART IDENTITY CASCADE;
         sender_country, receiver_country, device_fingerprint, ip_address, channel, 
         status, created_at, client_id, transaction_type
     ) VALUES (
-        '3942bd42-5326-4946-a520-47ade6eddb0d', 'idemp_bad_3942bd42-5326-4946-a520-47ade6eddb0d', 1671.69, 'USD', 'bad_user_01', 'unknown_crypto_exchange', 
-        'US', 'CY', 'device_bad_3', '10.0.61.31', 'api', 
-        'COMPLETED', '2026-04-21T10:35:49.428321+00:00', '5692b244-30d1-7072-584e-1b3637f04ab7', 'CRYPTO_PURCHASE'
+        '3c70f079-f38b-4ffb-bcc9-e64dce6845b7', 'idemp_bad_3c70f079-f38b-4ffb-bcc9-e64dce6845b7', 4667.95, 'USD', 'bad_user_01', 'unknown_crypto_exchange', 
+        'RU', 'CY', 'device_bad_2', '10.0.191.77', 'api', 
+        'COMPLETED', '2026-06-05T16:01:12.149131+00:00', '5692b244-30d1-7072-584e-1b3637f04ab7', 'CRYPTO_PURCHASE'
     );
     
 
@@ -692,9 +692,9 @@ TRUNCATE TABLE risk_results RESTART IDENTITY CASCADE;
         sender_country, receiver_country, device_fingerprint, ip_address, channel, 
         status, created_at, client_id, transaction_type
     ) VALUES (
-        '15670e29-6ace-4c93-b20d-e6ea7e1237cb', 'idemp_bad_15670e29-6ace-4c93-b20d-e6ea7e1237cb', 2870.35, 'USD', 'bad_user_01', 'unknown_crypto_exchange', 
-        'RU', 'CY', 'device_bad_1', '10.0.247.28', 'api', 
-        'COMPLETED', '2026-04-21T12:53:58.333065+00:00', '5692b244-30d1-7072-584e-1b3637f04ab7', 'CRYPTO_PURCHASE'
+        '047268c9-1275-4f27-9645-06781f006a81', 'idemp_bad_047268c9-1275-4f27-9645-06781f006a81', 3992.2, 'USD', 'bad_user_01', 'unknown_crypto_exchange', 
+        'RU', 'CY', 'device_bad_3', '10.0.199.127', 'api', 
+        'COMPLETED', '2026-06-05T16:47:56.777304+00:00', '5692b244-30d1-7072-584e-1b3637f04ab7', 'CRYPTO_PURCHASE'
     );
     
 
@@ -703,9 +703,9 @@ TRUNCATE TABLE risk_results RESTART IDENTITY CASCADE;
         sender_country, receiver_country, device_fingerprint, ip_address, channel, 
         status, created_at, client_id, transaction_type
     ) VALUES (
-        '28de76df-7ed6-42d7-87df-8239bb256c5f', 'idemp_bad_28de76df-7ed6-42d7-87df-8239bb256c5f', 2095.1, 'USD', 'bad_user_01', 'unknown_crypto_exchange', 
-        'CN', 'CY', 'device_bad_1', '10.0.49.85', 'api', 
-        'COMPLETED', '2026-04-21T15:46:58.614266+00:00', '5692b244-30d1-7072-584e-1b3637f04ab7', 'CRYPTO_PURCHASE'
+        'd6166ef3-d991-4fda-a5fa-1051c5892569', 'idemp_bad_d6166ef3-d991-4fda-a5fa-1051c5892569', 2455.45, 'USD', 'bad_user_01', 'unknown_crypto_exchange', 
+        'CN', 'CY', 'device_bad_1', '10.0.59.116', 'api', 
+        'COMPLETED', '2026-06-05T19:18:34.953534+00:00', '5692b244-30d1-7072-584e-1b3637f04ab7', 'CRYPTO_PURCHASE'
     );
     
 
@@ -714,9 +714,9 @@ TRUNCATE TABLE risk_results RESTART IDENTITY CASCADE;
         sender_country, receiver_country, device_fingerprint, ip_address, channel, 
         status, created_at, client_id, transaction_type
     ) VALUES (
-        'caf55c87-d414-43b1-8470-119d41e8f84f', 'idemp_bad_caf55c87-d414-43b1-8470-119d41e8f84f', 2829.81, 'USD', 'bad_user_01', 'unknown_crypto_exchange', 
-        'US', 'CY', 'device_bad_2', '10.0.172.234', 'api', 
-        'COMPLETED', '2026-04-21T16:20:03.058883+00:00', '5692b244-30d1-7072-584e-1b3637f04ab7', 'CRYPTO_PURCHASE'
+        '47bf420e-bba2-48ca-b5c2-c047716cf11f', 'idemp_bad_47bf420e-bba2-48ca-b5c2-c047716cf11f', 4051.75, 'USD', 'bad_user_01', 'unknown_crypto_exchange', 
+        'US', 'CY', 'device_bad_1', '10.0.248.226', 'api', 
+        'COMPLETED', '2026-06-05T20:54:25.406428+00:00', '5692b244-30d1-7072-584e-1b3637f04ab7', 'CRYPTO_PURCHASE'
     );
     
 
@@ -725,9 +725,9 @@ TRUNCATE TABLE risk_results RESTART IDENTITY CASCADE;
         sender_country, receiver_country, device_fingerprint, ip_address, channel, 
         status, created_at, client_id, transaction_type
     ) VALUES (
-        'cf58faa2-4754-42a4-9ce0-15119ece8a34', 'idemp_bad_cf58faa2-4754-42a4-9ce0-15119ece8a34', 4300.73, 'USD', 'bad_user_01', 'unknown_crypto_exchange', 
-        'CN', 'CY', 'device_bad_1', '10.0.186.231', 'api', 
-        'COMPLETED', '2026-04-21T17:50:01.756340+00:00', '5692b244-30d1-7072-584e-1b3637f04ab7', 'CRYPTO_PURCHASE'
+        '2c386573-c018-462b-83d0-2aedca70bc48', 'idemp_bad_2c386573-c018-462b-83d0-2aedca70bc48', 3159.89, 'USD', 'bad_user_01', 'unknown_crypto_exchange', 
+        'RU', 'CY', 'device_bad_1', '10.0.28.69', 'api', 
+        'COMPLETED', '2026-06-05T23:21:19.523351+00:00', '5692b244-30d1-7072-584e-1b3637f04ab7', 'CRYPTO_PURCHASE'
     );
     
 
@@ -736,9 +736,9 @@ TRUNCATE TABLE risk_results RESTART IDENTITY CASCADE;
         sender_country, receiver_country, device_fingerprint, ip_address, channel, 
         status, created_at, client_id, transaction_type
     ) VALUES (
-        'a54a08f5-8fc6-481b-b95c-1f42a22c7715', 'idemp_bad_a54a08f5-8fc6-481b-b95c-1f42a22c7715', 3649.66, 'USD', 'bad_user_01', 'unknown_crypto_exchange', 
-        'NG', 'CY', 'device_bad_1', '10.0.223.231', 'api', 
-        'COMPLETED', '2026-04-21T18:30:05.315613+00:00', '5692b244-30d1-7072-584e-1b3637f04ab7', 'CRYPTO_PURCHASE'
+        'fddd55da-ab3c-45cd-a0be-072f2eb20c49', 'idemp_bad_fddd55da-ab3c-45cd-a0be-072f2eb20c49', 1272.83, 'USD', 'bad_user_01', 'unknown_crypto_exchange', 
+        'NG', 'CY', 'device_bad_3', '10.0.228.150', 'api', 
+        'COMPLETED', '2026-06-06T00:23:49.737496+00:00', '5692b244-30d1-7072-584e-1b3637f04ab7', 'CRYPTO_PURCHASE'
     );
     
 
@@ -747,20 +747,9 @@ TRUNCATE TABLE risk_results RESTART IDENTITY CASCADE;
         sender_country, receiver_country, device_fingerprint, ip_address, channel, 
         status, created_at, client_id, transaction_type
     ) VALUES (
-        '6413a9c2-85f6-49d0-ae93-32252de6a82d', 'idemp_bad_6413a9c2-85f6-49d0-ae93-32252de6a82d', 1456.39, 'USD', 'bad_user_01', 'unknown_crypto_exchange', 
-        'RU', 'CY', 'device_bad_2', '10.0.155.113', 'api', 
-        'COMPLETED', '2026-04-21T20:26:55.784318+00:00', '5692b244-30d1-7072-584e-1b3637f04ab7', 'CRYPTO_PURCHASE'
-    );
-    
-
-    INSERT INTO transactions (
-        transaction_id, idempotency_key, amount, currency, sender_id, receiver_id, 
-        sender_country, receiver_country, device_fingerprint, ip_address, channel, 
-        status, created_at, client_id, transaction_type
-    ) VALUES (
-        '71ae4e1b-fae7-4037-bfd5-a7dd4bf27e6b', 'idemp_bad_71ae4e1b-fae7-4037-bfd5-a7dd4bf27e6b', 2035.39, 'USD', 'bad_user_01', 'unknown_crypto_exchange', 
-        'CN', 'CY', 'device_bad_1', '10.0.24.200', 'api', 
-        'COMPLETED', '2026-04-21T23:04:01.899167+00:00', '5692b244-30d1-7072-584e-1b3637f04ab7', 'CRYPTO_PURCHASE'
+        '735e5aeb-7492-4d8c-b67d-0344ed87e901', 'idemp_bad_735e5aeb-7492-4d8c-b67d-0344ed87e901', 2521.63, 'USD', 'bad_user_01', 'unknown_crypto_exchange', 
+        'GB', 'CY', 'device_bad_4', '10.0.46.215', 'api', 
+        'COMPLETED', '2026-06-06T00:54:30.467504+00:00', '5692b244-30d1-7072-584e-1b3637f04ab7', 'CRYPTO_PURCHASE'
     );
     
 \connect aegis_risk;
@@ -772,11 +761,11 @@ INSERT INTO account_profiles (
     unique_receiver_count, known_receiver_ids, unique_device_count, known_device_fingerprints, 
     unique_country_count, known_receiver_countries, first_seen_at, last_seen_at, version
 ) VALUES (
-    'good_user_01', 54, 78217.11, 11732.566499999999, 10, 
-    0, 0, 0, 0, 1448.465, 
+    'good_user_01', 53, 74526.44000000002, 11178.966000000002, 10, 
+    0, 0, 0, 0, 1406.1592452830191, 
     5000.00, false, 0, 0, 0, 
     5, ARRAY['merchant_trusted', 'merchant_1', 'merchant_2', 'merchant_3', 'merchant_4'], 1, ARRAY['device_good_1'], 
-    1, ARRAY['GB'], '2025-10-24T22:13:05.817710+00:00', '2026-04-21T22:13:05.817710+00:00', 1
+    1, ARRAY['GB'], '2025-12-09T00:47:20.028682+00:00', '2026-06-06T00:47:20.028682+00:00', 1
 );
 
 
@@ -787,9 +776,9 @@ INSERT INTO account_profiles (
     unique_receiver_count, known_receiver_ids, unique_device_count, known_device_fingerprints, 
     unique_country_count, known_receiver_countries, first_seen_at, last_seen_at, version
 ) VALUES (
-    'bad_user_01', 15, 44290.479999999996, 44290.479999999996, 15, 
-    44290.479999999996, 15, 5, 10000.00, 2952.698666666666, 
+    'bad_user_01', 15, 43127.780000000006, 43127.780000000006, 15, 
+    43127.780000000006, 15, 5, 10000.00, 2875.185333333334, 
     5000.00, true, 2, 5, 8, 
     1, ARRAY['unknown_crypto_exchange'], 4, ARRAY['device_bad_1', 'device_bad_2', 'device_bad_3', 'device_bad_4'], 
-    5, ARRAY['RU', 'NG', 'US', 'GB', 'CN'], '2026-04-20T22:13:05.817710+00:00', '2026-04-22T22:13:05.817710+00:00', 15
+    5, ARRAY['RU', 'NG', 'US', 'GB', 'CN'], '2026-06-05T00:47:20.028682+00:00', '2026-06-07T00:47:20.028682+00:00', 15
 );

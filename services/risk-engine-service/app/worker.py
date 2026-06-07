@@ -122,18 +122,26 @@ class RiskWorker:
             )
 
             # Step 1: Update account profile
+            sender_id = body.get("sender_id", "")
 
             async with get_session() as session:
                 profile_repo = AccountProfileRepository(session)
                 await profile_repo.upsert_after_transaction(
-                    account_id=body.get("sender_id", ""),
+                    account_id=sender_id,
                     amount=Decimal(str(body.get("amount", 0))),
                     receiver_id=body.get("receiver_id", ""),
-                device_fingerprint=body.get("device_fingerprint"),
-                receiver_country=body.get("receiver_country"),
-                decision=body.get("risk_decision", "REVIEW"),
+                    device_fingerprint=body.get("device_fingerprint"),
+                    receiver_country=body.get("receiver_country"),
+                    decision=body.get("risk_decision", "REVIEW"),
                 )
-            
+
+            # Invalidate profile cache so the next evaluation sees fresh DB state
+            try:
+                redis_client = get_redis()
+                await redis_client.delete(f"profile:{sender_id}")
+            except Exception as e:
+                logger.warning("redis_profile_cache_invalidation_error", error=str(e))
+
             if body.get("risk_decision") in ("BLOCK", "REVIEW"):
                 try:
                     redis_client = get_redis()
@@ -208,6 +216,7 @@ class RiskWorker:
                 transaction_id=transaction_id,
                 assessment=assessment,
                 correlation_id=correlation_id,
+                client_id=body.get("client_id", ""),
             )
 
             # Step 6: Acknowledge message
@@ -270,6 +279,7 @@ class RiskWorker:
         transaction_id: str,
         assessment: RiskAssessment,
         correlation_id: str,
+        client_id: str = "",
     ) -> None:
         """Publish RiskCompleted event for notification-service webhook."""
         payload = {
@@ -288,6 +298,8 @@ class RiskWorker:
             "risk_factors": [rf.model_dump() for rf in assessment.risk_factors],
             # analyst_summary is written async by the analyst-service worker
             "correlation_id": correlation_id,
+            # Propagate tenant ID so notification-service can route webhooks
+            "client_id": client_id,
         }
 
         try:

@@ -74,6 +74,8 @@ class TransactionMapper:
             risk_score=float(data.get("risk_score", 0.0)),
             risk_factors=proto_factors,
             risk_level=cls._format_field(data.get("risk_level")),
+            rule_score=float(data.get("rule_score", 0.0)),
+            ml_score=float(data.get("ml_score", 0.0)),
         )
 
     @classmethod

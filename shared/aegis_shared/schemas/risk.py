@@ -50,6 +50,7 @@ class RiskAssessment(BaseModel):
     confidence: str = "MEDIUM"         
     risk_factors: list[RiskFactor] = []
     rule_score: float = Field(0.0, ge=0.0, le=1.0)
+    ml_score: float = Field(0.0, ge=0.0, le=1.0)
     processing_time_ms: float = 0.0
     model_version: str = "1.0.0"
 

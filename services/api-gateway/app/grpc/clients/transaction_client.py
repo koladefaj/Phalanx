@@ -24,7 +24,7 @@ class TransactionGRPCClient:
     Client for communicating with the Transaction gRPC service.
     """
 
-    def __init__(self, channel):
+    def __init__(self, channel: grpc.aio.Channel):
         self.channel = channel
         self.stub = transaction_pb2_grpc.TransactionServiceStub(self.channel)
 

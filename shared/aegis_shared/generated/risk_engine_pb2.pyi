@@ -78,7 +78,7 @@ class RuleFlagResult(_message.Message):
     def __init__(self, rule_name: _Optional[str] = ..., triggered: bool = ..., score: _Optional[float] = ..., reason: _Optional[str] = ...) -> None: ...
 
 class EvaluateRiskResponse(_message.Message):
-    __slots__ = ("transaction_id", "decision", "risk_score", "risk_level", "confidence", "risk_factors", "processing_time_ms", "model_version")
+    __slots__ = ("transaction_id", "decision", "risk_score", "risk_level", "confidence", "risk_factors", "processing_time_ms", "model_version", "rule_score", "ml_score")
     TRANSACTION_ID_FIELD_NUMBER: _ClassVar[int]
     DECISION_FIELD_NUMBER: _ClassVar[int]
     RISK_SCORE_FIELD_NUMBER: _ClassVar[int]
@@ -87,6 +87,8 @@ class EvaluateRiskResponse(_message.Message):
     RISK_FACTORS_FIELD_NUMBER: _ClassVar[int]
     PROCESSING_TIME_MS_FIELD_NUMBER: _ClassVar[int]
     MODEL_VERSION_FIELD_NUMBER: _ClassVar[int]
+    RULE_SCORE_FIELD_NUMBER: _ClassVar[int]
+    ML_SCORE_FIELD_NUMBER: _ClassVar[int]
     transaction_id: str
     decision: str
     risk_score: float
@@ -95,7 +97,9 @@ class EvaluateRiskResponse(_message.Message):
     risk_factors: _containers.RepeatedCompositeFieldContainer[RiskFactor]
     processing_time_ms: float
     model_version: str
-    def __init__(self, transaction_id: _Optional[str] = ..., decision: _Optional[str] = ..., risk_score: _Optional[float] = ..., risk_level: _Optional[str] = ..., confidence: _Optional[str] = ..., risk_factors: _Optional[_Iterable[_Union[RiskFactor, _Mapping]]] = ..., processing_time_ms: _Optional[float] = ..., model_version: _Optional[str] = ...) -> None: ...
+    rule_score: float
+    ml_score: float
+    def __init__(self, transaction_id: _Optional[str] = ..., decision: _Optional[str] = ..., risk_score: _Optional[float] = ..., risk_level: _Optional[str] = ..., confidence: _Optional[str] = ..., risk_factors: _Optional[_Iterable[_Union[RiskFactor, _Mapping]]] = ..., processing_time_ms: _Optional[float] = ..., model_version: _Optional[str] = ..., rule_score: _Optional[float] = ..., ml_score: _Optional[float] = ...) -> None: ...
 
 class GetRiskResultResponse(_message.Message):
     __slots__ = ("transaction_id", "decision", "risk_score", "risk_level", "risk_factors", "rule_flags", "ml_anomaly_score", "ml_fallback_used", "ml_model_version", "agent_summary", "agent_risk_factors", "agent_recommendation", "agent_fallback_used", "processing_time_ms", "worker_id", "evaluated_at")

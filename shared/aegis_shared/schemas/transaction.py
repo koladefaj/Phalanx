@@ -75,6 +75,7 @@ class TransactionAccepted(BaseModel):
     decision: RiskDecision = RiskDecision.REVIEW
     risk_score: float | None = 0.0
     rule_score: float | None = 0.0
+    ml_score: float | None = 0.0
     risk_level: RiskLevel = RiskLevel.LOW
     risk_factors: list[RiskFactor] = []
     analyst_investigation: AnalystInvestigation | None = None

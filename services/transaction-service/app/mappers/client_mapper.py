@@ -84,6 +84,7 @@ class RiskClientMapper:
             confidence=proto.confidence or "MEDIUM",
             risk_factors=risk_factors,
             rule_score=float(proto.rule_score) if hasattr(proto, "rule_score") else 0.0,
+            ml_score=float(proto.ml_score) if hasattr(proto, "ml_score") else 0.0,
             processing_time_ms=float(proto.processing_time_ms),
             model_version=proto.model_version or "1.0.0",
         )

@@ -7,7 +7,7 @@ class Settings(BaseSettings):
 
     # LLM Provider settings (Loose Coupling)
     LLM_PROVIDER: str = "ollama"  # 'ollama', 'gemini', 'openai', 'anthropic'
-    LLM_MODEL: str = "gemma3:12b"
+    LLM_MODEL: str = "gemma3:4b" # "llama3.1:latest" for 8b (fast), "gemma3:12b" for 12b (better), "gemma3:4b" for 4b (very fast)
     LLM_BASE_URL: str = "http://host.docker.internal:11434" # Used primarily for ollama
     
     # Optional API Keys for other providers

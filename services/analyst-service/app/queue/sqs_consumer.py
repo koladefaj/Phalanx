@@ -178,18 +178,15 @@ class AnalystInvestigationWorker:
 
             elapsed_ms = (time.perf_counter() - start_time) * 1000
 
-            # ── Parse the report (best-effort) ────────────────────────────────
-            parsed = self._parse_report(report)
-
             # ── Write back to DB ──────────────────────────────────────────────
             async with get_session() as session:
                 repo = AnalystRiskResultRepository(session)
                 await repo.update_analyst_investigation(
                     transaction_id=transaction_id,
-                    agent_summary=parsed["summary"],
-                    agent_risk_factors=parsed["risk_factors"],
-                    agent_recommendation=parsed["recommendation"],
-                    agent_confidence=parsed["confidence"],
+                    agent_summary=report.summary,
+                    agent_risk_factors=report.risk_factors,
+                    agent_recommendation=report.recommendation,
+                    agent_confidence=report.confidence,
                     agent_model=self.agent.get_agent_name(),
                     agent_latency_ms=elapsed_ms,
                     agent_fallback_used=False,
@@ -201,7 +198,8 @@ class AnalystInvestigationWorker:
             logger.info(
                 "analyst_investigation_completed",
                 transaction_id=transaction_id,
-                verdict=parsed["verdict"],
+                verdict=report.verdict,
+                confidence=report.confidence,
                 latency_ms=round(elapsed_ms, 2),
             )
 
@@ -224,48 +222,3 @@ class AnalystInvestigationWorker:
                 ReceiptHandle=receipt_handle,
             )
 
-    # ── Report parsing ─────────────────────────────────────────────────────────
-
-    @staticmethod
-    def _parse_report(raw: str) -> dict:
-        """Best-effort extraction of structured fields from the agent's raw text."""
-        import re
-
-        verdict = "SUSPICIOUS"
-        for v in ("FRAUDULENT", "LEGITIMATE", "SUSPICIOUS"):
-            if v in raw.upper():
-                verdict = v
-                break
-
-        confidence_map = {"HIGH": 0.9, "MEDIUM": 0.65, "LOW": 0.35}
-        confidence = 0.65
-        for label, val in confidence_map.items():
-            if label in raw.upper():
-                confidence = val
-                break
-
-        recommendation = "REVIEW"
-        for r in ("BLOCK", "ALLOW", "REVIEW"):
-            if r in raw.upper():
-                recommendation = r
-                break
-
-        # Extract bullet-point risk factors if present (must be at start of line)
-        risk_factors = re.findall(r"^\s*[-*]\s*(.+)", raw, re.MULTILINE)
-        if not risk_factors:
-            risk_factors = [verdict.lower().replace("_", " ")]
-
-        # Extract summary if the LLM followed instructions
-        summary_match = re.search(r"SUMMARY:\s*(.*?)(?=\n[A-Z]+:|$)", raw, re.DOTALL)
-        if summary_match:
-            summary = summary_match.group(1).strip()
-        else:
-            summary = raw.replace("\n", " ")
-
-        return {
-            "summary": summary,
-            "verdict": verdict,
-            "confidence": confidence,
-            "recommendation": recommendation,
-            "risk_factors": risk_factors[:10],  # cap at 10
-        }

@@ -36,3 +36,7 @@ Thumbs.db
 
 # Logs
 *.log
+
+# Local dev / test files
+TEST_PAYLOADS.md
+seed_data.sql

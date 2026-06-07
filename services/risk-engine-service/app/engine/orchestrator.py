@@ -5,6 +5,8 @@ The orchestrator returns a RiskAssessment immediately after ML scoring.
 LLM explanation is triggered async via SQS and delivered via webhook.
 """
 
+import asyncio
+import json
 import time
 from decimal import Decimal
 from typing import Optional, Any
@@ -61,10 +63,8 @@ class RiskOrchestrator:
 
         logger.info("risk_evaluation_started", transaction_id=transaction_id)
 
-        # Step 1: Load account profile
-        async with get_session() as session:
-            profile_repo = AccountProfileRepository(session)
-            profile = await profile_repo.get_or_create(sender_id)
+        # Step 1: Load account profile (Redis cache → DB fallback)
+        profile = await self._load_profile_cached(sender_id)
 
         # Step 2: Enrich transaction with behavioural features
         device_fp = transaction_data.get("device_fingerprint") or ""
@@ -76,31 +76,41 @@ class RiskOrchestrator:
         try:
             from aegis_shared.utils.redis import get_redis
             redis_client = get_redis()
-            
-            # Use Redis sets to track burst devices and receivers that SQS hasn't committed yet
-            if is_new_device and device_fp:
-                device_key = f"burst:device:{sender_id}"
-                if await redis_client.sadd(device_key, device_fp) == 0:
-                    is_new_device = False
-                await redis_client.expire(device_key, 300)  # 5 min TTL
-                
-            if is_new_receiver and receiver_id:
-                receiver_key = f"burst:receiver:{sender_id}"
-                if await redis_client.sadd(receiver_key, receiver_id) == 0:
-                    is_new_receiver = False
-                await redis_client.expire(receiver_key, 300)
-                
-        # ── Velocity counter — increment on every evaluation ─────────────────
-            # Redis tracks real-time count; DB profile is always behind by ~3s
-            velocity_key = f"velocity:1h:{sender_id}"
-            redis_txn_count = await redis_client.incr(velocity_key)
-            await redis_client.expire(velocity_key, 3600)  # 1 hour TTL
 
-            # ── Failed burst counter ──────────────────────────────────────────────
-            # Read from Redis if available — more accurate than DB profile
+            device_key = f"burst:device:{sender_id}"
+            receiver_key = f"burst:receiver:{sender_id}"
+            velocity_key = f"velocity:1h:{sender_id}"
             failed_key = f"failed:1h:{sender_id}"
-            redis_failed = await redis_client.get(failed_key)
+
+            async def _sadd_device():
+                if is_new_device and device_fp:
+                    return await redis_client.sadd(device_key, device_fp)
+                return 1
+
+            async def _sadd_receiver():
+                if is_new_receiver and receiver_id:
+                    return await redis_client.sadd(receiver_key, receiver_id)
+                return 1
+
+            # All four Redis reads/writes are independent — run concurrently
+            device_result, receiver_result, redis_txn_count, redis_failed = await asyncio.gather(
+                _sadd_device(),
+                _sadd_receiver(),
+                redis_client.incr(velocity_key),
+                redis_client.get(failed_key),
+            )
+
+            if device_result == 0:
+                is_new_device = False
+            if receiver_result == 0:
+                is_new_receiver = False
+
             redis_failed_count = int(redis_failed) if redis_failed else profile.blocked_txn_count
+
+            # TTL refreshes don't affect correctness — fire without blocking the hot path
+            asyncio.create_task(redis_client.expire(device_key, 300))
+            asyncio.create_task(redis_client.expire(receiver_key, 300))
+            asyncio.create_task(redis_client.expire(velocity_key, 3600))
 
         except Exception as e:
             logger.warning("redis_burst_cache_error", error=str(e), transaction_id=transaction_id)
@@ -226,14 +236,46 @@ class RiskOrchestrator:
         return RiskAssessment(
             transaction_id=transaction_id,
             decision=decision,
-            risk_score=round(final_score / 100, 4),  # normalize to 0–1
+            risk_score=round(final_score / 100, 4),
             risk_level=risk_level,
             confidence=self._score_to_confidence(final_score),
             risk_factors=risk_factors,
-            rule_score=round(rule_score / 100, 4),   # normalized 0–1
+            rule_score=round(rule_score / 100, 4),
+            ml_score=round(ml_result.get("anomaly_score", 0.0), 4),
             processing_time_ms=round(processing_time_ms, 2),
             model_version=ml_result.get("model_version", "1.0.0"),
         )
+
+    async def _load_profile_cached(self, sender_id: str):
+        """Load account profile from Redis cache, falling back to Postgres on miss.
+
+        Cache TTL is 30s — short enough that stale is_high_risk flags are tolerable,
+        long enough to absorb concurrent requests from the same sender.
+        """
+        from aegis_shared.utils.redis import get_redis
+        from app.models.account_profile import AccountProfile
+
+        try:
+            redis_client = get_redis()
+            cached = await redis_client.get(f"profile:{sender_id}")
+            if cached:
+                return AccountProfile.from_cache_dict(json.loads(cached))
+        except Exception:
+            pass
+
+        async with get_session() as session:
+            profile_repo = AccountProfileRepository(session)
+            profile = await profile_repo.get_or_create(sender_id)
+
+        try:
+            redis_client = get_redis()
+            asyncio.create_task(
+                redis_client.setex(f"profile:{sender_id}", 30, json.dumps(profile.to_cache_dict()))
+            )
+        except Exception:
+            pass
+
+        return profile
 
     async def _get_ml_score(self, transaction_data: dict, profile) -> dict:
         """Get ML anomaly score with graceful fallback.

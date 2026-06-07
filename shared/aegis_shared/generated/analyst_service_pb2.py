@@ -22,7 +22,7 @@ _runtime_version.ValidateProtobufRuntimeVersion(
 _sym_db = _symbol_database.Default()
 
 
-import common_pb2 as common__pb2
+from aegis_shared.generated import common_pb2 as common__pb2
 
 
 DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x15\x61nalyst_service.proto\x12\x15\x61\x65gis.analyst_service\x1a\x0c\x63ommon.proto\"p\n\x12InvestigateRequest\x12/\n\x08metadata\x18\x01 \x01(\x0b\x32\x1d.aegis.common.RequestMetadata\x12\x16\n\x0etransaction_id\x18\x02 \x01(\t\x12\x11\n\tsender_id\x18\x03 \x01(\t\"\x8f\x01\n\x13InvestigateResponse\x12\x16\n\x0etransaction_id\x18\x01 \x01(\t\x12\x0f\n\x07verdict\x18\x02 \x01(\t\x12\x12\n\nconfidence\x18\x03 \x01(\t\x12\x0f\n\x07summary\x18\x04 \x01(\t\x12\x16\n\x0erecommendation\x18\x05 \x01(\t\x12\x12\n\nagent_name\x18\x06 \x01(\t2\xd5\x01\n\x0e\x41nalystService\x12o\n\x16InvestigateTransaction\x12).aegis.analyst_service.InvestigateRequest\x1a*.aegis.analyst_service.InvestigateResponse\x12R\n\x0bHealthCheck\x12 .aegis.common.HealthCheckRequest\x1a!.aegis.common.HealthCheckResponseb\x06proto3')

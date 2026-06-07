@@ -7,8 +7,9 @@ class Settings(BaseSettings):
     """API Gateway settings."""
 
     # General
-    ENVIRONMENT: str 
+    ENVIRONMENT: str
     LOG_LEVEL: str = "INFO"
+    DEV_BYPASS_AUTH: bool = False  # When true, accepts X-Dev-Tenant-Id header instead of JWT
     API_GATEWAY_PORT: int = 8000
     CORRELATION_ID_HEADER: str
 

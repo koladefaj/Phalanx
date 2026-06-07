@@ -52,6 +52,8 @@ class RiskServicerMapper:
             ],
             processing_time_ms=float(result.processing_time_ms),
             model_version=result.model_version or "1.0.0",
+            rule_score=float(result.rule_score) if result.rule_score is not None else 0.0,
+            ml_score=float(result.ml_score) if result.ml_score is not None else 0.0,
         )
 
     @classmethod

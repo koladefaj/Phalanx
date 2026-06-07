@@ -8,7 +8,8 @@ proto:
 		--grpc_python_out=shared/aegis_shared/generated \
 		--pyi_out=shared/aegis_shared/generated \
 		proto/*.proto
-	@echo "Proto stubs generated in shared/aegis_shared/generated/"
+	python infra/fix_proto_imports.py
+	@echo "Proto stubs generated and imports fixed in shared/aegis_shared/generated/"
 
 # ─── Docker ─────────────────────────────────────────────
 up:

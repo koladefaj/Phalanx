@@ -1,8 +1,10 @@
 """Transaction business logic service."""
 
-from uuid import UUID
+from uuid import UUID, uuid4
 from decimal import Decimal
 from datetime import datetime, UTC
+
+from sqlalchemy.exc import IntegrityError
 
 from app.db.session import get_session
 from aegis_shared.schemas.transaction import TransactionAccepted, TransactionResponse, TransactionUpdate
@@ -43,21 +45,22 @@ class TransactionBusinessService:
     ) -> TransactionAccepted:
 
         now = datetime.now(UTC)
+        transaction_id = uuid4()  # Pre-generate so scoring and INSERT use the same ID
+
+        # Idempotency check only — no INSERT yet
+        request_data = {
+            "amount": amount,
+            "currency": currency,
+            "sender_id": sender_id,
+            "receiver_id": receiver_id,
+            "sender_country": sender_country,
+            "receiver_country": receiver_country,
+            "transaction_type": transaction_type,
+        }
 
         async with get_session() as session:
             repo = TransactionRepository(session)
-
-            # Check idempotency
             existing = await repo.find_by_idempotency_key(idempotency_key, client_id=client_id)
-            request_data = {
-                "amount": amount,
-                "currency": currency,
-                "sender_id": sender_id,
-                "receiver_id": receiver_id,
-                "sender_country": sender_country,
-                "receiver_country": receiver_country,
-                "transaction_type": transaction_type,
-            }
 
             if existing:
                 existing_data = {
@@ -69,7 +72,6 @@ class TransactionBusinessService:
                     "receiver_country": existing.receiver_country,
                     "transaction_type": existing.transaction_type,
                 }
-
                 if existing_data != request_data:
                     logger.warning(
                         "db_idempotency_conflict",
@@ -78,37 +80,14 @@ class TransactionBusinessService:
                         attempted_request=request_data,
                     )
                     raise DuplicateTransactionError(idempotency_key)
-
                 logger.info("duplicate_transaction_found", idempotency_key=idempotency_key)
                 return TransactionAccepted.model_validate(existing).model_copy(
                     update={"already_existed": True}
                 )
 
-            # Persist with status=RECEIVED
-            transaction_data = {
-                "idempotency_key": idempotency_key,
-                "amount": amount,
-                "currency": currency,
-                "sender_id": sender_id,
-                "receiver_id": receiver_id,
-                "sender_country": sender_country,
-                "receiver_country": receiver_country,
-                "transaction_type": transaction_type,
-                "device_fingerprint": device_fingerprint,
-                "ip_address": ip_address,
-                "channel": channel,
-                "client_id": client_id,
-                "status": TransactionStatus.RECEIVED.value,
-                "created_at": now,
-            }
-
-            txn = await repo.create(transaction_data)
-            transaction_id = str(txn.transaction_id)
-            logger.info("transaction_persisted", transaction_id=transaction_id)
-
-        # Risk scoring outside DB session
+        # Score risk outside any DB session using the pre-generated transaction_id
         risk_decision = await self._score_risk(
-            transaction_id=txn.transaction_id,
+            transaction_id=transaction_id,
             amount=amount,
             currency=currency,
             sender_id=sender_id,
@@ -122,24 +101,52 @@ class TransactionBusinessService:
 
         final_status = TransactionStatus.from_risk_decision(risk_decision.decision).value
 
-        # Update status in a new session
-        async with get_session() as session:
-            repo = TransactionRepository(session)
-            await repo.update_status(txn.transaction_id, final_status)
-
         logger.info(
             "transaction_risk_scored",
-            transaction_id=transaction_id,
+            transaction_id=str(transaction_id),
             decision=risk_decision.decision,
             risk_score=risk_decision.risk_score,
             status=final_status,
         )
 
-        # Build event payload
+        # Single INSERT with the final status — no RECEIVED → APPROVED/BLOCKED/REVIEW UPDATE needed
+        txn_data = {
+            "transaction_id": transaction_id,
+            "idempotency_key": idempotency_key,
+            "amount": amount,
+            "currency": currency,
+            "sender_id": sender_id,
+            "receiver_id": receiver_id,
+            "sender_country": sender_country,
+            "receiver_country": receiver_country,
+            "transaction_type": transaction_type,
+            "device_fingerprint": device_fingerprint,
+            "ip_address": ip_address,
+            "channel": channel,
+            "client_id": client_id,
+            "status": final_status,
+            "created_at": now,
+        }
+
+        try:
+            async with get_session() as session:
+                repo = TransactionRepository(session)
+                txn = await repo.create(txn_data)
+            logger.info("transaction_persisted", transaction_id=str(transaction_id))
+        except IntegrityError:
+            # Concurrent request with the same idempotency_key won the INSERT race
+            async with get_session() as session:
+                repo = TransactionRepository(session)
+                existing = await repo.find_by_idempotency_key(idempotency_key, client_id=client_id)
+            if existing:
+                logger.info("duplicate_after_insert_race", idempotency_key=idempotency_key)
+                return TransactionAccepted.model_validate(existing).model_copy(
+                    update={"already_existed": True}
+                )
+            raise
+
         event_payload = {
             **TransactionAccepted.model_validate(txn).model_dump(mode="json"),
-
-            # Risk decision fields
             "risk_decision": risk_decision.decision.value if hasattr(risk_decision.decision, "value") else str(risk_decision.decision),
             "risk_score": float(risk_decision.risk_score),
             "risk_level": risk_decision.risk_level.value if hasattr(risk_decision.risk_level, "value") else str(risk_decision.risk_level),
@@ -148,27 +155,21 @@ class TransactionBusinessService:
             "rule_score": float(risk_decision.rule_score) if risk_decision.rule_score is not None else 0.0,
             "rule_flags": [rf.model_dump() for rf in risk_decision.risk_factors],
             "triggered_rules": [rf.factor for rf in risk_decision.risk_factors],
-
-            # ML fields
-            "ml_anomaly_score": 0.0,
+            "ml_anomaly_score": float(risk_decision.ml_score),
             "ml_model_version": risk_decision.model_version,
-            "ml_fallback_used": True,
-
-            # Performance
+            "ml_fallback_used": risk_decision.ml_score == 0.0,
             "processing_time_ms": risk_decision.processing_time_ms,
             "model_version": risk_decision.model_version,
-
-            # Tracing
             "correlation_id": get_correlation_id() or "",
+            "client_id": client_id,
         }
 
         try:
             await self.publisher.publish_transaction_queued(event_payload)
-            logger.info("transaction_event_published", transaction_id=transaction_id)
+            logger.info("transaction_event_published", transaction_id=str(transaction_id))
         except Exception as e:
-            logger.error("transaction_event_publish_failed", transaction_id=transaction_id, error=str(e))
+            logger.error("transaction_event_publish_failed", transaction_id=str(transaction_id), error=str(e))
 
-        # Return final TransactionAccepted
         return TransactionAccepted(
             transaction_id=txn.transaction_id,
             idempotency_key=idempotency_key,
@@ -183,6 +184,7 @@ class TransactionBusinessService:
             already_existed=False,
             risk_score=risk_decision.risk_score,
             rule_score=risk_decision.rule_score,
+            ml_score=risk_decision.ml_score,
             risk_level=risk_decision.risk_level,
             risk_factors=risk_decision.risk_factors,
             decision=risk_decision.decision,

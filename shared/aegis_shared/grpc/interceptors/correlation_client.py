@@ -12,6 +12,7 @@ from aegis_shared.utils.tracing import get_correlation_id
 
 
 class _ClientCallDetails(grpc.aio.ClientCallDetails):
+    """Wrapper around ClientCallDetails to inject correlation ID."""
     def __init__(
         self,
         method,
@@ -20,6 +21,7 @@ class _ClientCallDetails(grpc.aio.ClientCallDetails):
         credentials,
         wait_for_ready,
     ):
+        """Initialize the interceptor."""
         self._method = method
         self._timeout = timeout
         self._metadata = metadata
@@ -73,28 +75,28 @@ class CorrelationIdClientInterceptor(
             wait_for_ready=client_call_details.wait_for_ready,
         )
 
-    # 🔹 unary -> unary
+    # unary -> unary
     async def intercept_unary_unary(
         self, continuation, client_call_details, request
     ):
         new_details = self._inject_metadata(client_call_details)
         return await continuation(new_details, request)
 
-    # 🔹 unary -> stream
+    # unary -> stream
     async def intercept_unary_stream(
         self, continuation, client_call_details, request
     ):
         new_details = self._inject_metadata(client_call_details)
         return await continuation(new_details, request)
 
-    # 🔹 stream -> unary
+    # stream -> unary
     async def intercept_stream_unary(
         self, continuation, client_call_details, request_iterator
     ):
         new_details = self._inject_metadata(client_call_details)
         return await continuation(new_details, request_iterator)
 
-    # 🔹 stream -> stream
+    # stream -> stream
     async def intercept_stream_stream(
         self, continuation, client_call_details, request_iterator
     ):

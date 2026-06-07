@@ -2,28 +2,35 @@ FROM python:3.12-slim
 
 WORKDIR /app
 
-# Install gcc for compiling dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
     gcc \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Poetry
-RUN pip install --no-cache-dir poetry
-
-# Copy only pyproject.toml + poetry.lock first for caching
-COPY services/notification-service/pyproject.toml services/notification-service/poetry.lock* ./
-
-# Disable virtualenvs, install dependencies
-RUN poetry config virtualenvs.create false
-RUN poetry install --no-interaction --no-ansi --no-root
-
-# Copy shared libraries, proto files, and service code
+# Copy shared library first
 COPY shared/ /shared/
-COPY proto/ /proto/
-COPY services/notification-service/app/ ./app/
 
-# Expose service port
+# Copy dependency manifest
+COPY services/notification-service/pyproject.toml ./
+
+# Install pip dependencies directly (no poetry needed — setuptools build system)
+RUN pip install --no-cache-dir \
+    "grpcio>=1.78.0,<2.0.0" \
+    "sqlalchemy>=2.0.48,<3.0.0" \
+    "alembic>=1.18.4,<2.0.0" \
+    "asyncpg>=0.31.0,<0.32.0" \
+    "aioboto3>=15.5.0,<16.0.0" \
+    "httpx>=0.28.0,<0.29.0" \
+    "pydantic-settings>=2.9.1,<3.0.0" \
+    "protobuf>=7.34.0,<8.0.0"
+
+# Install shared aegis_shared package
+RUN pip install /shared
+
+# Copy application code and alembic migrations
+COPY services/notification-service/app/ ./app/
+COPY services/notification-service/alembic/ ./alembic/
+COPY services/notification-service/alembic.ini ./
+
 EXPOSE 50055
 
-# Run service
-CMD ["python", "-m", "app.main"]
+CMD ["sh", "-c", "alembic upgrade head && python -m app.main"]

@@ -356,6 +356,85 @@ class AccountProfile(Base):
             self.unique_country_count += 1
             self.known_receiver_countries = [*self.known_receiver_countries, country]
 
+    def to_cache_dict(self) -> dict:
+        """Serialize to a JSON-safe dict for Redis caching."""
+        def _dt(v):
+            return v.isoformat() if v is not None else None
+
+        def _dec(v):
+            return str(v) if v is not None else "0"
+
+        return {
+            "account_id": self.account_id,
+            "total_txn_count": self.total_txn_count,
+            "total_volume_lifetime": _dec(self.total_volume_lifetime),
+            "total_volume_30d": _dec(self.total_volume_30d),
+            "txn_count_30d": self.txn_count_30d,
+            "total_volume_24h": _dec(self.total_volume_24h),
+            "txn_count_24h": self.txn_count_24h,
+            "txn_count_1h": self.txn_count_1h,
+            "total_volume_1h": _dec(self.total_volume_1h),
+            "avg_txn_amount": _dec(self.avg_txn_amount),
+            "max_txn_amount": _dec(self.max_txn_amount),
+            "last_txn_amount": _dec(self.last_txn_amount) if self.last_txn_amount is not None else None,
+            "is_high_risk": self.is_high_risk,
+            "fraud_txn_count": self.fraud_txn_count,
+            "blocked_txn_count": self.blocked_txn_count,
+            "review_txn_count": self.review_txn_count,
+            "unique_receiver_count": self.unique_receiver_count,
+            "known_receiver_ids": self.known_receiver_ids or [],
+            "unique_device_count": self.unique_device_count,
+            "known_device_fingerprints": self.known_device_fingerprints or [],
+            "unique_country_count": self.unique_country_count,
+            "known_receiver_countries": self.known_receiver_countries or [],
+            "first_seen_at": _dt(self.first_seen_at),
+            "last_seen_at": _dt(self.last_seen_at),
+            "window_reset_at_1h": _dt(self.window_reset_at_1h),
+            "window_reset_at_24h": _dt(self.window_reset_at_24h),
+            "version": self.version,
+        }
+
+    @classmethod
+    def from_cache_dict(cls, data: dict) -> "AccountProfile":
+        """Reconstruct a transient (non-session-attached) instance from a cached dict."""
+        def _parse_dt(v):
+            if v is None:
+                return None
+            parsed = datetime.fromisoformat(v)
+            return parsed if parsed.tzinfo is not None else parsed.replace(tzinfo=UTC)
+
+        last_txn = data.get("last_txn_amount")
+        return cls(
+            account_id=data["account_id"],
+            total_txn_count=data.get("total_txn_count", 0),
+            total_volume_lifetime=Decimal(data.get("total_volume_lifetime", "0")),
+            total_volume_30d=Decimal(data.get("total_volume_30d", "0")),
+            txn_count_30d=data.get("txn_count_30d", 0),
+            total_volume_24h=Decimal(data.get("total_volume_24h", "0")),
+            txn_count_24h=data.get("txn_count_24h", 0),
+            txn_count_1h=data.get("txn_count_1h", 0),
+            total_volume_1h=Decimal(data.get("total_volume_1h", "0")),
+            avg_txn_amount=Decimal(data.get("avg_txn_amount", "0")),
+            max_txn_amount=Decimal(data.get("max_txn_amount", "0")),
+            last_txn_amount=Decimal(last_txn) if last_txn else None,
+            is_high_risk=data.get("is_high_risk", False),
+            fraud_txn_count=data.get("fraud_txn_count", 0),
+            blocked_txn_count=data.get("blocked_txn_count", 0),
+            review_txn_count=data.get("review_txn_count", 0),
+            unique_receiver_count=data.get("unique_receiver_count", 0),
+            known_receiver_ids=data.get("known_receiver_ids", []),
+            unique_device_count=data.get("unique_device_count", 0),
+            known_device_fingerprints=data.get("known_device_fingerprints", []),
+            unique_country_count=data.get("unique_country_count", 0),
+            known_receiver_countries=data.get("known_receiver_countries", []),
+            first_seen_at=_parse_dt(data.get("first_seen_at")) or datetime.now(UTC),
+            last_seen_at=_parse_dt(data.get("last_seen_at")) or datetime.now(UTC),
+            window_reset_at_1h=_parse_dt(data.get("window_reset_at_1h")),
+            window_reset_at_24h=_parse_dt(data.get("window_reset_at_24h")),
+            version=data.get("version", 1),
+            profile_metadata=None,
+        )
+
     def to_feature_dict(
         self,
         current_amount: Decimal,
